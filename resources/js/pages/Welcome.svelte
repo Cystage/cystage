@@ -5,8 +5,8 @@
 
     let { offre }= $props();
 
-    let ListePhraseInspirante = ["Trouver votre futur ici",
-        "Débutez votre carrière profesionnel!",
+    let ListePhraseInspirante = ["Trouvez votre futur ici",
+        "Débutez votre carrière profesionnelle!",
         "Votre futur commence aujourd'hui",
         "L'avenir est entre vos mains",
         "Reprenez votre destin en main",
