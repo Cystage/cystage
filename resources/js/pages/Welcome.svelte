@@ -2,10 +2,17 @@
     import AppHead from '@/components/AppHead.svelte';
     import { createInertiaApp } from '@inertiajs/svelte';
     import OffreDeStage from './OffreDeStage.svelte';
+    import Modal from './Modal.svelte';
 
     import logo from './img/logo.png';
 
     let { offre }= $props();
+
+    let showModal= $state(false);
+
+    function modal() {
+        showModal=!showModal;
+    }
 
     let ListePhraseInspirante = ["Trouvez votre futur ici",
         "Débutez votre carrière profesionnelle!",
@@ -30,7 +37,13 @@
 <header>
     <p>Cy stage </p>
 
-    <button>Publier une offre</button>
+    <button onclick={modal}>Publier une offre</button>
+
+    <div class="modal">
+        {#if showModal}
+            <Modal bind:showModal={showModal}/>
+        {/if}
+    </div>
 </header>
 
 <center>
@@ -45,6 +58,11 @@
     <style>
         h1 {
             font-size: 2em;
+        }
+
+        .modal {
+            height: 100%;
+            width: 100%;
         }
     </style>
 

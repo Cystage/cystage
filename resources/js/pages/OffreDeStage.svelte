@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { offre }= $props();
+    let { offre = $bindable() }= $props();
 
 </script>
     <div>
