@@ -1,6 +1,6 @@
 <script lang="ts">
     import AppHead from '@/components/AppHead.svelte';
-    import { createInertiaApp } from '@inertiajs/svelte';
+       import { createInertiaApp } from '@inertiajs/svelte';
     import OffreDeStage from './OffreDeStage.svelte';
     import Modal from './Modal.svelte';
 
@@ -32,6 +32,9 @@
 <AppHead title="Welcome">
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 </AppHead>
 
 <header>
@@ -56,6 +59,11 @@
     {/each}
 
     <style>
+        * {
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-optical-sizing: auto;
+            font-style: normal;
+        }
         h1 {
             font-size: 2em;
         }
