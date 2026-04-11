@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('offres', function (Blueprint $table) {
+        Schema::create('entreprises', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->string('nom');
-            $table->string('entreprise');
-            $table->string('adresse');      
-            $table->text('description');
+            $table->string('siret');
+            $table->string('adresse');
+            $table->string('code_postal');
+            $table->string('ville');
+            $table->string('pays');
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('offres');
+        Schema::dropIfExists('entreprises');
     }
 };

@@ -3,6 +3,7 @@
        import { createInertiaApp } from '@inertiajs/svelte';
     import OffreDeStage from './OffreDeStage.svelte';
     import Modal from './Modal.svelte';
+    import Login from './Login.svelte';
 
     import logo from './img/logo.png';
 
@@ -10,8 +11,14 @@
 
     let showModal= $state(false);
 
+    let showLogin= $state(false);
+
     function modal() {
         showModal=!showModal;
+    }
+
+    function login() {
+        showLogin=!showLogin;
     }
 
     let ListePhraseInspirante = ["Trouvez votre futur ici",
@@ -43,10 +50,17 @@
     <button onclick={modal}>Publier une offre</button>
 
     <a class="profile-link" href="/profil">Mon profil</a>
+    <button onclick={login}>login</button>
 
     <div class="modal">
         {#if showModal}
             <Modal bind:showModal={showModal}/>
+        {/if}
+    </div>
+
+    <div class="login">
+        {#if showLogin}
+            <Login bind:showLogin={showLogin}/>
         {/if}
     </div>
 </header>
@@ -80,6 +94,9 @@
             text-decoration: none;
             font-weight: 600;
             color: #2563eb;
+        .login {
+            height: 100%;
+            width: 100%;
         }
     </style>
 
