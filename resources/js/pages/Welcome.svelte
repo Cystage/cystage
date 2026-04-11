@@ -1,6 +1,7 @@
 <script lang="ts">
+    import Header from '@/components/Header.svelte';  
     import AppHead from '@/components/AppHead.svelte';
-       import { createInertiaApp } from '@inertiajs/svelte';
+    import { createInertiaApp } from '@inertiajs/svelte';
     import OffreDeStage from './OffreDeStage.svelte';
     import Modal from './Modal.svelte';
     import Login from './Login.svelte';
@@ -10,7 +11,6 @@
     let { offres }= $props();
 
     let showModal= $state(false);
-
     let showLogin= $state(false);
 
     function modal() {
@@ -21,7 +21,8 @@
         showLogin=!showLogin;
     }
 
-    let ListePhraseInspirante = ["Trouvez votre futur ici",
+    let ListePhraseInspirante = [
+        "Trouvez votre futur ici",
         "Débutez votre carrière profesionnelle!",
         "Votre futur commence aujourd'hui",
         "L'avenir est entre vos mains",
@@ -32,8 +33,6 @@
     ]
 
     const phraseInspirante = ListePhraseInspirante[Math.floor(Math.random() * ListePhraseInspirante.length)];
-
-
 </script>
 
 <AppHead title="Welcome">
@@ -41,63 +40,69 @@
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 </AppHead>
 
-<header>
-    <p>Cy stage </p>
 
-    <button onclick={modal}>Publier une offre</button>
-
-    <a class="profile-link" href="/profil">Mon profil</a>
-    <button onclick={login}>login</button>
-
-    <div class="modal">
-        {#if showModal}
-            <Modal bind:showModal={showModal}/>
-        {/if}
+<Header bind:showModal={showModal} bind:showLogin={showLogin}/>
+<main>
+    <div class="hero">
+        <img src={logo} alt="Le logo Cystage" width="260">
+        <p class="phrase">{phraseInspirante}</p>
     </div>
 
-    <div class="login">
-        {#if showLogin}
-            <Login bind:showLogin={showLogin}/>
-        {/if}
+    <div class="offres-list">
+        {#each offres as o}
+            <OffreDeStage offre={o}/>
+        {/each}
     </div>
-</header>
+</main>
 
-<center>
-    <img src={logo} alt="Le logo Cystage" width="300em">
-    <p>{phraseInspirante}</p>
-    <br>
-    {#each offres as o}
-        
-        <OffreDeStage offre={o}/>
-    {/each}
+{#if showModal}
+    <Modal bind:showModal={showModal}/>
+{/if}
 
-    <style>
-        * {
-            font-family: "Plus Jakarta Sans", sans-serif;
-            font-optical-sizing: auto;
-            font-style: normal;
-        }
-        h1 {
-            font-size: 2em;
-        }
+{#if showLogin}
+    <Login bind:showLogin={showLogin}/>
+{/if}
 
-        .modal {
-            height: 100%;
-            width: 100%;
-        }
+<style>
+    * {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        .profile-link {
-            margin-left: auto;
-            text-decoration: none;
-            font-weight: 600;
-            color: #2563eb;
-        .login {
-            height: 100%;
-            width: 100%;
-        }
-    </style>
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+    }
 
-</center>
+    .hero {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero img {
+        margin-bottom: 1rem;
+    }
+
+    .phrase {
+        font-size: 1.1rem;
+        color: #64748b;
+        font-style: italic;
+    }
+
+    .offres-list {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+</style>

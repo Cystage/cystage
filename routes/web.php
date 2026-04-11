@@ -34,3 +34,6 @@ Route::get('/profil', function (Request $request) {
 })->name('profile');
 
 Route::redirect('/progil', '/profil');
+
+Route::get('/register', fn() => inertia('Register'))->name('register');
+Route::post('/register', [AuthController::class, 'register']);

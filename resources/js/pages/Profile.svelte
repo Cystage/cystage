@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
 
     type Profile = {
@@ -46,6 +47,7 @@
 
 <AppHead title="Profil" />
 
+<Header/>
 <main class="page-container">
     <div class="content">
         <p class="greeting">Bonjour, {getFullName()}</p>
