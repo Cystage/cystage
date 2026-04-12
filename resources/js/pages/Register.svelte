@@ -8,7 +8,7 @@
         nom: '',
         prenom: '',
         date_de_naissance: '',
-        nb_tel: '',
+        num_tel: '',
         adresse: '',
         email: '',
         password: '',
@@ -22,7 +22,7 @@
         if (!$form.nom) errors.nom = "Le nom est obligatoire";
         if (!$form.prenom) errors.prenom = "Le prénom est obligatoire";
         if (!$form.date_de_naissance) errors.date_de_naissance = "La date de naissance est obligatoire";
-        if (!$form.nb_tel) errors.nb_tel = "Le numéro de téléphone est obligatoire";
+        if (!$form.num_tel) errors.num_tel = "Le numéro de téléphone est obligatoire";
         if (!$form.adresse) errors.adresse = "L'adresse est obligatoire";
         if (!$form.email) errors.email = "L'e-mail est obligatoire";
         if (!$form.password) errors.password = "Le mot de passe est obligatoire";
@@ -37,7 +37,7 @@
     function submit(e: Event) {
         e.preventDefault();
         if (!validate()) return;
-        $form.post('/register', { preserveState: true });
+        $form.post('/register');
     }
 </script>
 
@@ -88,13 +88,13 @@
             </div>
 
             <div class="form-group">
-                <label for="nb_tel">Téléphone <span class="required">*</span></label>
+                <label for="num_tel">Téléphone <span class="required">*</span></label>
                 <input
-                    type="tel" id="nb_tel" placeholder="06 12 34 56 78"
-                    bind:value={$form.nb_tel}
-                    class:input-error={errors.nb_tel || $form.errors.nb_tel}
+                    type="tel" id="num_tel" placeholder="06 12 34 56 78"
+                    bind:value={$form.num_tel}
+                    class:input-error={errors.num_tel || $form.errors.num_tel}
                 />
-                <span class="error-message">{errors.nb_tel || $form.errors.nb_tel || ''}</span>
+                <span class="error-message">{errors.num_tel || $form.errors.num_tel || ''}</span>
             </div>
 
             <div class="form-group form-group-full">

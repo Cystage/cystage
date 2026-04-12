@@ -28,11 +28,11 @@ Route::get('/profil', function (Request $request) {
             'numero_tel' => $user?->numero_tel ?? $user?->telephone ?? $user?->phone,
             'adresse' => $user?->adresse,
             'email' => $user?->email,
-            'num_etudiant' => $user?->num_etudiant ?? $user?->numero_etudiant,
+            'num_etudiant' => $user?->num_etudiant,
             'annee_etude' => $user?->annee_etude,
         ],
     ]);
-})->name('profile');
+})->middleware('auth')->name('profile');
 
 Route::redirect('/progil', '/profil');
 
