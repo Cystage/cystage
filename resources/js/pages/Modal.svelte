@@ -6,8 +6,8 @@
         showModal=!showModal;
         console.log(showModal);
     }
-    //'nom','entreprise','adresse','description'
-    const form = useForm({ nom: '',entreprise: '', adresse: '',description:''});
+    //'nom','ent_id','nb_week','week_hour','paye_hour','teletrav','poste_desc','profil_desc'
+    const form = useForm({ nom: '',ent_id: '', nb_week: '',week_hour:'',paye_hour:'',teletrav:'',poste_desc:'',profil_desc:''});
 
     function submit(e) {
         e.preventDefault();
@@ -35,21 +35,45 @@
             </div>
 
             <div class="field">
-                <label for="entreprise">Entreprise</label>
-                <input bind:value={$form.entreprise} type="text" id="entreprise" placeholder="Ex: Google"/>
-                {#if $form.errors.entreprise}<span class="erreur">{$form.errors.entreprise}</span>{/if}
+                <label for="ent_id">Entreprise</label>
+                <input bind:value={$form.ent_id} type="number" id="ent_id" placeholder="1"/>
+                {#if $form.errors.ent_id}<span class="erreur">{$form.errors.ent_id}</span>{/if}
             </div>
 
             <div class="field">
-                <label for="adresse">Adresse</label>
-                <input bind:value={$form.adresse} type="text" id="adresse" placeholder="Ex: Paris, 75001"/>
-                {#if $form.errors.adresse}<span class="erreur">{$form.errors.adresse}</span>{/if}
+                <label for="nb_week">Durée (semaines)</label>
+                <input bind:value={$form.nb_week} type="number" id="nb_week" placeholder="8"/>
+                {#if $form.errors.nb_week}<span class="erreur">{$form.errors.nb_week}</span>{/if}
             </div>
 
             <div class="field">
-                <label for="description">Description</label>
-                <textarea bind:value={$form.description} id="description" rows="3" placeholder="Décrivez le poste..."></textarea>
-                {#if $form.errors.description}<span class="erreur">{$form.errors.description}</span>{/if}
+                <label for="week_hour">Heures/semaine</label>
+                <input bind:value={$form.week_hour} type="number" id="week_hour" placeholder="35"/>
+                {#if $form.errors.week_hour}<span class="erreur">{$form.errors.week_hour}</span>{/if}
+            </div>
+
+            <div class="field">
+                <label for="paye_hour">Taux horaire</label>
+                <input bind:value={$form.paye_hour} type="number" step=0.01 id="paye_hour" placeholder="3.5"/>
+                {#if $form.errors.paye_hour}<span class="erreur">{$form.errors.paye_hour}</span>{/if}
+            </div>
+
+            <div class="field">
+                <label for="teletrav">Télétravail possible</label>
+                <input bind:checked={$form.teletrav} id="teletrav" type="checkbox" placeholder=""/>
+                {#if $form.errors.teletrav}<span class="erreur">{$form.errors.teletrav}</span>{/if}
+            </div>
+
+            <div class="field">
+                <label for="poste_desc">Description du poste</label>
+                <textarea bind:value={$form.poste_desc} id="poste_desc" rows="3" placeholder="Décrivez le poste..."></textarea>
+                {#if $form.errors.poste_desc}<span class="erreur">{$form.errors.poste_desc}</span>{/if}
+            </div>
+
+            <div class="field">
+                <label for="profil_desc">Description du profil recherché</label>
+                <textarea bind:value={$form.profil_desc} id="profil_desc" rows="3" placeholder="Décrivez le profil..."></textarea>
+                {#if $form.errors.profil_desc}<span class="erreur">{$form.errors.profil_desc}</span>{/if}
             </div>
 
             <button type="submit" class="submit">Publier l'offre</button>

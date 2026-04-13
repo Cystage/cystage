@@ -14,10 +14,15 @@ return new class extends Migration
         Schema::create('offres', function (Blueprint $table) {
             $table->id();
             $table->string('nom');
-            $table->string('entreprise');
-            $table->string('adresse');      
-            $table->text('description');
-            $table->timestamps();
+            $table->unsignedBigInteger('ent_id');
+            $table->foreign('ent_id')->references('id')->on('entreprises');
+            $table->integer('nb_week');
+            $table->integer('week_hour');
+            $table->float('paye_hour');
+            $table->boolean('teletrav');
+            $table->text('poste_desc');
+            $table->text('profil_desc');
+            $table->timestamps();   
         });
     }
 

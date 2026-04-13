@@ -21,6 +21,7 @@ class EntreprisesTableSeeder extends Seeder
             'code_postal' => '01234',
             'ville' => 'testVille',
             'pays' => 'testPays',
+            'num_tel' => '6666666666',
         ]);
     }
 }
