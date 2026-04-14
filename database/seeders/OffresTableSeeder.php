@@ -14,12 +14,22 @@ class OffresTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('offres')->insert([
-            'nom' => 'testOffre',
+            'nom' => 'testOffreTele',
             'ent_id' => '1',
             'nb_week' => '6',
             'week_hour' => '35',
             'paye_hour' => '6.9',
-            'teletrav' => 'true',
+            'teletrav' => '1',
+            'poste_desc' => 'testPosteDesc',
+            'profil_desc' => 'testProfilDesc',
+        ]);
+        DB::table('offres')->insert([
+            'nom' => 'testOffrePasTele',
+            'ent_id' => '2',
+            'nb_week' => '6',
+            'week_hour' => '35',
+            'paye_hour' => '6.9',
+            'teletrav' => '0',
             'poste_desc' => 'testPosteDesc',
             'profil_desc' => 'testProfilDesc',
         ]);

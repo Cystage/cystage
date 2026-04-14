@@ -3,17 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OffreController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EntrepriseController;
 use Inertia\Inertia;
+use App\Models\Entreprise;
 use App\Models\Offre;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'offres' => Offre::latest()->get() 
+        'offres' => Offre::latest()->get(),
+        'entreprises' => Entreprise::latest()->get()
     ]);
 })->name('home');
 
 Route::post('/offre', [OffreController::class, 'poste'])->name('links.offre');
+
+Route::post('/entreprise', [EntrepriseController::class, 'poste'])->name('links.entreprise');
 
 Route::get('/profil', function (Request $request) {
     $user = $request->user();

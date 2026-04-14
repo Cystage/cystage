@@ -8,10 +8,14 @@
 
     import logo from './img/logo.png';
 
-    let { offres }= $props();
+    let { entreprises, offres }= $props();
 
     let showModal= $state(false);
     let showLogin= $state(false);
+
+    function entofoffre(e,o){
+        return e[o.ent_id-1].nom;
+    }
 
     function modal() {
         showModal=!showModal;
@@ -53,7 +57,7 @@
 
     <div class="offres-list">
         {#each offres as o}
-            <OffreDeStage offre={o}/>
+            <OffreDeStage offre={o} entreprise={entreprises[o.ent_id-1]}/>
         {/each}
     </div>
 </main>

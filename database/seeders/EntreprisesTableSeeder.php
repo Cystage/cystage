@@ -23,5 +23,15 @@ class EntreprisesTableSeeder extends Seeder
             'pays' => 'testPays',
             'num_tel' => '6666666666',
         ]);
+        DB::table('entreprises')->insert([
+            'user_id' => '4',
+            'nom' => 'testEnt2',
+            'siret' => 'test',
+            'adresse' => 'testAdr',
+            'code_postal' => '01234',
+            'ville' => 'testVille',
+            'pays' => 'testPays',
+            'num_tel' => '6666666666',
+        ]);
     }
 }

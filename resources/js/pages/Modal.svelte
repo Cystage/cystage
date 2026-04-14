@@ -16,6 +16,7 @@
             onSuccess: () => { $form.reset(); showModal = false; }
         });
     }
+    $form.teletrav = false;
 </script>
 
 <div class="overlay">
@@ -61,7 +62,6 @@
             <div class="field">
                 <label for="teletrav">Télétravail possible</label>
                 <input bind:checked={$form.teletrav} id="teletrav" type="checkbox" placeholder=""/>
-                {#if $form.errors.teletrav}<span class="erreur">{$form.errors.teletrav}</span>{/if}
             </div>
 
             <div class="field">
