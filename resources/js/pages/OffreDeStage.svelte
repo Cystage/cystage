@@ -1,5 +1,5 @@
 <script lang="ts">
-    let { offre = $bindable(), entreprise = $bindable() }= $props();
+    let { offre = $bindable(), entreprise = $bindable(), doms , skills }= $props();
 //'user_id','nom','siret','adresse','code_postal','ville','pays','num_tel'
 //'nom','ent_id','nb_week','week_hour','paye_hour','teletrav','poste_desc','profil_desc'
 </script>
@@ -17,7 +17,15 @@
         <br>
         <h1>{offre.profil_desc}<br></h1>
         <br>
-
+        <p>Pour plus d'information, contacter ou appeler le {entreprise.num_tel}<p>
+        <br>
+        {#each skills as s}
+            <p>{s.name}</p>
+        {/each}
+        <br>
+        {#each doms as d}
+            <p>{d.name}</p>
+        {/each}
     </div>
 
     <style>

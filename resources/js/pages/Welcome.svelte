@@ -8,13 +8,30 @@
 
     import logo from './img/logo.png';
 
-    let { entreprises, offres }= $props();
+    let { entreprises, offres, competences, domaines, links_offres_competences, links_offres_domaines }= $props();
 
     let showModal= $state(false);
     let showLogin= $state(false);
+    let skills = $state([]);
 
-    function entofoffre(e,o){
-        return e[o.ent_id-1].nom;
+    function getdoms(o,o_d,d){
+        let doms = $state([]);
+        for(let l of o_d){
+            if(o.id == l.offre_id){
+                doms.push(d[l.dom_id-1]);
+            }
+        }
+        return doms;
+    }
+
+    function getskills(o,o_c,c){
+        let skills = $state([]);
+        for(let l of o_c){
+            if(o.id == l.offre_id){
+                skills.push(c[l.skill_id-1]);
+            }
+        }
+        return skills;
     }
 
     function modal() {
@@ -54,10 +71,12 @@
         <img src={logo} alt="Le logo Cystage" width="260">
         <p class="phrase">{phraseInspirante}</p>
     </div>
-
+    {#each getdoms(offres[0],links_offres_domaines,domaines) as d}
+        {d.name}
+    {/each}
     <div class="offres-list">
         {#each offres as o}
-            <OffreDeStage offre={o} entreprise={entreprises[o.ent_id-1]}/>
+            <OffreDeStage offre={o} entreprise={entreprises[o.ent_id-1]} doms={getdoms(o,links_offres_domaines,domaines)} skills={getskills(o,links_offres_competences,competences)}/>
         {/each}
     </div>
 </main>
