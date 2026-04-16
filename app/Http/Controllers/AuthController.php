@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Etudiant;
 
 class AuthController extends Controller
 {
@@ -30,15 +31,26 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8|confirmed',
+            'num_tel' => 'required|min:8',
         ]);
 
         $user = User::create([
-            'name' => $validated['nom'],
+            'name' => 'e-'.$validated['prenom'][0].$validated['nom'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id' => 3
+        ]);
+
+        $latestuser = \App\Models\User::latest()->first();
+
+        Etudiant::create([
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'user_id' => $latestuser->id,
+            'num_etudiant' => $validated['num_tel']
         ]);
 
         Auth::login($user);
