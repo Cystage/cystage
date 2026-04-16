@@ -23,6 +23,7 @@
                 <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
             {/if}
             {#if user.role_id==2 || user.role_id==1}
+                <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
                 <button class="btn-secondary" onclick={() => showModal = !showModal}>Publier une offre</button>
             {/if}
             <button class="btn-primary" onclick={logout}>Déconnexion</button>

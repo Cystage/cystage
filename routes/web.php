@@ -16,6 +16,7 @@ use App\Models\Offre;
 use App\Models\Competence;
 use App\Models\Etudiant;
 use App\Models\Domaine;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 Route::get('/', function (Request $request) {
@@ -84,6 +85,7 @@ Route::get('/profil', function (Request $request) {
                 'email' => $user->email,
                 'num_etudiant' => $etud->num_etudiant,
                 'identifiant' => $user->name,
+                'type'=> $user->role_id,
             ],
         ]);
     }
@@ -99,6 +101,7 @@ Route::get('/profil', function (Request $request) {
                 'ville' => $ent->ville,
                 'pays' => $ent->pays,
                 'num_tel' => $ent->num_tel,
+                'type'=> $user->role_id,
             ],
         ]);
     }
