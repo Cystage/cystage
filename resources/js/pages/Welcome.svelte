@@ -103,6 +103,13 @@
     <Login bind:showLogin={showLogin}/>
 {/if}
 
+<footer>
+<center>
+    <p>© CyStage Tout droit réservé 2026</p>
+</center>
+
+</footer>
+
 <style>
     * {
         font-family: "Plus Jakarta Sans", sans-serif;
@@ -142,4 +149,12 @@
         flex-direction: column;
         gap: 1rem;
     }
+
+    footer {
+        background-color: rgb(223, 223, 223);
+        padding-top: 50px;
+        justify-content: center;
+    }
+
+
 </style>
