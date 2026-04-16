@@ -34,13 +34,15 @@ Route::get('/', function (Request $request) {
         }
         if($user->role_id==2){
             $ent = Entreprise::where('user_id',$user->id)->first();
+            $offres = Offre::where('ent_id',$ent->id)->latest()->get();
+            $offreIds = $offres->pluck('id');
             return Inertia::render('Welcome', [
                 'entreprises' => $ent,
-                'offres' => Offre::where('ent_id',$ent->id)->latest()->get(),
+                'offres' => $offres,
                 'competences' => Competence::latest()->get(),
                 'domaines' => Domaine::latest()->get(),
-                'links_offres_competences' => Offre_Competence::latest()->get(),
-                'links_offres_domaines' => Offre_Domaine::latest()->get(),
+                'links_offres_competences' => Offre_Competence::whereIn('offre_id', $offreIds)->latest()->get(),
+                'links_offres_domaines' => Offre_Domaine::whereIn('offre_id', $offreIds)->latest()->get(),
             ]);
         }
         if($user->role_id==1){
@@ -55,12 +57,6 @@ Route::get('/', function (Request $request) {
         }
     }else{
         return Inertia::render('Welcome', [
-            'offres' => Offre::latest()->get(),
-            'competences' => Competence::latest()->get(),
-            'domaines' => Domaine::latest()->get(),
-            'links_offres_competences' => Offre_Competence::latest()->get(),
-            'links_offres_domaines' => Offre_Domaine::latest()->get(),
-            'entreprises' => Entreprise::latest()->get(),
         ]);
     }
 })->name('home');
