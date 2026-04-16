@@ -31,6 +31,7 @@
         fields = [
             { label: 'Appelation', value: profile?.nom },
             { label: 'Email', value: profile?.email, full: true },
+            { label: 'Indentifiant', value: profile?.identifiant },
             { label: 'siret', value: profile?.siret },
             { label: 'adresse', value: profile?.adresse },
             { label: 'code_postal', value: profile?.code_postal },

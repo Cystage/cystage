@@ -12,7 +12,6 @@
 
     let showModal= $state(false);
     let showLogin= $state(false);
-    let skills = $state([]);
 
     function getdoms(o,o_d,d){
         let doms = $state([]);
@@ -22,6 +21,14 @@
             }
         }
         return doms;
+    }
+
+    function getent(o,ents){
+        for(let e of ents){
+            if(o.ent_id == e.id){
+                return e;
+            }
+        }
     }
 
     function getskills(o,o_c,c){
@@ -81,7 +88,7 @@
             {/each}
         {:else}
             {#each offres as o}
-                <OffreDeStage offre={o} entreprise={entreprises[o.ent_id-1]} doms={getdoms(o,links_offres_domaines,domaines)} skills={getskills(o,links_offres_competences,competences)}/>
+                <OffreDeStage offre={o} entreprise={getent(o,entreprises)} doms={getdoms(o,links_offres_domaines,domaines)} skills={getskills(o,links_offres_competences,competences)}/>
             {/each}
         {/if}
     </div>

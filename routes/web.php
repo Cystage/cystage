@@ -94,6 +94,7 @@ Route::get('/profil', function (Request $request) {
         return Inertia::render('Profile', [
             'profile' => [
                 'nom' => $ent->nom,
+                'identifiant' => $user->name,
                 'email' => $user->email,
                 'siret' => $ent->siret,
                 'adresse' => $ent->adresse,
@@ -111,6 +112,9 @@ Route::redirect('/progil', '/profil');
 
 Route::get('/register', fn() => inertia('Register'))->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+Route::get('/newent', fn() => inertia('NewEnt'))->name('newent');
+Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

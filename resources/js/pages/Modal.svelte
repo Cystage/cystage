@@ -36,11 +36,11 @@
             {#if user.role_id == 1}
             <div class="field">
                 <label>Entreprise</label>
-                {#each entreprises as e}
-                    <label><input id="{e.nom}" type="radio" bind:group={$form.ent_id} value="{e.id}"> {e.nom}</label>
+                {#each entreprises as e }
+                    <label><input name="ent_id" type="radio" bind:group={$form.ent_id} value={e.id}/> {e.nom}</label>
                 {/each}
                 {#if $form.errors.ent_id}<span class="erreur">{$form.errors.ent_id}</span>{/if}
-            </div>$
+            </div>
             {/if}
             <div class="field">
                 <label>Domaines</label>

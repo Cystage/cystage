@@ -19,16 +19,18 @@
     </div>
     <div class="header-right">
         {#if user}
-            {#if user.role_id==3}
+            {#if user.role_id==3 || user.role_id==2}
                 <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
             {/if}
             {#if user.role_id==2 || user.role_id==1}
-                <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
                 <button class="btn-secondary" onclick={() => showModal = !showModal}>Publier une offre</button>
+            {/if}
+            {#if user.role_id==1}
+                <a use:inertia class="btn-ghost" href="/register">Créer un compte étudiant</a>
+                <a use:inertia class="btn-ghost" href="/newent">Créer un compte entreprise</a>
             {/if}
             <button class="btn-primary" onclick={logout}>Déconnexion</button>
         {:else}
-            <a use:inertia class="btn-ghost" href="/register">Créer un compte</a>
             <button class="btn-primary" onclick={() => showLogin = !showLogin}>Connexion</button>
         {/if}
     </div>
