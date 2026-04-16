@@ -3,10 +3,11 @@
     import AppHead from '@/components/AppHead.svelte';
 
     type Profile = {
-        nom?: string | null;
-        prenom?: string | null;
-        email?: string | null;
-        num_etudiant?: string | null;
+        nom?: string;
+        prenom?: string;
+        email?: string;
+        num_etudiant?: string;
+        identifiant?: string;
     };
 
     let { profile }: { profile: Profile } = $props();
@@ -16,6 +17,7 @@
         { label: 'Prénom', value: profile?.prenom },
         { label: 'Email', value: profile?.email, full: true },
         { label: 'Numéro étudiant', value: profile?.num_etudiant },
+        { label: 'Indentifiant', value: profile?.identifiant },
     ]);
 
     function getFullName() {

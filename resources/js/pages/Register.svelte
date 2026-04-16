@@ -7,10 +7,7 @@
     const form = useForm({
         nom: '',
         prenom: '',
-        date_de_naissance: '',
-        num_tel: '',
-        adresse: '',
-        email: '',
+        num_etudiant: '',
         password: '',
         password_confirmation: '',
     });
@@ -21,10 +18,7 @@
         errors = {};
         if (!$form.nom) errors.nom = "Le nom est obligatoire";
         if (!$form.prenom) errors.prenom = "Le prénom est obligatoire";
-        if (!$form.date_de_naissance) errors.date_de_naissance = "La date de naissance est obligatoire";
-        if (!$form.num_tel) errors.num_tel = "Le numéro de téléphone est obligatoire";
-        if (!$form.adresse) errors.adresse = "L'adresse est obligatoire";
-        if (!$form.email) errors.email = "L'e-mail est obligatoire";
+        if (!$form.num_etudiant) errors.num_etudiant = "Le numéro étudiant est obligatoire";
         if (!$form.password) errors.password = "Le mot de passe est obligatoire";
         if (!$form.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
         if ($form.password && $form.password_confirmation && $form.password !== $form.password_confirmation) {
@@ -78,43 +72,14 @@
             </div>
 
             <div class="form-group">
-                <label for="date_de_naissance">Date de naissance <span class="required">*</span></label>
+                <label for="num_etudiant">Numéro étudiant <span class="required">*</span></label>
                 <input
-                    type="date" id="date_de_naissance"
-                    bind:value={$form.date_de_naissance}
-                    class:input-error={errors.date_de_naissance || $form.errors.date_de_naissance}
+                    type="text" id="num_etudiant" placeholder="12345678"
+                    pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
+                    bind:value={$form.num_etudiant}
+                    class:input-error={errors.num_etudiant || $form.errors.num_etudiant}
                 />
-                <span class="error-message">{errors.date_de_naissance || $form.errors.date_de_naissance || ''}</span>
-            </div>
-
-            <div class="form-group">
-                <label for="num_tel">Téléphone <span class="required">*</span></label>
-                <input
-                    type="tel" id="num_tel" placeholder="06 12 34 56 78"
-                    bind:value={$form.num_tel}
-                    class:input-error={errors.num_tel || $form.errors.num_tel}
-                />
-                <span class="error-message">{errors.num_tel || $form.errors.num_tel || ''}</span>
-            </div>
-
-            <div class="form-group form-group-full">
-                <label for="adresse">Adresse <span class="required">*</span></label>
-                <input
-                    type="text" id="adresse" placeholder="11 rue de la Paix 64000 Pau"
-                    bind:value={$form.adresse}
-                    class:input-error={errors.adresse || $form.errors.adresse}
-                />
-                <span class="error-message">{errors.adresse || $form.errors.adresse || ''}</span>
-            </div>
-
-            <div class="form-group form-group-full">
-                <label for="email">E-mail <span class="required">*</span></label>
-                <input
-                    type="email" id="email" placeholder="jean.dupont@gmail.com"
-                    bind:value={$form.email}
-                    class:input-error={errors.email || $form.errors.email}
-                />
-                <span class="error-message">{errors.email || $form.errors.email || ''}</span>
+                <span class="error-message">{errors.num_etudiant || $form.errors.num_etudiant || ''}</span>
             </div>
 
             <div class="form-group form-group-full">

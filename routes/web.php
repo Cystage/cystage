@@ -64,6 +64,7 @@ Route::get('/profil', function (Request $request) {
                 'prenom' => $etud->prenom,
                 'email' => $user->email,
                 'num_etudiant' => $etud->num_etudiant,
+                'identifiant' => $user->name,
             ],
         ]);
     }
