@@ -1,7 +1,19 @@
 <script lang="ts">
+    import Modal from "./Modal.svelte";
+    import "./ModalPoste.svelte";
+    import ModalPoste from "./ModalPoste.svelte";
+    import { createInertiaApp,page } from '@inertiajs/svelte';
+
     let { offre = $bindable(), entreprise = $bindable(), doms , skills }= $props();
 //'user_id','nom','siret','adresse','code_postal','ville','pays','num_tel'
 //'nom','ent_id','nb_week','week_hour','paye_hour','teletrav','poste_desc','profil_desc'
+    let showModalPostuler = $state(false);
+    function modalPostuler() {
+        console.log("test");
+        showModalPostuler=!showModalPostuler;
+    }
+
+    let user = $derived($page.props.auth?.user);
 </script>
     <div class="main">
        <header>
@@ -32,6 +44,12 @@
         {#each doms as d}
             <p>{d.name}</p>
         {/each}
+        <input type="submit" class="button" value="Postuler" onclick={modalPostuler}/>
+
+        {#if showModalPostuler && user.id==1}
+            <ModalPoste bind:showModalPostuler={showModalPostuler} offre={offre}/>
+        {/if}
+
 
     </div>
 
@@ -55,5 +73,20 @@
         }
         div.location svg {
             margin-top: 2px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 0.7rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s;
+            margin-top: 0.25rem;
         }
     </style>
