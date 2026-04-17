@@ -14,32 +14,34 @@
     }
 
     let user = $derived($page.props.auth?.user);
+
+
 </script>
     <div class="main">
        <header>
-        <h1>{offre.nom}<br></h1>
+        <h1><b>{offre.nom}</b></h1>
+        de {entreprise.nom}
          <div class="location">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <p>{entreprise.adresse}, {entreprise.code_postal}, {entreprise.ville}, {entreprise.pays}<br></p>
-        <p>de {entreprise.nom}<br></p>
+          <p class="information">{entreprise.adresse}, {entreprise.code_postal}, {entreprise.ville}, {entreprise.pays}<br></p>
          </div>
        </header>
-      <br><br>
-      <p>{offre.nb_week} semaines de {offre.week_hour} heures, taux horaire de {offre.paye_hour} € <br></p>
-        {#if offre.teletrav == true}
-            <p>télétravail possible<br></p>
-        {:else}
-            <p>tout en présentiel<br></p>
-        {/if}
-        <p>{offre.poste_desc}<br></p>
+       <hr>
+       <h2>Information utile: <br></h2>
+            <p>Durée de travail : {offre.nb_week} semaines</p>
+            <p>par semaine: {offre.week_hour}h payé {offre.paye_hour} € </p>
+            <p>Télétravail: {#if offre.teletrav}✅{:else}❌{/if}</p>
+       <br>
+
+        <p>Tache: {offre.poste_desc}<br></p>
         <br>
-        <p>{offre.profil_desc}<br></p>
+        <p>Qualité requise: {offre.profil_desc}<br></p>
         <br>
         <p>Pour plus d'information, appeler le {entreprise.num_tel}<p>
         <br>
-        {#each skills as s}
-            <p>{s.name}</p>
-        {/each}
+        <p> {#each skills as s}
+            {s.name}&nbsp;
+        {/each}</p>
         <br>
         {#each doms as d}
             <p>{d.name}</p>
@@ -59,6 +61,9 @@
     <style>
         h1 {
             font-size: 2em;
+        }
+        h2 {
+            font-size: 1.2em;
         }
         div.main {
             padding: 1rem;
@@ -91,5 +96,9 @@
             font-family: inherit;
             transition: background 0.15s;
             margin-top: 0.25rem;
+        }
+
+        p.information {
+            color:grey;
         }
     </style>
