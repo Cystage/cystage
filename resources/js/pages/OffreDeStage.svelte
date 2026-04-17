@@ -44,10 +44,13 @@
         {#each doms as d}
             <p>{d.name}</p>
         {/each}
-        <input type="submit" class="button" value="Postuler" onclick={modalPostuler}/>
 
-        {#if showModalPostuler && user.id==1}
-            <ModalPoste bind:showModalPostuler={showModalPostuler} offre={offre}/>
+        {#if user.id ==3}
+            <input type="submit" class="button" value="Postuler" onclick={modalPostuler}/>
+
+            {#if showModalPostuler}
+                <ModalPoste bind:showModalPostuler={showModalPostuler} offre={offre}/>
+            {/if}
         {/if}
 
 

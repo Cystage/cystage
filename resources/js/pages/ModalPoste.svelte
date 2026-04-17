@@ -46,7 +46,7 @@
             </div>
 
 
-            <button type="submit" class="submit">Publier l'offre</button>
+            <button type="submit" class="submit">Postez l'offre</button>
         </form>
     </div>
 </div>
