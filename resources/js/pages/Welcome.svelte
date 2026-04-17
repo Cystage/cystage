@@ -95,6 +95,23 @@
     {/if}
 </main>
 
+<center>
+    {#if !user}
+        <p class="WelcomeText">
+        Cytech met à disposition à tous les étudiant CyStage, une <span style="color:blue">application web</span> permettant de centraliser la recherche de stage. <br> <br>
+        <b><u>Vous êtes étudiants ?</u></b><br>
+        Vous disposez d'un compte dont les identifiants vous ont été communiqué durant la rentrée administratif <br>
+        Si vous n'avez pas de compte? <span style="color:blue">Créer vous en un </span>. <br><br>
+
+        <b><u>Vous êtes une entreprise ?</u></b><br>
+        Contactez-nous pour propulser le monde de demain !<br><br>
+
+        <b><u>Vous êtes tuteur ?</u></b><br>
+        lorem  ipsum
+        </p> 
+        {/if}
+</center>
+
 {#if showModal}
     <Modal bind:showModal={showModal} bind:domaines={domaines} bind:competences={competences} bind:entreprises={entreprises} user={user}/>
 {/if}
@@ -154,6 +171,12 @@
         background-color: rgb(223, 223, 223);
         padding-top: 50px;
         justify-content: center;
+    }
+
+    p.WelcomeText {
+        font-size: 1.2em;
+        text-align:start;
+        margin-left: 25%;
     }
 
 
