@@ -102,4 +102,10 @@
         p.information {
             color:grey;
         }
+
+        @media (max-width: 600px) {
+            div.main {
+                margin:0;
+            }
+        }
     </style>
