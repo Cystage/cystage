@@ -39,7 +39,7 @@ Pour lancer le projet, vous aurez besoin de
 - **Composer** 
 
 ## Lancer le projet 
-Pour lancer le **front-end**, il faut executer
+Pour lancer le **front-end**, il faut executer.
 
 ```console
 composer run dev 
