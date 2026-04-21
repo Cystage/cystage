@@ -1,6 +1,7 @@
 <script lang="ts">
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
+    import { useForm } from '@inertiajs/svelte';
 
     type Profile = {
         nom?: string;
@@ -17,29 +18,45 @@
         type?: string,
     };
     let { profile }: { profile: Profile } = $props();
-    let fields = [];
-    if(profile?.type == '3'){
-        fields = [
-            { label: 'Nom', value: profile?.nom },
-            { label: 'Prénom', value: profile?.prenom },
-            { label: 'Email', value: profile?.email, full: true },
-            { label: 'Numéro étudiant', value: profile?.num_etudiant },
-            { label: 'Indentifiant', value: profile?.identifiant },
-        ];
+
+    let editing = $state(false);
+
+    const form = useForm({
+        nom:          profile?.nom          ?? '',
+        prenom:       profile?.prenom       ?? '',
+        num_etudiant: profile?.num_etudiant ?? '',
+        siret:        profile?.siret        ?? '',
+        adresse:      profile?.adresse      ?? '',
+        code_postal:  profile?.code_postal  ?? '',
+        ville:        profile?.ville        ?? '',
+        pays:         profile?.pays         ?? '',
+        num_tel:      profile?.num_tel      ?? '',
+    });
+
+    function submit(e: Event) {
+        e.preventDefault();
+        $form.patch('/profil', {
+            onSuccess: () => { editing = false; }
+        });
     }
-    if(profile?.type == '2'){
-        fields = [
-            { label: 'Appelation', value: profile?.nom },
-            { label: 'Email', value: profile?.email, full: true },
-            { label: 'Indentifiant', value: profile?.identifiant },
-            { label: 'siret', value: profile?.siret },
-            { label: 'adresse', value: profile?.adresse },
-            { label: 'code_postal', value: profile?.code_postal },
-            { label: 'ville', value: profile?.ville },
-            { label: 'pays', value: profile?.pays },
-            { label: 'num_tel', value: profile?.num_tel },
-        ];
-    }
+
+    let fields = $derived(profile?.type == '3' ? [
+        { label: 'Nom',              key: 'nom',          value: profile?.nom },
+        { label: 'Prénom',           key: 'prenom',       value: profile?.prenom },
+        { label: 'Email',            key: null,           value: profile?.email,        full: true },
+        { label: 'Numéro étudiant',  key: 'num_etudiant', value: profile?.num_etudiant },
+        { label: 'Identifiant',      key: null,           value: profile?.identifiant },
+    ] : [
+        { label: 'Appellation',  key: 'nom',         value: profile?.nom,         full: true },
+        { label: 'Email',        key: null,           value: profile?.email,        full: true },
+        { label: 'Identifiant',  key: null,           value: profile?.identifiant },
+        { label: 'SIRET',        key: 'siret',        value: profile?.siret },
+        { label: 'Adresse',      key: 'adresse',      value: profile?.adresse,      full: true },
+        { label: 'Code postal',  key: 'code_postal',  value: profile?.code_postal },
+        { label: 'Ville',        key: 'ville',        value: profile?.ville },
+        { label: 'Pays',         key: 'pays',         value: profile?.pays },
+        { label: 'Téléphone',    key: 'num_tel',      value: profile?.num_tel },
+    ]);
     
     function getFullName() {
         const prenom = profile?.prenom?.trim() ?? '';
@@ -69,20 +86,46 @@
 
         <div class="Y1">
             <div class="Bande">Mon profil</div>
-
             <div class="profile-header">
                 <div class="avatar" aria-hidden="true">{getInitials()}</div>
                 <p class="profile-name">{getFullName()}</p>
             </div>
         </div>
+
         <div class="Y2">
-            <form>
+            <form onsubmit={submit}>
                 {#each fields as field, index}
                     <div class={`form-group ${field.full ? 'form-group-full' : ''}`.trim()}>
                         <label for={`profile-field-${index}`}>{field.label}</label>
-                        <input id={`profile-field-${index}`} type="text" value={displayValue(field.value)} disabled />
+
+                        {#if editing && field.key}
+                            <input
+                                id={`profile-field-${index}`}
+                                type="text"
+                                bind:value={$form[field.key]}
+                            />
+                            {#if $form.errors[field.key]}
+                                <span class="erreur">{$form.errors[field.key]}</span>
+                            {/if}
+                        {:else}
+                            <input
+                                id={`profile-field-${index}`}
+                                type="text"
+                                value={displayValue(field.value)}
+                                disabled
+                            />
+                        {/if}
                     </div>
                 {/each}
+
+                <div class="form-actions">
+                    {#if editing}
+                        <button type="submit" class="btn-save">Enregistrer</button>
+                        <button type="button" class="btn-cancel" onclick={() => editing = false}>Annuler</button>
+                    {:else}
+                        <button type="button" class="btn-edit" onclick={() => editing = true}>Modifier le profil</button>
+                    {/if}
+                </div>
             </form>
 
             <a class="back" href="/">← Retour à l'accueil</a>
@@ -216,5 +259,48 @@
         color: #2563eb;
         font-weight: 600;
     }
+
+    .form-group input:disabled {
+    background-color: #f8fafc;
+    color: #64748b;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .erreur {
+        color: #dc3545;
+        font-size: 13px;
+    }
+
+    .form-actions {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-edit, .btn-save, .btn-cancel {
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+        transition: background 0.15s;
+    }
+
+    .btn-edit  { background: #ff0000; color: white; }
+    .btn-edit:hover  { background: #1d4ed8; }
+
+    .btn-save  { background: #16a34a; color: white; }
+    .btn-save:hover  { background: #15803d; }
+
+    .btn-cancel { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
+    .btn-cancel:hover { background: #e2e8f0; }
 
 </style>

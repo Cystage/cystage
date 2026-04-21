@@ -118,3 +118,5 @@ Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::patch('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');

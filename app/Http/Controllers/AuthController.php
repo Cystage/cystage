@@ -106,4 +106,47 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/');
     }
+
+    public function updateProfil(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role_id == 3) {
+            $validated = $request->validate([
+                'nom'          => 'required|string|max:255',
+                'prenom'       => 'required|string|max:255',
+                'num_etudiant' => 'required|min:8|max:8',
+            ]);
+
+            $etud = Etudiant::where('user_id', $user->id)->first();
+            $etud->update([
+                'nom'          => $validated['nom'],
+                'prenom'       => $validated['prenom'],
+                'num_etudiant' => $validated['num_etudiant'],
+            ]);
+
+            // Met à jour le name du user aussi
+            $user->update([
+                'name' => 'e-' . $validated['prenom'][0] . $validated['nom'],
+            ]);
+        }
+
+        if ($user->role_id == 2) {
+            $validated = $request->validate([
+                'nom'         => 'required|string|max:255',
+                'siret'       => 'required|string|max:255',
+                'adresse'     => 'required|string|max:255',
+                'code_postal' => 'required|string|max:255',
+                'ville'       => 'required|string|max:255',
+                'pays'        => 'required|string|max:255',
+                'num_tel'     => 'required|digits:10',
+            ]);
+
+            $ent = Entreprise::where('user_id', $user->id)->first();
+            $ent->update($validated);
+        }
+
+        return redirect('/profil')->with('success', 'Profil mis à jour !');
+    }
+
 }
