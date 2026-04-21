@@ -13,11 +13,16 @@
 
     {#each postulation as p}
         <div class="main">
-            <h2>Voir cv : file.cv</h2>
             <h1>Théo Maynadier</h1>
-             <button class="close"><p>✅</p></button>
-             <button class="close"><p>❌</p></button>
-        </div>
+            <hr><br>
+            <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h2>
+            <br>
+            <h2>Voir cv : <span style="color:blue">file.cv</span></h2>
+            <center>
+              <button class="close"><p>✅</p></button>
+                <button class="close"><p>❌</p></button>
+            </center>
+            </div>
     {/each}
 </main>
 
@@ -37,12 +42,13 @@
         
         background: none;
         border: none;
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         color: #94a3b8;
         cursor: pointer;
         padding: 0.25rem 0.5rem;
         border-radius: 6px;
         transition: background 0.15s;
+        margin-left: 40px;
         }
 
         .close:hover {
