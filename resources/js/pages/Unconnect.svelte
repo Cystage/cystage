@@ -1,575 +1,163 @@
 <script lang="ts">
- import Header from '@/components/Header.svelte'
- import AppHead from '@/components/AppHead.svelte'
- import { page } from '@inertiajs/svelte'
- import { onMount } from 'svelte'
- import OffreDeStage from './OffreDeStage.svelte'
- import Modal from './Modal.svelte'
- import Login from './Login.svelte'
- import logo from './img/logo.png'
+    import Header from '@/components/Header.svelte';  
+    import AppHead from '@/components/AppHead.svelte';
+    import { createInertiaApp } from '@inertiajs/svelte';
+    import OffreDeStage from './OffreDeStage.svelte';
+    import Modal from './Modal.svelte';
+    import Login from './Login.svelte';
+    import logo from './img/logo.png';
 
- let {entreprises = $bindable(), offres, competences = $bindable(), domaines = $bindable(), links_offres_competences, links_offres_domaines } = $props()
-
-let showModal = $state(false)
- 
- let showLogin = $state(false)
-
-
- function recupDomaines(offre, liens, listeDomaines){
-  
-  
-  let res = []
-  
-  for(let l of liens){
-   if(offre.id == l.offre_id){
-    res.push(listeDomaines[l.dom_id-1])
-   }
-  }
     
-    return res
- }
-
- function recupEntreprise(offre, listeEntreprises){
-    for(let e of listeEntreprises){
-    if(offre.ent_id == e.id){
-      return e
-   }
-  }
- }
-
- function recupCompetences(offre, liens, listeCompetences){
-  let res = []
-  for(let l of liens){
-   if(offre.id == l.offre_id){
-    res.push(listeCompetences[l.skill_id - 1])
-   }
-  }
-  return res
- }
-
- let utilisateur = $derived(page?.props?.auth?.user ?? null)
-
- onMount(() => {
-  
-  let observer = new IntersectionObserver((entrees) => {
-   entrees.forEach((entree) => {
+    let {entreprises = $bindable(), offres, competences = $bindable(), domaines = $bindable(), links_offres_competences, links_offres_domaines } = $props();
     
-    if(entree.isIntersecting){
-     entree.target.classList.add('visible')
+    let showModal= $state(false);
+    let showLogin= $state(false);
+
+    function recupererDesDomaines(offres,liens,listeDesDomaines){
+        let domaines = $state([]);
+        for(let varListe of liens){
+            if(offres.id == l.offre_id){
+                domaines.push(d[varListe.dom_id-1]);
+            }
+        }
+        return domaines;
     }
-   })
-  }, {
-   threshold: 0.14
-  })
 
-  let blocs = document.querySelectorAll('.apparition')
-  
-  blocs.forEach((b) => observer.observe(b))
+    function recupererEntreprise(offre,listeEntreprises){
+        for(let entreprises of listeEntreprises){
+            if(offre.ent_id == entreprises.id){
+                return entreprises;
+            }
+        }
+    }
 
-  window.addEventListener('scroll', animScroll)
+    function recupererCompetences(offre,liens,listeCompetences){
+        let tabCompetences=[];
+        for(let varListe of liens){
+            if(offre.id == varListe.offre_id){
+                res.push(listeCompetences[varListe.skill_id-1]);
+            }
+        }
+        return tabCompetences;
+    }
 
-  return () => {
-   observer.disconnect()
-   window.removeEventListener('scroll', animScroll)
-  }
- })
+
+    function modal() {
+        showModal=!showModal;
+    }
+
+    function login() {
+        showLogin=!showLogin;
+    }
+
+    let ListePhraseInspirante = [
+        "Trouvez votre futur ici",
+        "Débutez votre carrière profesionnelle!",
+        "Votre futur commence aujourd'hui",
+        "L'avenir est entre vos mains",
+        "Reprenez votre destin en main",
+        "Découvrez le monde profesionnel!",
+        "N'arrêtez jamais d'apprendre!",
+        "Construisons la génération de demain!",
+    ]
+
+    const phraseInspirante = ListePhraseInspirante[Math.floor(Math.random() * ListePhraseInspirante.length)];
+
+    
+    
 </script>
 
-<AppHead title="Welcome">
- <link rel="preconnect" href="https://rsms.me/" />
- <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
- <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+<AppHead title="Bienvenu">
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 </AppHead>
 
 
-
 <main>
- <section class="hero">
-  <div class="fond1"></div>
-  <div class="fond2"></div>
+    <div class="style1">
+        <div class="divGauche">
+            <div class="texte1">
+                Plateforme de gestion de stages
+            </div>
 
-  <div class="contenuHero">
-   <div class="blocGauche apparition visible">
-    <div class="zoneLogo">
-     <img src={logo} alt="Logo CyStage" class="logoHero">
+            <h1>
+                Trouvez votre stage.
+            <br>
+                Construisez votre avenir.
+            </h1>
+        
+            <p class="texte2">
+                CyStage centralise les offres, simplifie les démarches et facilite les échanges
+                entre étudiants, entreprises et encadrants sur une seule plateforme moderne,
+                claire et accessible.
+            </p>
+                <div class="nonConnecte">
+                    <button class="bouttonLogin"  onclick={() => showLogin = true}>
+                        Se connecter
+                    </button>
+                </div>
+        </div>
     </div>
-
-    <div class="petitBadge">
-     Plateforme de gestion de stages
-    </div>
-
-    <h1>
-     Trouvez votre stage.<br>
-     Construisez votre avenir.
-    </h1>
-
-    <p class="texteHero">
-     CyStage centralise les offres, simplifie les démarches et facilite les échanges
-     entre étudiants, entreprises et encadrants sur une seule plateforme moderne,
-     claire et accessible.
-    </p>
-
-    {#if !utilisateur}
-     <div class="actionsHero">
-      <button class="btn btnBleu" onclick={() => showLogin = true}>
-       Se connecter
-      </button>
-
-      <a href="/register" class="btn btnBlanc">
-       Compte étudiant
-      </a>
-
-      <a href="/newent" class="btn btnBlanc">
-       Compte entreprise
-      </a>
-     </div>
-
-     <div class="statsHero apparition">
-      <div class="petiteStat">
-       <strong>+120</strong>
-       <span>offres</span>
-      </div>
-
-      <div class="petiteStat">
-       <strong>+35</strong>
-       <span>entreprises</span>
-      </div>
-
-      <div class="petiteStat">
-       <strong>3</strong>
-       <span>espaces dédiés</span>
-      </div>
-     </div>
-    {/if}
-   </div>
-
-
-
-   <div class="blocDroite apparition">
-    <div class="carte carteGrande">
-     <span class="miniTexte">Recherche simplifiée</span>
-     <h3>Tout regrouper. Tout clarifier.</h3>
-     <p>
-      Offres, profils et suivi sont réunis dans une seule interface pensée
-      pour rendre la recherche de stage plus fluide.
-     </p>
-    </div>
-
-
-
-
-
-
-    <div class="ligneCartes">
-     <div class="carte cartePetite">
-      <span class="miniTexte">Étudiants</span>
-      <h3>Consulter</h3>
-      <p>Trouvez des offres adaptées à votre profil.</p>
-     </div>
-
-
-
-
-
-
-
-
-     <div class="carte cartePetite">
-      <span class="miniTexte">Entreprises</span>
-      <h3>Publier</h3>
-      <p>Diffusez vos opportunités plus simplement.</p>
-     </div>
-    </div>
-
-
-
-
-
-
-
-
-
-    <div class="carte carteOffres">
-     <span class="miniTexte">Aperçu</span>
-
-     <div class="miniOffre">
-      <div>
-       <h4>Développeur Web</h4>
-       <p>Frontend / Backend / UI</p>
-      </div>
-      <span class="tagPetit">Stage</span>
-     </div>
-
-
-
-
-
-
-
-
-
-
-
-     <div class="miniOffre">
-      <div>
-       <h4>Assistant Data</h4>
-       <p>Analyse / Visualisation / SQL</p>
-      </div>
-      <span class="tagPetit">Data</span>
-     </div>
-
-
-
-
-
-
-
-
-
-     <div class="miniOffre">
-      <div>
-       <h4>Support SI</h4>
-       <p>Infrastructure / Réseau / Outils</p>
-      </div>
-      <span class="tagPetit">SI</span>
-     </div>
-    </div>
-   </div>
-  </div>
- </section>
-
-
-
-
-
-
-
-
- {#if !utilisateur}
-  <section class="section apparition">
-   <div class="titreBloc">
-    <span>Pourquoi CyStage ?</span>
-    <h2>Une plateforme pensée pour rendre la recherche de stage plus simple</h2>
-    <p>
-     CyStage a été conçu pour centraliser les informations utiles, améliorer
-     la lisibilité des offres et fluidifier les échanges entre tous les acteurs du stage.
-    </p>
-   </div>
-
-
-
-
-
-
-
-
-
-
-   <div class="grille4">
-    <div class="blocInfo apparition">
-     <div class="iconeBloc">↗</div>
-     <h3>Consulter des offres</h3>
-     <p>Accédez rapidement à des opportunités adaptées à différents profils et domaines.</p>
-    </div>
-
-
-
-
-
-    <div class="blocInfo apparition">
-     <div class="iconeBloc">▣</div>
-     <h3>Centraliser les démarches</h3>
-     <p>Retrouvez les informations importantes dans un seul espace clair et structuré.</p>
-    </div>
-
-
-
-
-
-
-    <div class="blocInfo apparition">
-     <div class="iconeBloc">◎</div>
-     <h3>Faciliter les échanges</h3>
-     <p>Étudiants, entreprises et encadrants interagissent dans un environnement commun.</p>
-    </div>
-
-
-
-
-
-
-    <div class="blocInfo apparition">
-     <div class="iconeBloc">⚡</div>
-     <h3>Gagner du temps</h3>
-     <p>Moins de dispersion, plus de lisibilité et une expérience plus fluide pour tous.</p>
-    </div>
-   </div>
-  </section>
-
-
-
-
-
-
-  <section class="section sectionMoins apparition">
-   <div class="titreBloc">
-    <span>Pour qui ?</span>
-    <h2>Un espace adapté à chaque profil</h2>
-    <p>
-     La plateforme s’adresse à tous les acteurs impliqués dans le parcours de stage,
-     avec une logique simple, directe et organisée.
-    </p>
-   </div>
-
-
-
-
-
-   <div class="grille3">
-    <div class="blocInfo apparition">
-     <h3>Étudiants</h3>
-     <p>
-      Consultez les offres disponibles, accédez à votre espace personnel
-      et simplifiez votre recherche de stage.
-     </p>
-    </div>
-
-
-
-
-
-
-
-
-    <div class="blocInfo apparition">
-     <h3>Entreprises</h3>
-     <p>
-      Publiez vos offres, présentez vos besoins et valorisez vos opportunités
-      auprès des étudiants.
-     </p>
-    </div>
-
-
-
-
-
-
-    <div class="blocInfo apparition">
-     <h3>Tuteurs & Encadrants</h3>
-     <p>
-      Suivez plus facilement les informations utiles et accompagnez les étudiants
-      avec davantage de clarté.
-     </p>
-    </div>
-   </div>
-  </section>
-
-
-
-
-
-
-
-
-  <section class="section apparition">
-   <div class="titreBloc">
-    <span>Comment ça marche ?</span>
-    <h2>Une expérience simple en 3 étapes</h2>
-   </div>
-
-
-
-
-
-
-
-   <div class="zoneEtapes">
-    <div class="ligneEtapes"></div>
-
-    <div class="grille3">
-     <div class="blocInfo apparition">
-      <div class="numeroEtape">1</div>
-      <h3>Créez votre espace</h3>
-      <p>Inscrivez-vous selon votre profil pour accéder aux fonctionnalités adaptées.</p>
-     </div>
-
-
-
-
-
-
-     <div class="blocInfo apparition">
-      <div class="numeroEtape">2</div>
-      <h3>Accédez aux offres</h3>
-      <p>Consultez, explorez ou publiez des opportunités selon vos besoins.</p>
-     </div>
-
-
-
-
-
-
-
-     <div class="blocInfo apparition">
-      <div class="numeroEtape">3</div>
-      <h3>Suivez votre progression</h3>
-      <p>Centralisez les informations utiles et facilitez vos démarches de stage.</p>
-     </div>
-    </div>
-   </div>
-  </section>
-
-
-
-
-
-
-
-
-  <section class="sectionFin apparition">
-   <div class="blocFin">
-    <span class="miniTitreFin">Rejoindre la plateforme</span>
-    <h2>Prêt à démarrer avec CyStage ?</h2>
-    <p>
-     Connectez-vous ou créez votre espace pour accéder aux offres,
-     publier des opportunités et structurer votre parcours.
-    </p>
-
-
-
-
-
-
-
-
-
-
-
-    <div class="actionsHero centre">
-     <button class="btn btnBleu" onclick={() => showLogin = true}>
-      Connexion
-     </button>
-
-     <a href="/register" class="btn btnBlanc">
-      Inscription étudiant
-     </a>
-
-     <a href="/newent" class="btn btnBlanc">
-      Inscription entreprise
-     </a>
-    </div>
-   </div>
-  </section>
- {/if}
-
-
-
-
-
-
-
-
-
-
-
- {#if utilisateur}
-  <section class="zoneOffres apparition visible">
-   <div class="titreBloc titreGauche">
-    <span>Espace connecté</span>
-    <h2>Offres disponibles</h2>
-    <p>Retrouvez ici les offres actuellement présentes sur la plateforme.</p>
-   </div>
-
-
-
-
-
-
-
-   <div class="listeOffres">
-    {#if utilisateur.role_id == 2}
-     {#each offres as offre}
-      <OffreDeStage
-       offre={offre}
-       entreprise={entreprises}
-       doms={recupDomaines(offre, links_offres_domaines, domaines)}
-       skills={recupCompetences(offre, links_offres_competences, competences)}
-      />
-     {/each}
-     
-     
-     
-     
-    {:else}
-     {#each offres as offre}
-      <OffreDeStage
-       offre={offre}
-       entreprise={recupEntreprise(offre, entreprises)}
-       doms={recupDomaines(offre, links_offres_domaines, domaines)}
-       skills={recupCompetences(offre, links_offres_competences, competences)}
-      />
-     {/each}
-    {/if}
-   </div>
-  </section>
- {/if}
+    
 </main>
 
-
-
-
 {#if showModal}
-
-
- <Modal
-  bind:showModal={showModal}
-  bind:domaines={domaines}
-  bind:competences={competences}
-  bind:entreprises={entreprises}
-  user={utilisateur}
- />
+    <Modal bind:showModal={showModal}/>
 {/if}
-
-
-
-
-
-
-
-
 
 {#if showLogin}
-    <Login bind:showLogin={showLogin} />
-{/if}
-
-
-
-
-
-
-
-
-
-
-
-
-
-<footer>
- <p>© CyStage - Tous droits réservés 2026</p>
-</footer>
-
-
-
-
-
-
-
-
+    <Login bind:showLogin={showLogin}/>
+{/if}   
 
 
 <style>
+    * {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-optical-sizing: auto;
+        font-style: normal;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+    }
+
+    .hero {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .hero img {
+        margin-bottom: 1rem;
+    }
+
+    .phrase {
+        font-size: 1.1rem;
+        color: #64748b;
+        font-style: italic;
+    }
+
+    .offres-list {
+        width: 100%;
+        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    footer {
+        background-color: rgb(223, 223, 223);
+        padding-top: 50px;
+        justify-content: center;
+    }
  :global(body){
   margin:0;
   background:linear-gradient(180deg,#f8fbff 0%,#ffffff 35%,#f8fafc 100%);
@@ -614,7 +202,7 @@ let showModal = $state(false)
   z-index:0;
  }
 
- .contenuHero{
+ .style1{
   position:relative;
   z-index:1;
   max-width:1220px;
@@ -625,7 +213,7 @@ let showModal = $state(false)
   align-items:center;
  }
 
- .blocGauche{
+ .divGauche{
   max-width:680px;
  }
 
@@ -647,7 +235,7 @@ let showModal = $state(false)
   object-fit:contain;
  }
 
- .petitBadge{
+ .texte1{
   display:inline-flex;
   align-items:center;
   gap:.4rem;
@@ -670,7 +258,7 @@ let showModal = $state(false)
   font-weight:800;
  }
 
- .texteHero{
+ .texte2{
   margin:0 0 2rem 0;
   max-width:620px;
   font-size:1.08rem;
