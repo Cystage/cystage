@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('postulations', function (Blueprint $table) {
             $table->unsignedBigInteger('offre_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('etu_id');
             $table->foreign('offre_id')->references('id')->on('offres');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('etu_id')->references('id')->on('etudiants');
             $table->integer('state');
             $table->string('motiv');
             $table->string('path');

@@ -16,7 +16,7 @@ class PostulationController extends Controller
     public function poste(Request $request) {
         $validated = $request->validate([
             'offre_id' => 'required|integer',
-            'user_id' => 'required|integer',
+            'etu_id' => 'required|integer',
             'state' => 'required|integer',
             'motiv' => 'required|string',
             'path' => 'required|string',
@@ -24,7 +24,7 @@ class PostulationController extends Controller
 
         \App\Models\Postulation::create([
             'offre_id' => $request->offre_id,
-            'user_id' => $request->user_id,
+            'etu_id' => $request->etu_id,
             'state' => $request->state,
             'motiv' => $request->motiv,
             'path' => $request->path

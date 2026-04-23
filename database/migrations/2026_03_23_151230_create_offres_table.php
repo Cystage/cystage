@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('teletrav');
             $table->text('poste_desc');
             $table->text('profil_desc');
-            $table->timestamps();   
+            $table->timestamps();
         });
     }
 
