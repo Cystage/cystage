@@ -10,14 +10,19 @@
 
 <Header/>
 <main class="page-container">
-
+    <center>
+        <br><br><br><br>
+        <h1>Vous avez <b><span style="color:blue">{postulation.length} nouvelles</span> candidatures!</b></h1>
+        <p>Consultez les maintenant!</p>
+        <br><br>
+    </center>
     {#each postulation as p}
         <div class="main">
-            <h1>Théo Maynadier</h1>
+            <h2>Théo Maynadier</h2>
             <hr><br>
-            <h2>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h2>
+            <h3>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</h3>
             <br>
-            <h2>Voir cv : <span style="color:blue">file.cv</span></h2>
+            <h3>Voir cv : <span style="color:blue">file.cv</span></h3>
             <center>
               <button class="close"><p>✅</p></button>
                 <button class="close"><p>❌</p></button>
@@ -40,19 +45,31 @@
 
         .close {
         
-        background: none;
-        border: none;
-        font-size: 1.3rem;
-        color: #94a3b8;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        transition: background 0.15s;
-        margin-left: 40px;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            transition: background 0.15s;
+            margin-left: 40px;
         }
 
         .close:hover {
-        background: #f1f5f9;
-        color: #1e293b;
+             background-color: rgba(201, 201, 201, 0.567);
+             color: #1e293b;
+        }
+
+        h1 {
+            font-size: 3em;
+
+        }
+
+        h2 {
+            font-size: 1.5em;
+        }
+
+        p  {
+            font-size: 1.2em;
         }
 </style>
+
