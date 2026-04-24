@@ -41,10 +41,10 @@
 
             <div class="field">
                 <label for="">Déposer votre cv ici</label>
-                    <div class="drop-area" ondragover={(e) => e.preventDefault()} ondrop={(e) => { e.preventDefault(); $form.fichier = e.dataTransfer.files[0]; }}>
-
-                        {#if $form.fichier}
-                            Fichier prêt : {$form.fichier.name}
+                    <div class="drop-area" ondragover={(e) => e.preventDefault()} ondrop={(e) => { e.preventDefault(); $form.path = e.dataTransfer.files[0].name; }}>
+                        
+                        {#if $form.path}
+                            Fichier prêt : {$form.path}
                         {:else}
                             Déposez votre fichier ici
                         {/if}
