@@ -1,637 +1,551 @@
 <script lang="ts">
- import Header from '@/components/Header.svelte'
- import AppHead from '@/components/AppHead.svelte'
- import { page } from '@inertiajs/svelte'
- import { onMount } from 'svelte'
- import OffreDeStage from './OffreDeStage.svelte'
- import Modal from './Modal.svelte'
- import logo from './img/logo.png'
- import Unconnect from './Unconnect.svelte';
- 
- let showModal = $state(false)
- 
- let { entreprises=$bindable(), offres, competences=$bindable(), domaines=$bindable(), links_offres_competences, links_offres_domaines, etudiant=$bindable() }= $props();
+    import Header from '@/components/Header.svelte'
+    import AppHead from '@/components/AppHead.svelte'
+    import { page } from '@inertiajs/svelte'
+    import { onMount } from 'svelte'
+    import OffreDeStage from './OffreDeStage.svelte'
+    import Modal from './Modal.svelte'
+    import Unconnect from './Unconnect.svelte';
 
+    let showModal = $state(false)
 
- function recupDomaines(offre, liens, listeDomaines){
-  
-  
-  let res: any[] = []
-  
-  for(let l of liens){
-   if(offre.id == l.offre_id){
-    res.push(listeDomaines[l.dom_id-1])
-   }
-  }
-    return res
- }
+    let { entreprises=$bindable(), offres=[], competences=$bindable([]), domaines=$bindable([]), links_offres_competences=[], links_offres_domaines=[], etudiant=$bindable() } = $props();
 
- function recupEntreprise(offre, listeEntreprises){
-    for(let e of listeEntreprises){
-    if(offre.ent_id == e.id){
-      return e
-   }
-  }
- }
+    // Filtres
+    let recherche = $state('');
+    let filtreDomaineIds: number[] = $state([]);
+    let filtreSkillIds: number[] = $state([]);
+    let filtreTeletrav = $state<boolean | null>(null);
+    let filtreWeekMax = $state<number | null>(null);
 
- function recupCompetences(offre, liens, listeCompetences){
-  let res: any[] = []
-  for(let l of liens){
-   if(offre.id == l.offre_id){
-    res.push(listeCompetences[l.skill_id - 1])
-   }
-  }
-  return res
- }
-
- let utilisateur = $derived($page?.props?.auth?.user ?? null)
-
- const animScroll = () => {}
-
- onMount(() => {
-  
-  let observer = new IntersectionObserver((entrees) => {
-   entrees.forEach((entree) => {
-    
-    if(entree.isIntersecting){
-     entree.target.classList.add('visible')
+    function toggleDomaine(id: number) {
+        if (filtreDomaineIds.includes(id)) {
+            filtreDomaineIds = filtreDomaineIds.filter(d => d !== id);
+        } else {
+            filtreDomaineIds = [...filtreDomaineIds, id];
+        }
     }
-   })
-  }, {
-   threshold: 0.14
-  })
 
-  let blocs = document.querySelectorAll('.apparition')
-  
-  blocs.forEach((b) => observer.observe(b))
+    function toggleSkill(id: number) {
+        if (filtreSkillIds.includes(id)) {
+            filtreSkillIds = filtreSkillIds.filter(s => s !== id);
+        } else {
+            filtreSkillIds = [...filtreSkillIds, id];
+        }
+    }
 
-  window.addEventListener('scroll', animScroll)
+    function resetFiltres() {
+        recherche = '';
+        filtreDomaineIds = [];
+        filtreSkillIds = [];
+        filtreTeletrav = null;
+        filtreWeekMax = null;
+    }
 
-  return () => {
-   observer.disconnect()
-   window.removeEventListener('scroll', animScroll)
-  }
- })
+    let offresFiltrees = $derived(() => {
+        if (!offres) return [];
+        return offres.filter(offre => {
+            // Recherche texte
+            if (recherche) {
+                const q = recherche.toLowerCase();
+                const ent = recupEntreprise(offre, entreprises);
+                if (
+                    !offre.nom.toLowerCase().includes(q) &&
+                    !(ent?.nom?.toLowerCase().includes(q))
+                ) return false;
+            }
+
+            // Filtre domaines
+            if (filtreDomaineIds.length > 0) {
+                const domsOffre = recupDomaines(offre, links_offres_domaines, domaines).map(d => d?.id);
+                if (!filtreDomaineIds.some(id => domsOffre.includes(id))) return false;
+            }
+
+            // Filtre compétences
+            if (filtreSkillIds.length > 0) {
+                const skillsOffre = recupCompetences(offre, links_offres_competences, competences).map(s => s?.id);
+                if (!filtreSkillIds.some(id => skillsOffre.includes(id))) return false;
+            }
+
+            // Filtre télétravail
+            if (filtreTeletrav !== null) {
+                if (Boolean(offre.teletrav) !== filtreTeletrav) return false;
+            }
+
+            // Filtre durée max
+            if (filtreWeekMax !== null) {
+                if (offre.nb_week > filtreWeekMax) return false;
+            }
+
+            return true;
+        });
+    });
+
+    function recupDomaines(offre, liens, listeDomaines) {
+        let res: any[] = []
+        for (let l of liens) {
+            if (offre.id == l.offre_id) {
+                res.push(listeDomaines[l.dom_id - 1])
+            }
+        }
+        return res
+    }
+
+    function recupEntreprise(offre, listeEntreprises) {
+        if (!listeEntreprises) return null;
+        for (let e of listeEntreprises) {
+            if (offre.ent_id == e.id) return e
+        }
+        return null;
+    }
+
+    function recupCompetences(offre, liens, listeCompetences) {
+        let res: any[] = []
+        for (let l of liens) {
+            if (offre.id == l.offre_id) {
+                res.push(listeCompetences[l.skill_id - 1])
+            }
+        }
+        return res
+    }
+
+    let utilisateur = $derived($page?.props?.auth?.user ?? null)
+
+    onMount(() => {
+        let observer = new IntersectionObserver((entrees) => {
+            entrees.forEach((entree) => {
+                if (entree.isIntersecting) entree.target.classList.add('visible')
+            })
+        }, { threshold: 0.14 })
+
+        let blocs = document.querySelectorAll('.apparition')
+        blocs.forEach((b) => observer.observe(b))
+
+        return () => observer.disconnect()
+    })
 </script>
 
 <AppHead title="Welcome">
- <link rel="preconnect" href="https://rsms.me/" />
- <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
- <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 </AppHead>
 
 <Header bind:showModal={showModal} />
 
 <main>
-
-  {#if !utilisateur}
-  <Unconnect />
- {:else}
-  <section class="zoneOffres apparition visible">
-   <div class="titreBloc titreGauche">
-    <span>Espace connecté</span>
-    <h2>Offres disponibles</h2>
-    <p>Retrouvez ici les offres actuellement présentes sur la plateforme.</p>
-   </div>
-   <div class="listeOffres">
-    {#if utilisateur.role_id == 2}
-     {#each offres as offre}
-      <OffreDeStage
-       offre={offre}
-       entreprise={entreprises}
-       doms={recupDomaines(offre, links_offres_domaines, domaines)}
-       skills={recupCompetences(offre, links_offres_competences, competences)}
-       etudiant={etudiant}
-      />
-     {/each}
-
+    {#if !utilisateur}
+        <Unconnect />
     {:else}
-     {#each offres as offre}
-      <OffreDeStage
-       offre={offre}
-       entreprise={recupEntreprise(offre, entreprises)}
-       doms={recupDomaines(offre, links_offres_domaines, domaines)}
-       skills={recupCompetences(offre, links_offres_competences, competences)}
-       etudiant={etudiant}
-      />
-     {/each}
+        <section class="zoneOffres">
+            <div class="titreBloc titreGauche">
+                <span>Espace connecté</span>
+                <h2>Offres disponibles</h2>
+                <p>Retrouvez ici les offres actuellement présentes sur la plateforme.</p>
+            </div>
+
+            <div class="layout">
+                <!-- Sidebar filtres -->
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Filtres</h3>
+                        {#if filtreDomaineIds.length > 0 || filtreSkillIds.length > 0 || filtreTeletrav !== null || filtreWeekMax !== null || recherche}
+                            <button class="reset-btn" onclick={resetFiltres}>Réinitialiser</button>
+                        {/if}
+                    </div>
+
+                    <!-- Recherche -->
+                    <div class="filtre-section">
+                        <div class="filtre-label">🔍 Recherche</div>
+                        <input
+                            type="text"
+                            placeholder="Nom de l'offre, entreprise..."
+                            bind:value={recherche}
+                            class="search-input"
+                        />
+                    </div>
+
+                    <!-- Télétravail -->
+                    <div class="filtre-section">
+                        <div class="filtre-label">🏠 Télétravail</div>
+                        <div class="radio-group">
+                            <button
+                                class="radio-btn"
+                                class:active={filtreTeletrav === null}
+                                onclick={() => filtreTeletrav = null}
+                            >Tous</button>
+                            <button
+                                class="radio-btn"
+                                class:active={filtreTeletrav === true}
+                                onclick={() => filtreTeletrav = true}
+                            >Oui</button>
+                            <button
+                                class="radio-btn"
+                                class:active={filtreTeletrav === false}
+                                onclick={() => filtreTeletrav = false}
+                            >Non</button>
+                        </div>
+                    </div>
+
+                    <!-- Durée max -->
+                    <div class="filtre-section">
+                        <div class="filtre-label">
+                            📅 Durée max
+                            {#if filtreWeekMax !== null}
+                                <span class="filtre-value">{filtreWeekMax} sem.</span>
+                            {/if}
+                        </div>
+                        <input
+                            type="range"
+                            min="4"
+                            max="24"
+                            step="2"
+                            bind:value={filtreWeekMax}
+                            class="range-input"
+                        />
+                        <div class="range-labels">
+                            <span>4 sem.</span>
+                            <span>24 sem.</span>
+                        </div>
+                        {#if filtreWeekMax !== null}
+                            <button class="clear-btn" onclick={() => filtreWeekMax = null}>✕ Effacer</button>
+                        {/if}
+                    </div>
+
+                    <!-- Domaines -->
+                    {#if domaines && domaines.length > 0}
+                        <div class="filtre-section">
+                            <div class="filtre-label">🗂️ Domaines</div>
+                            <div class="tags-list">
+                                {#each domaines as d}
+                                    <button
+                                        class="tag-btn"
+                                        class:active={filtreDomaineIds.includes(d.id)}
+                                        onclick={() => toggleDomaine(d.id)}
+                                    >{d.name}</button>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
+
+                    <!-- Compétences -->
+                    {#if competences && competences.length > 0}
+                        <div class="filtre-section">
+                            <div class="filtre-label">⚙️ Compétences</div>
+                            <div class="tags-list">
+                                {#each competences as c}
+                                    <button
+                                        class="tag-btn"
+                                        class:active={filtreSkillIds.includes(c.id)}
+                                        onclick={() => toggleSkill(c.id)}
+                                    >{c.name}</button>
+                                {/each}
+                            </div>
+                        </div>
+                    {/if}
+                </aside>
+
+                <!-- Liste des offres -->
+                <div class="listeOffres">
+                    {#if offresFiltrees().length === 0}
+                        <div class="empty-state">
+                            <p class="empty-icon">🔍</p>
+                            <p class="empty-title">Aucune offre trouvée</p>
+                            <p class="empty-sub">Essayez de modifier vos filtres.</p>
+                            <button class="reset-btn-center" onclick={resetFiltres}>Réinitialiser les filtres</button>
+                        </div>
+                    {:else}
+                        <p class="nb-resultats">{offresFiltrees().length} offre{offresFiltrees().length > 1 ? 's' : ''} trouvée{offresFiltrees().length > 1 ? 's' : ''}</p>
+                        {#if utilisateur.role_id == 2}
+                            {#each offresFiltrees() as offre}
+                                <OffreDeStage
+                                    offre={offre}
+                                    entreprise={entreprises}
+                                    doms={recupDomaines(offre, links_offres_domaines, domaines)}
+                                    skills={recupCompetences(offre, links_offres_competences, competences)}
+                                    etudiant={etudiant}
+                                />
+                            {/each}
+                        {:else}
+                            {#each offresFiltrees() as offre}
+                                <OffreDeStage
+                                    offre={offre}
+                                    entreprise={recupEntreprise(offre, entreprises)}
+                                    doms={recupDomaines(offre, links_offres_domaines, domaines)}
+                                    skills={recupCompetences(offre, links_offres_competences, competences)}
+                                    etudiant={etudiant}
+                                />
+                            {/each}
+                        {/if}
+                    {/if}
+                </div>
+            </div>
+        </section>
     {/if}
-   </div>
-  </section>
- {/if}
 </main>
 
 {#if showModal}
- <Modal
-  bind:showModal={showModal}
-  bind:domaines={domaines}
-  bind:competences={competences}
-  bind:entreprises={entreprises}
-  user={utilisateur}
- />
+    <Modal
+        bind:showModal={showModal}
+        bind:domaines={domaines}
+        bind:competences={competences}
+        bind:entreprises={entreprises}
+        user={utilisateur}
+    />
 {/if}
 
 <footer>
- <p>© CyStage - Tous droits réservés 2026</p>
+    <p>© CyStage - Tous droits réservés 2026</p>
 </footer>
 
 <style>
 
 
-
- .hero {
-  position: relative;
-  padding: 5rem 1.5rem 3.8rem;
-  overflow: hidden;
- }
-
- .fond1,
- .fond2 {
-  position: absolute;
-  border-radius: 999px;
-  pointer-events: none;
-  z-index: 0;
- }
-
- .fond1 {
-  top: -300px;
-  left: 40%;
-  width: 980px;
-  height: 980px;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.14) 0%, rgba(59, 130, 246, 0) 70%);
- }
-
- .fond2 {
-  top: 70px;
-  right: 7%;
-  width: 280px;
-  height: 280px;
-  background: radial-gradient(circle, rgba(29, 78, 216, 0.14) 0%, rgba(29, 78, 216, 0) 70%);
- }
-
- .contenuHero {
-  position: relative;
-  z-index: 1;
-  max-width: 1220px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 2.2rem;
-  align-items: center;
- }
-
- .blocGauche {
-  max-width: 680px;
- }
-
- .zoneLogo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-bottom: 1rem;
- }
-
- .logoHero {
-  width: 250px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  object-fit: contain;
- }
-
- .petitBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.5rem 0.95rem;
-  border-radius: 999px;
-  background: var(--primary-50);
-  border: 1px solid var(--primary-100);
-  color: var(--primary-700);
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
- }
-
- h1 {
-  margin: 0 0 1.1rem;
-  font-size: clamp(2.2rem, 5vw, 4.2rem);
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  font-weight: 800;
- }
-
- .texteHero {
-  margin: 0 0 2rem;
-  max-width: 620px;
-  font-size: 1.05rem;
-  line-height: 1.75;
-  color: var(--ink-600);
- }
-
- .actionsHero {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.9rem;
- }
-
-
- .statsHero {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-top: 1.4rem;
- }
-
- .petiteStat {
-  min-width: 116px;
-  padding: 0.9rem 1rem;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid var(--primary-100);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
- }
-
- .petiteStat:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.13);
- }
-
- .petiteStat strong {
-  display: block;
-  font-size: 1.2rem;
-  line-height: 1;
-  color: var(--ink-900);
- }
-
- .petiteStat span {
-  display: block;
-  margin-top: 0.35rem;
-  color: var(--ink-600);
-  font-size: 0.9rem;
- }
-
- .blocDroite {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
- }
-
- .ligneCartes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
- }
-
- .carte {
-  background: var(--surface-0);
-  border: 1px solid var(--border-200);
-  border-radius: 22px;
-  padding: 1.35rem;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
- }
-
- .carte:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
-  border-color: var(--primary-100);
- }
-
- .carteGrande {
-  min-height: 190px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
- }
-
- .miniTexte {
-  display: inline-flex;
-  margin-bottom: 0.8rem;
-  color: var(--primary-700);
-  font-weight: 700;
-  font-size: 0.86rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
- }
-
- .carte h3 {
-  margin: 0 0 0.65rem;
-  font-size: 1.1rem;
- }
-
- .carte p {
-  margin: 0;
-  color: var(--ink-600);
-  line-height: 1.65;
- }
-
- .miniOffre {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  padding: 0.95rem 0;
-  border-top: 1px solid #edf2f7;
- }
-
- .miniOffre:first-of-type {
-  border-top: none;
-  padding-top: 0.2rem;
- }
-
- .miniOffre h4 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
- }
-
- .miniOffre p {
-  margin: 0;
-  color: var(--ink-600);
-  font-size: 0.9rem;
- }
-
- .tagPetit {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 52px;
-  padding: 0.42rem 0.7rem;
-  border-radius: 999px;
-  background: var(--primary-50);
-  color: var(--primary-700);
-  font-size: 0.8rem;
-  font-weight: 700;
-  white-space: nowrap;
- }
-
- .section {
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
- }
-
- .sectionMoins {
-  padding-top: 0.5rem;
- }
-
- .titreBloc {
-  max-width: 760px;
-  margin: 0 auto 2.3rem;
-  text-align: center;
- }
-
- .titreGauche {
-  text-align: left;
-  margin: 0 0 2rem;
-  max-width: unset;
- }
-
- .titreBloc span {
-  display: inline-block;
-  margin-bottom: 0.75rem;
-  color: var(--primary-700);
-  font-weight: 700;
-  font-size: 0.92rem;
-  text-transform: uppercase;
-  letter-spacing: 0.045em;
- }
-
- .titreBloc h2,
- .blocFin h2 {
-  margin: 0 0 0.95rem;
-  font-size: clamp(1.8rem, 3vw, 2.8rem);
-  line-height: 1.14;
- }
-
- .titreBloc p {
-  margin: 0;
-  color: var(--ink-600);
-  line-height: 1.75;
-  font-size: 1rem;
- }
-
- .grille4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.2rem;
- }
-
- .grille3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
- }
-
- .blocInfo {
-  background: #ffffff;
-  border: 1px solid #e5edf5;
-  border-radius: 20px;
-  padding: 1.45rem;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
- }
-
- .blocInfo:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1);
-  border-color: var(--primary-100);
- }
-
- .iconeBloc {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-  color: var(--primary-700);
-  font-weight: 800;
-  font-size: 1.05rem;
- }
-
- .blocInfo h3 {
-  margin: 0 0 0.75rem;
-  font-size: 1.05rem;
- }
-
- .blocInfo p {
-  margin: 0;
-  color: var(--ink-600);
-  line-height: 1.72;
- }
-
- .zoneEtapes {
-  position: relative;
- }
-
- .ligneEtapes {
-  position: absolute;
-  top: 29px;
-  left: 8%;
-  right: 8%;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), rgba(37, 99, 235, 0.38), rgba(59, 130, 246, 0.15));
-  z-index: 0;
- }
-
- .zoneEtapes .grille3 {
-  position: relative;
-  z-index: 1;
- }
-
- .numeroEtape {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--primary-700);
-  font-weight: 800;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
- }
-
- .sectionFin {
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 0 1.5rem 4.8rem;
- }
-
- .blocFin {
-  padding: 3rem 2rem;
-  text-align: center;
-  border-radius: 28px;
-  border: 1px solid var(--primary-100);
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
-  box-shadow: 0 20px 46px rgba(37, 99, 235, 0.1);
- }
-
- .miniTitreFin {
-  display: inline-block;
-  margin-bottom: 0.85rem;
-  color: var(--primary-700);
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.045em;
- }
-
- .blocFin p {
-  max-width: 700px;
-  margin: 0 auto 1.9rem;
-  color: var(--ink-600);
-  line-height: 1.75;
- }
-
- .centre {
-  justify-content: center;
- }
-
- .zoneOffres {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
- }
-
- .listeOffres {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
- }
-
- footer {
-  padding: 1.4rem 1rem 2rem;
-  text-align: center;
-  color: var(--ink-600);
-  font-size: 0.9rem;
- }
-
- footer p {
-  margin: 0;
- }
-
- @media (max-width: 1024px) {
-  .contenuHero {
-   grid-template-columns: 1fr;
-   gap: 1.6rem;
-  }
-
-  .blocGauche {
-   max-width: unset;
-  }
-
-  .grille4 {
-   grid-template-columns: repeat(2, 1fr);
-  }
-
-  .grille3 {
-   grid-template-columns: repeat(2, 1fr);
-  }
- }
-
- @media (max-width: 768px) {
-  .hero {
-   padding-top: 3.6rem;
-  }
-
-  .section,
-  .sectionFin,
-  .zoneOffres {
-   padding-left: 1rem;
-   padding-right: 1rem;
-  }
-
-  .logoHero {
-   width: 210px;
-  }
-
-  h1 {
-   font-size: clamp(2rem, 9vw, 2.8rem);
-  }
-
-  .texteHero {
-   font-size: 1rem;
-   line-height: 1.65;
-  }
-
-  .ligneCartes,
-  .grille4,
-  .grille3 {
-   grid-template-columns: 1fr;
-  }
-
-  .ligneEtapes {
-   display: none;
-  }
-
-  .actionsHero {
-   flex-direction: column;
-  }
-
-  .btn {
-   width: 100%;
-  }
-
-  .blocFin {
-   padding: 2rem 1.2rem;
-  }
- }
-
- @media (prefers-reduced-motion: reduce) {
-  .carte,
-  .blocInfo,
-  .petiteStat,
-  .btn {
-   transition: none;
-  }
- }
+    .zoneOffres {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem 4rem;
+    }
+
+    .titreBloc { margin-bottom: 1.5rem; }
+    .titreGauche { text-align: left; }
+
+    .titreBloc span {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        color: var(--primary-700);
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .titreBloc h2 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 800;
+    }
+
+    .titreBloc p { margin: 0; color: var(--ink-600); }
+
+    /* Layout sidebar + offres */
+    .layout {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: #fff;
+        border: 1px solid var(--border-200);
+        border-radius: 16px;
+        padding: 1.25rem;
+        position: sticky;
+        top: 80px;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    }
+
+    .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-header h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink-900);
+        margin: 0;
+    }
+
+    .reset-btn {
+        font-size: 0.78rem;
+        color: var(--primary-600);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        padding: 0;
+        font-family: inherit;
+    }
+
+    .reset-btn:hover { text-decoration: underline; }
+
+    .filtre-section {
+        margin-bottom: 1.25rem;
+        padding-bottom: 1.25rem;
+        border-bottom: 1px solid var(--border-200);
+    }
+
+    .filtre-section:last-child { border-bottom: none; margin-bottom: 0; }
+
+    .filtre-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: var(--ink-600);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 0.6rem;
+    }
+
+    .filtre-value {
+        font-size: 0.8rem;
+        color: var(--primary-600);
+        font-weight: 700;
+        text-transform: none;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary-600);
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 0.4rem;
+    }
+
+    .radio-btn {
+        flex: 1;
+        padding: 0.4rem 0.5rem;
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: #f8fafc;
+        color: var(--ink-600);
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+
+    .radio-btn.active {
+        background: var(--primary-50);
+        border-color: var(--primary-600);
+        color: var(--primary-700);
+    }
+
+    .range-input {
+        width: 100%;
+        accent-color: var(--primary-600);
+        cursor: pointer;
+    }
+
+    .range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--ink-600);
+        margin-top: 0.25rem;
+    }
+
+    .clear-btn {
+        margin-top: 0.4rem;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0;
+    }
+
+    .clear-btn:hover { color: #ef4444; }
+
+    .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .tag-btn {
+        padding: 0.3rem 0.65rem;
+        border: 1px solid var(--border-200);
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: #f8fafc;
+        color: var(--ink-600);
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+
+    .tag-btn.active {
+        background: var(--primary-50);
+        border-color: var(--primary-600);
+        color: var(--primary-700);
+    }
+
+    /* Liste offres */
+    .listeOffres {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nb-resultats {
+        font-size: 0.85rem;
+        color: var(--ink-600);
+        margin: 0 0 0.5rem 0;
+        font-weight: 600;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--border-200);
+    }
+
+    .empty-icon { font-size: 2.5rem; margin: 0; }
+    .empty-title { font-size: 1.1rem; font-weight: 700; color: var(--ink-900); margin: 0.5rem 0 0.25rem; }
+    .empty-sub { color: var(--ink-600); font-size: 0.9rem; margin: 0 0 1rem; }
+
+    .reset-btn-center {
+        padding: 0.5rem 1.25rem;
+        background: var(--primary-600);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    footer {
+        padding: 1.4rem 1rem 2rem;
+        text-align: center;
+        color: var(--ink-600);
+        font-size: 0.9rem;
+    }
+
+    footer p { margin: 0; }
+
+    @media (max-width: 900px) {
+        .layout { grid-template-columns: 1fr; }
+        .sidebar { position: static; }
+    }
 </style>
