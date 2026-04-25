@@ -2,8 +2,18 @@
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { useForm } from '@inertiajs/svelte';
-
+    import { router } from '@inertiajs/svelte';
     let { postulations=[] } = $props();
+    
+    function supprimer(id: number) {
+        if (confirm("Etes vous sûr de voulour refuser ce candidat?")) {
+            router.delete(`/postulation/${id}`, {
+                preserveScroll: true,
+                onSuccess: () => {
+                }
+            });
+        }
+    }
 </script>
 
 <AppHead title="Postulations"/>
@@ -22,10 +32,10 @@
             <hr><br>
             <h3>{p?.motiv || "Motivation de l'étudiant"}</h3>
             <br>
-            <h3>Voir cv : <span style="color:blue">{p?.path || "fichier.cv"}</span></h3>
+            <h3>Voir cv : <span style="color:blue"><a href="/storage/{p.path}">ici</a></span></h3>
             <center>
-              <button class="close"><p>✅</p></button>
-                <button class="close"><p>❌</p></button>
+              <button class="close" onclick={() => console.log(p)}><p>✅</p></button>
+                <button class="close" onclick={() => supprimer(p.offre_id)}><p>❌</p></button>
             </center>
             </div>
     {/each}

@@ -7,7 +7,7 @@
     }
    
 
-    const form = useForm({ offre_id: offre.id,etu_id: etudiant.id, state:1 ,motiv:'',path:''});
+    const form = useForm({ offre_id: offre.id,etu_id: etudiant.id, state:1 ,motiv:'',path:null});
 
     function submit(e:Event) {
         e.preventDefault();

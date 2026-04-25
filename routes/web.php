@@ -141,7 +141,41 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
-Route::get('/postulation', fn() => inertia('EntreprisePostulation'))->name('postulation');
+Route::get('/postulation', function (Request $request) {
+    $user = $request->user();
+    
+    if ($user && $user->role_id == 2) {
+        $ent = Entreprise::where('user_id', $user->id)->first();
+        if (!$ent || $ent->offres->isEmpty()) {
+            return Inertia::render('EntreprisePostulation', [
+                'postulations' => []
+            ]);
+        }
+
+        $offreIds = $ent->offres->pluck('id');
+        $postulations = Postulation::whereIn('offre_id', $offreIds)
+            ->with(['etudiant', 'offre']) 
+            ->latest()
+            ->get();
+
+        return Inertia::render('EntreprisePostulation', [
+            'postulations' => $postulations
+        ]);
+    }
+    
+    return redirect('/');
+})->middleware('auth')->name('postulation');
+
+Route::delete('/postulation/{id}', function ($id) {
+    $postulation = Postulation::findOrFail($id);
+    if ($postulation->path && Storage::disk('public')->exists($postulation->path)) {
+        Storage::disk('public')->delete($postulation->path);
+    }
+    $postulation->delete();
+    return back()->with('success', 'delete');
+})->middleware('auth');
+
+
 Route::patch('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
 
 Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('password.request');

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import EntreprisePostulation from './EntreprisePostulation.svelte';
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { useForm } from '@inertiajs/svelte';
@@ -163,23 +164,7 @@
         {/if}
 
         {#if activeTab === 'candidatures'}
-            <div class="Y2">
-            {#if profile?.type == '3'}
-                <div class="empty-state">
-                    <p class="empty-icon">📋</p>
-                    <p class="empty-title">Aucune candidature pour le moment</p>
-                    <p class="empty-sub">Les offres auxquelles vous postulez apparaîtront ici.</p>
-                    <a class="btn-edit" href="/">Voir les offres disponibles</a>
-                </div>
-            {/if}
-            {#if profile?.type == '2'}
-                <div class="empty-state">
-                    <p class="empty-icon">👥</p>
-                    <p class="empty-title">Aucune candidature reçue pour le moment</p>
-                    <p class="empty-sub">Les étudiants ayant postulé à vos offres apparaîtront ici.</p>
-                </div>
-            {/if}
-            </div>
+            <EntreprisePostulation />
         {/if}
     </div>
 </main>

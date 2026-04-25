@@ -19,15 +19,17 @@ class PostulationController extends Controller
             'etu_id' => 'required|integer',
             'state' => 'required|integer',
             'motiv' => 'required|string',
-            'path' => 'required|string',
+            'path' => 'required|file|mimes:pdf',
         ]);
 
+        $path = $request->file('path')->store('cvs', 'public');
+        
         \App\Models\Postulation::create([
             'offre_id' => $request->offre_id,
             'etu_id' => $request->etu_id,
             'state' => $request->state,
             'motiv' => $request->motiv,
-            'path' => $request->path
+            'path' => $path
         ]);
 
         return back()->with('success','Code partagé avec succès');
