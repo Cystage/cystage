@@ -1,62 +1,81 @@
 <script lang="ts">
-    import Modal from "./Modal.svelte";
-    import "./ModalPoste.svelte";
     import ModalPoste from "./ModalPoste.svelte";
-    import { createInertiaApp,page } from '@inertiajs/svelte';
+    import { page } from '@inertiajs/svelte';
 
-    let { offre = $bindable(), entreprise = $bindable(), doms , skills, etudiant = $bindable()}= $props();
-//'user_id','nom','siret','adresse','code_postal','ville','pays','num_tel'
-//'nom','ent_id','nb_week','week_hour','paye_hour','teletrav','poste_desc','profil_desc'
+    let { offre = $bindable(), entreprise = $bindable(), doms, skills, etudiant = $bindable() } = $props();
+
     let showModalPostuler = $state(false);
-    function modalPostuler() {
-        console.log("test");
-        showModalPostuler=!showModalPostuler;
-    }
-
     let user = $derived($page.props.auth?.user);
 
-
+    function portal(node: HTMLElement) {
+        document.body.appendChild(node);
+        return {
+            destroy() {
+                node.remove();
+            }
+        };
+    }
 </script>
-    <div class="main">
-       <header>
-        <h1><b>{offre.nom}</b></h1>
-        de {entreprise?.nom}
-         <div class="location">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-          <p class="information">{entreprise?.adresse}, {entreprise?.code_postal}, {entreprise?.ville}, {entreprise?.pays}<br></p>
-         </div>
-       </header>
-       <hr>
-       <h2>Informations utiles: <br></h2>
-            <p>Durée de travail : {offre.nb_week} semaines</p>
-            <p>par semaine: {offre.week_hour}h payées {offre.paye_hour} € </p>
-            <p>Télétravail: {#if offre.teletrav}✅{:else}❌{/if}</p>
-       <br>
 
-        <p>Tâches: {offre.poste_desc}<br></p>
-        <br>
-        <p>Qualités requises: {offre.profil_desc}<br></p>
-        <br>
-        <p>Pour plus d'informations, appeler le {entreprise?.num_tel}</p>
-        <br>
-        <p>Compétences demandées :</p>
-        <p> {#each skills as s}
-            {s.name}&nbsp;
-        {/each}</p>
-        <br>
-        {#each doms as d}
-            <p>#{d.name}</p>
-        {/each}
-
-        {#if user?.role_id == 3}
-            <input type="submit" class="button" value="Postuler" onclick={modalPostuler}/>
-
-            {#if showModalPostuler}
-                <ModalPoste etudiant={etudiant} bind:showModalPostuler={showModalPostuler} offre={offre}/>
+<div class="card">
+    <!-- Header -->
+    <div class="card-header">
+        <div class="header-left">
+            {#if entreprise?.logo}
+                <img src={entreprise.logo} alt="Logo {entreprise.nom}" class="logo-ent"/>
+            {:else}
+                <div class="logo-placeholder">{entreprise?.nom?.[0] ?? '?'}</div>
             {/if}
-        {/if}
+            <div class="header-info">
+                <h1>{offre.nom}</h1>
+                <span class="ent-nom">{entreprise?.nom}</span>
+            </div>
+        </div>
 
+        <div class="badges">
+            {#if offre.teletrav}
+                <span class="badge badge-green">🏠 Télétravail</span>
+            {:else}
+                <span class="badge badge-gray">🏢 Présentiel</span>
+            {/if}
+            {#each doms as d}
+                <span class="badge badge-blue">#{d.name}</span>
+            {/each}
+        </div>
+    </div>
 
+    <hr class="divider"/>
+
+    <!-- Infos rapides -->
+    <div class="info-grid">
+        <div class="info-item">
+            <span class="info-icon">📅</span>
+            <div>
+                <span class="info-label">Durée</span>
+                <span class="info-value">{offre.nb_week} semaines</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <span class="info-icon">⏰</span>
+            <div>
+                <span class="info-label">Rythme</span>
+                <span class="info-value">{offre.week_hour}h / semaine</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <span class="info-icon">💶</span>
+            <div>
+                <span class="info-label">Gratification</span>
+                <span class="info-value">{offre.paye_hour} €/h</span>
+            </div>
+        </div>
+        <div class="info-item">
+            <span class="info-icon">📍</span>
+            <div>
+                <span class="info-label">Lieu</span>
+                <span class="info-value">{entreprise?.ville}, {entreprise?.pays}</span>
+            </div>
+        </div>
     </div>
 
     <style>

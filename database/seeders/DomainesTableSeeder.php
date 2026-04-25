@@ -13,20 +13,13 @@ class DomainesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('domaines')->insert([
-            'name' => 'DevWeb',
-        ]);
-        DB::table('domaines')->insert([
-            'name' => 'Cyber',
-        ]);
-        DB::table('domaines')->insert([
-            'name' => 'Data',
-        ]);
-        DB::table('domaines')->insert([
-            'name' => 'Embarqué',
-        ]);
-        DB::table('domaines')->insert([
-            'name' => 'Dev',
-        ]);
+        $domaines = [
+            'Développement Web', 'Cybersécurité', 'Data Science',
+            'Systèmes Embarqués', 'Développement Logiciel',
+            'Mobile', 'DevOps', 'Intelligence Artificielle',
+        ];
+        foreach ($domaines as $d) {
+            DB::table('domaines')->insert(['name' => $d]);
+        }
     }
 }

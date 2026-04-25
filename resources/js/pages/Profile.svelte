@@ -16,6 +16,7 @@
         ville?: string,
         pays?: string,
         num_tel?: string,
+        logo?: string,
         type?: string,
     };
     let { profile }: { profile: Profile } = $props();
@@ -33,11 +34,19 @@
         ville:        profile?.ville        ?? '',
         pays:         profile?.pays         ?? '',
         num_tel:      profile?.num_tel      ?? '',
+        logo:         null as File | null,
     });
+
+    function handleLogo(e: Event) {
+        const input = e.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (file) $form.logo = file;
+    }
 
     function submit(e: Event) {
         e.preventDefault();
-        $form.patch('/profil', {
+        $form.post('/profil', {
+            forceFormData: true,
             onSuccess: () => { editing = false; }
         });
     }
@@ -95,7 +104,11 @@
         <div class="Y1">
             <div class="Bande">Mon espace</div>
             <div class="profile-header">
-                <div class="avatar">{getInitials()}</div>
+                {#if profile?.logo}
+                    <img src={profile.logo} alt="Logo" class="logo-preview"/>
+                {:else}
+                    <div class="avatar">{getInitials()}</div>
+                {/if}
                 <p class="profile-name">{getFullName()}</p>
             </div>
         </div>
@@ -151,6 +164,15 @@
 
                     <div class="form-actions">
                         {#if editing}
+                            {#if profile?.type == '2' && editing}
+                            <div class="form-group form-group-full">
+                                <label for="company-logo">Logo de l'entreprise</label>
+                                {#if profile?.logo}
+                                    <img src={`/storage/${profile.logo}`} alt="Logo actuel" class="logo-preview"/>
+                                {/if}
+                                <input id="company-logo" type="file" accept="image/*" onchange={handleLogo} />
+                            </div>
+                            {/if}
                             <button type="submit" class="btn-save">Enregistrer</button>
                             <button type="button" class="btn-cancel" onclick={() => editing = false}>Annuler</button>
                         {:else}
@@ -379,6 +401,15 @@
         text-decoration: none;
         color: var(--primary-600);
         font-weight: 600;
+    }
+
+    .logo-preview {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        margin-bottom: 0.5rem;
     }
 
     @media (max-width: 760px) {

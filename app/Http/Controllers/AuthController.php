@@ -62,39 +62,41 @@ class AuthController extends Controller
 
     public function newent(Request $request)
     {
-
         $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'siret' => 'required|string|max:255',
-            'adresse' => 'required|string|max:255',
+            'nom'         => 'required|string|max:255',
+            'siret'       => 'required|string|max:255',
+            'adresse'     => 'required|string|max:255',
             'code_postal' => 'required|string|max:255',
-            'ville' => 'required|string|max:255',
-            'pays' => 'required|string|max:255',
-            'password' => 'required|min:8|confirmed',
-            'num_tel' => 'required|digits:10',
+            'ville'       => 'required|string|max:255',
+            'pays'        => 'required|string|max:255',
+            'password'    => 'required|min:8|confirmed',
+            'num_tel'     => 'required|digits:10',
         ]);
 
+        $domain = explode('@', $validated['nom'] . '.com')[0];
+        $logo = "https://img.logo.dev/{$domain}.com?token=TON_TOKEN_ICI";
+
         $user = User::create([
-            'name' => 'ent-'.$validated['nom'],
-            'email' => $validated['nom']. time() . '@ent.test',
+            'name'     => 'ent-' . $validated['nom'],
+            'email'    => $validated['nom'] . '@ent.test',
             'password' => Hash::make($validated['password']),
-            'role_id' => 2
+            'role_id'  => 2,
         ]);
 
         Entreprise::create([
-            'nom' => $validated['nom'],
-            'siret' => $validated['siret'],
-            'adresse' => $validated['adresse'],
+            'nom'         => $validated['nom'],
+            'siret'       => $validated['siret'],
+            'adresse'     => $validated['adresse'],
             'code_postal' => $validated['code_postal'],
-            'ville' => $validated['ville'],
-            'pays' => $validated['pays'],
-            'user_id' => $user->id,
-            'num_tel' => $validated['num_tel']
+            'ville'       => $validated['ville'],
+            'pays'        => $validated['pays'],
+            'user_id'     => $user->id,
+            'num_tel'     => $validated['num_tel'],
+            'logo'        => $logo,
         ]);
 
         Auth::login($user);
         $request->session()->regenerate();
-
         return redirect('/');
     }
 
@@ -139,10 +141,19 @@ class AuthController extends Controller
                 'ville'       => 'required|string|max:255',
                 'pays'        => 'required|string|max:255',
                 'num_tel'     => 'required|digits:10',
+                'logo'        => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             ]);
 
             $ent = Entreprise::where('user_id', $user->id)->first();
-            $ent->update($validated);
+            $data = collect($validated)->except('logo')->toArray();
+            
+            if ($request->hasFile('logo')) {
+                if ($ent->logo) {
+                    \Storage::disk('public')->delete($ent->logo);
+                }
+                $data['logo'] = $request->file('logo')->store('logos', 'public');
+            }
+            $ent->update($data);
         }
 
         return redirect('/profil')->with('success', 'Profil mis à jour !');

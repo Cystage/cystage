@@ -16,7 +16,7 @@ class UsersTableSeeder extends Seeder
     {
         DB::table('users')->insert([
             'role_id' => '1',
-            'name' => 'Admin',
+            'name' => 'admin',
             'email' => 'admin@example.com',
             'password' => bcrypt('753159'),
         ]);
@@ -37,6 +37,37 @@ class UsersTableSeeder extends Seeder
             'name' => 'TestEnt2',
             'email' => 'entreprise2@example.com',
             'password' => bcrypt('4444'),
+        ]);
+
+        DB::table('users')->insert([
+            'role_id'  => 2,
+            'name'     => 'ent-Total',
+            'email'    => 'contact@total.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 3,
+            'name'     => 'eJDupont',
+            'email'    => 'jean.dupont@etu.cyu.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 2,
+            'name'     => 'ent-Safran',
+            'email'    => 'contact@safran.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 2,
+            'name'     => 'ent-Airbus',
+            'email'    => 'contact@airbus.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 3,
+            'name'     => 'eLMartin',
+            'email'    => 'lea.martin@etu.cyu.fr',
+            'password' => bcrypt('1234'),
         ]);
     }
 }

@@ -3,58 +3,150 @@
 
     let { showModalPostuler = $bindable(), offre = $bindable(), etudiant = $bindable()} = $props();
     function disable_modal() {
-        showModalPostuler=!showModalPostuler;
-        console.log(showModalPostuler);
+        showModalPostuler = !showModalPostuler;
     }
-   
 
-    const form = useForm({ offre_id: offre.id,etu_id: etudiant.id, state:1 ,motiv:'',path:null});
+    const form = useForm({ 
+        offre_id: offre.id,
+        etu_id: etudiant.id,
+        state: 1,
+        motiv: '',
+        path: null as File | null
+    });
 
-    function submit(e:Event) {
+    let isDragging = $state(false);
+    let success = $state(false);
+
+    function handleFile(file: File) {
+        if (file && file.type === 'application/pdf') {
+            $form.path = file;
+        } else {
+            alert('Veuillez déposer un fichier PDF uniquement.');
+        }
+    }
+
+    function handleDrop(e: DragEvent) {
+        e.preventDefault();
+        isDragging = false;
+        const file = e.dataTransfer?.files[0];
+        if (file) handleFile(file);
+    }
+
+    function handleInputChange(e: Event) {
+        const input = e.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (file) handleFile(file);
+    }
+
+    function submit(e: Event) {
         e.preventDefault();
         $form.post('/postulation', {
+            forceFormData: true,
             preserveState: true,
-            onSuccess: () => { $form.reset(); showModalPostuler = false; }
+            onSuccess: () => {
+                $form.reset();
+                success = true;
+                setTimeout(() => {
+                    success = false;
+                    showModalPostuler = false;
+                }, 3000);
+            }
         });
-
     }
+
+
 </script>
 
 <div class="overlay">
     <div class="modal">
-        <div class="header">
 
-            <h1 class="titre">Postuler chez Test {offre.entreprise}</h1>
-            <button class="close" onclick={disable_modal}><p>❌</p></button>
-        </div>
+        {#if success}
+            <div class="success-banner">
+                <span class="success-icon">✅</span>
+                <div>
+                    <p class="success-title">Candidature en cours d'envoie</p>
+                    <p class="success-sub">Veuillez patienter quelques secondes...</p>
+                </div>
+            </div>
+        {:else}
 
-        <br><br>
-        <form onsubmit={submit}>
-            <div class="field">
-                <label for="">Expliquez nous votre motivation!</label>
-                <textarea 
-                    name="" 
-                    id=""
-                    bind:value={$form.motiv}
-                    rows=10>
-                </textarea>
+            <div class="header">
+                <div class="header-info">
+                    <p class="pre-titre">Candidature pour</p>
+                    <h1 class="titre">{offre.nom}</h1>
+                </div>
+                <button class="close" onclick={disable_modal}>✕</button>
             </div>
 
-            <div class="field">
-                <label for="">Déposer votre cv ici</label>
-                    <div class="drop-area" ondragover={(e) => e.preventDefault()} ondrop={(e) => { e.preventDefault(); $form.path = e.dataTransfer?.files[0]; }}>
-                        
+            <form onsubmit={submit}>
+                <div class="field">
+                    <label for="motiv">
+                        ✍️ Lettre de motivation
+                        <span class="required">*</span>
+                    </label>
+                    <textarea
+                        id="motiv"
+                        bind:value={$form.motiv}
+                        rows={7}
+                        placeholder="Expliquez pourquoi vous êtes intéressé par ce poste, vos compétences clés, vos expériences pertinentes..."
+                    ></textarea>
+                    {#if $form.errors.motiv}
+                        <span class="erreur">{$form.errors.motiv}</span>
+                    {/if}
+                </div>
+
+                <div class="field">
+                    <label for="file-input">
+                        📄 CV <span class="required">*</span>
+                        <span class="label-hint">— PDF uniquement</span>
+                    </label>
+                    <div
+                        class="drop-area"
+                        class:dragging={isDragging}
+                        class:has-file={$form.path}
+                        ondragover={(e) => { e.preventDefault(); isDragging = true; }}
+                        ondragleave={() => isDragging = false}
+                        ondrop={handleDrop}
+                        onclick={() => document.getElementById('file-input')?.click()}
+                        role="button"
+                        tabindex="0"
+                        onkeydown={(e) => e.key === 'Enter' && document.getElementById('file-input')?.click()}
+                    >
                         {#if $form.path}
-                            Fichier prêt : {$form.path.name}
+                            <div class="file-ready">
+                                <span class="file-icon">📎</span>
+                                <div>
+                                    <p class="file-name">{($form.path as File).name}</p>
+                                    <p class="file-hint">Cliquez pour changer de fichier</p>
+                                </div>
+                            </div>
                         {:else}
-                            Déposez votre fichier ici
+                            <span class="drop-icon">☁️</span>
+                            <p class="drop-text">Glissez votre CV ici</p>
+                            <p class="drop-hint">ou cliquez pour parcourir</p>
                         {/if}
                     </div>
-            </div>
+                    <input
+                        id="file-input"
+                        type="file"
+                        accept=".pdf"
+                        style="display:none"
+                        onchange={handleInputChange}
+                    />
+                    {#if $form.errors.path}
+                        <span class="erreur">{$form.errors.path}</span>
+                    {/if}
+                </div>
 
-
-            <button type="submit" class="submit">Envoyer ma candidature</button>
-        </form>
+                <button type="submit" class="submit" disabled={$form.processing}>
+                    {#if $form.processing}
+                        <span class="spinner"></span> Envoi en cours...
+                    {:else}
+                        Envoyer ma candidature →
+                    {/if}
+                </button>
+            </form>
+        {/if}
     </div>
 </div>
 
@@ -64,118 +156,216 @@
     .overlay {
         position: fixed;
         inset: 0;
-        background-color: rgba(0,0,0,0.6);
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
         z-index: 200;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 1rem;
     }
+
     .modal {
-        position: relative;
-        width: 480px;
-        max-width: 90vw;
-        max-height: 85vh;
+        width: 520px;
+        max-width: 100%;
+        max-height: 90vh;
         overflow-y: auto;
-        background: white;
-        border-radius: 18px;
-        border: 1px solid var(--border-200);
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
         padding: 2rem;
-        box-shadow: 0 16px 36px rgba(15, 23, 42, 0.2);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
     }
-    .header {
+
+    /* Succès */
+    .success-banner {
         display: flex;
         align-items: center;
+        gap: 1rem;
+        padding: 2rem;
+        text-align: left;
+    }
+
+    .success-icon { font-size: 2.5rem; }
+
+    .success-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #16a34a;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .success-sub {
+        font-size: 0.875rem;
+        color: #64748b;
+        margin: 0;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        align-items: flex-start;
         justify-content: space-between;
+        gap: 1rem;
         margin-bottom: 1.5rem;
     }
+
+    .pre-titre {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 0.2rem 0;
+    }
+
     .titre {
         font-size: 1.2rem;
         font-weight: 700;
-        color: var(--ink-900);
+        color: #0f172a;
+        margin: 0;
+        line-height: 1.3;
     }
+
     .close {
-        background: none;
-        border: none;
-        font-size: 1.1rem;
-        color: #94a3b8;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        transition: background 0.15s;
-    }
-    .close:hover {
         background: #f1f5f9;
-        color: #1e293b;
+        border: none;
+        font-size: 0.9rem;
+        color: #64748b;
+        cursor: pointer;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        transition: background 0.15s;
+        flex-shrink: 0;
     }
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-    }
+
+    .close:hover { background: #e2e8f0; color: #0f172a; }
+
+    /* Form */
+    form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
     label {
         font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--ink-600);
+        font-weight: 700;
+        color: #374151;
     }
-    input, textarea {
+
+    .label-hint {
+        font-weight: 400;
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+
+    .required { color: #ef4444; }
+
+    textarea {
         width: 100%;
-        padding: 0.55rem 0.75rem;
+        padding: 0.75rem;
         border: 1px solid #d1d5db;
         border-radius: 10px;
         font-size: 0.9rem;
         outline: none;
-        transition: border-color 0.15s;
         font-family: inherit;
         box-sizing: border-box;
-    }
-    input:focus, textarea:focus {
-        border-color: var(--primary-600);
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-    textarea {
         resize: vertical;
-    }
-    .submit {
-        margin-top: 0.5rem;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.15s;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-    }
-    .submit:hover {
-    background: #1d4ed8;
-    transform: translateY(-1px);
-    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
-    }
-    .erreur {
-        color: #ef4444;
-        font-size: 0.8rem;
-    }
-    .drop-area { 
-        border: 2px dashed #93c5fd;
-        border-radius: 10px;
-        padding: 24px;
-        text-align: center;
-        background: #eff6ff;
+        transition: border-color 0.15s, box-shadow 0.15s;
+        line-height: 1.6;
     }
 
-    .close:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible,
-    .submit:focus-visible,
-    .drop-area:focus-visible {
-        outline: 3px solid rgba(37, 99, 235, 0.35);
-        outline-offset: 2px;
+    textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    /* Drop area */
+    .drop-area {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+    }
+
+    .drop-area:hover { border-color: #2563eb; background: #eff6ff; }
+    .drop-area.dragging { border-color: #2563eb; background: #eff6ff; }
+    .drop-area.has-file { border-color: #16a34a; background: #f0fdf4; border-style: solid; }
+
+    .drop-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
+    .drop-text { font-size: 0.9rem; font-weight: 600; color: #374151; margin: 0; }
+    .drop-hint { font-size: 0.8rem; color: #94a3b8; margin: 0.2rem 0 0 0; }
+
+    .file-ready {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-align: left;
+    }
+
+    .file-icon { font-size: 1.5rem; }
+    .file-name { font-size: 0.9rem; font-weight: 600; color: #16a34a; margin: 0; }
+    .file-hint { font-size: 0.78rem; color: #94a3b8; margin: 0.15rem 0 0 0; }
+
+    .erreur { color: #ef4444; font-size: 0.8rem; }
+
+    /* Submit */
+    .submit {
+        padding: 0.8rem;
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        font-family: inherit;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .submit:not(:disabled):hover {
+        transform: translateY(-1px);
+        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
+    }
+
+    .submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Spinner */
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: inline-block;
+    }
+
+    .overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        overflow: hidden;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 </style>

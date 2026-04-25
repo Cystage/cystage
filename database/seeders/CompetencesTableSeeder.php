@@ -13,26 +13,13 @@ class CompetencesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('competences')->insert([
-            'name' => 'Java',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'C',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'Html',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'Javascript',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'R',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'Php',
-        ]);
-        DB::table('competences')->insert([
-            'name' => 'Data mining',
-        ]);
+        $competences = [
+            'Java', 'C', 'HTML/CSS', 'JavaScript', 'R',
+            'PHP', 'Data Mining', 'Python', 'SQL', 'Docker',
+            'Git', 'Flutter', 'React', 'Vue.js', 'Laravel',
+        ];
+        foreach ($competences as $c) {
+            DB::table('competences')->insert(['name' => $c]);
+        }
     }
 }

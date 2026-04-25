@@ -25,8 +25,8 @@ use App\Http\Controllers\AdminController;
 Route::get('/', function (Request $request) {
     if ($request->user()) {
         $user = $request->user();
-        $etu = Etudiant::where('user_id',$user->id)->first();
         if($user->role_id==3){
+            $etu = Etudiant::where('user_id',$user->id)->first();
             return Inertia::render('Welcome', [
                 'offres' => Offre::latest()->get(),
                 'competences' => Competence::latest()->get(),
@@ -112,6 +112,7 @@ Route::get('/profil', function (Request $request) {
                 'pays' => $ent->pays,
                 'num_tel' => $ent->num_tel,
                 'type'=> $user->role_id,
+                'logo' => $ent->logo,
             ],
         ]);
     }
@@ -176,7 +177,7 @@ Route::delete('/postulation/{id}', function ($id) {
 })->middleware('auth');
 
 
-Route::patch('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
+Route::post('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
 
 Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
