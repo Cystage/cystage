@@ -127,5 +127,9 @@ Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+<<<<<<< HEAD
 Route::get('/postulation', fn() => inertia('EntreprisePostulation'))->name('postulation');
 Route::post('/postulation', [PostulationController::class, 'poste'])->name('postulation');
+=======
+Route::patch('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
+>>>>>>> modifprofil
