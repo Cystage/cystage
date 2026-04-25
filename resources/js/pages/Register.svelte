@@ -4,7 +4,9 @@
     import AppHead from '@/components/AppHead.svelte';
     import logo from './img/logo.png';
 
-    const form = useForm({
+    let role: 'etudiant' | 'entreprise' = $state('etudiant');
+
+    const formEtudiant = useForm({
         nom: '',
         prenom: '',
         num_etudiant: '',
@@ -12,16 +14,46 @@
         password_confirmation: '',
     });
 
+    const formEntreprise = useForm({
+        nom: '',
+        siret: '',
+        adresse: '',
+        code_postal: '',
+        ville: '',
+        pays: '',
+        num_tel: '',
+        password: '',
+        password_confirmation: '',
+    });
+
     let errors: Record<string, string> = $state({});
 
-    function validate(): boolean {
+    function validateEtudiant(): boolean {
         errors = {};
-        if (!$form.nom) errors.nom = "Le nom est obligatoire";
-        if (!$form.prenom) errors.prenom = "Le prénom est obligatoire";
-        if (!$form.num_etudiant) errors.num_etudiant = "Le numéro étudiant est obligatoire";
-        if (!$form.password) errors.password = "Le mot de passe est obligatoire";
-        if (!$form.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
-        if ($form.password && $form.password_confirmation && $form.password !== $form.password_confirmation) {
+        if (!$formEtudiant.nom) errors.nom = "Le nom est obligatoire";
+        if (!$formEtudiant.prenom) errors.prenom = "Le prénom est obligatoire";
+        if (!$formEtudiant.num_etudiant) errors.num_etudiant = "Le numéro étudiant est obligatoire";
+        if (!$formEtudiant.password) errors.password = "Le mot de passe est obligatoire";
+        if (!$formEtudiant.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
+        if ($formEtudiant.password && $formEtudiant.password_confirmation && $formEtudiant.password !== $formEtudiant.password_confirmation) {
+            errors.password_confirmation = "Les mots de passe ne correspondent pas";
+            errors.password = " ";
+        }
+        return Object.keys(errors).length === 0;
+    }
+
+    function validateEntreprise(): boolean {
+        errors = {};
+        if (!$formEntreprise.nom) errors.nom = "L'appellation est obligatoire";
+        if (!$formEntreprise.siret) errors.siret = "Le SIRET est obligatoire";
+        if (!$formEntreprise.adresse) errors.adresse = "L'adresse est obligatoire";
+        if (!$formEntreprise.code_postal) errors.code_postal = "Le code postal est obligatoire";
+        if (!$formEntreprise.ville) errors.ville = "La ville est obligatoire";
+        if (!$formEntreprise.pays) errors.pays = "Le pays est obligatoire";
+        if (!$formEntreprise.num_tel) errors.num_tel = "Le numéro de téléphone est obligatoire";
+        if (!$formEntreprise.password) errors.password = "Le mot de passe est obligatoire";
+        if (!$formEntreprise.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
+        if ($formEntreprise.password && $formEntreprise.password_confirmation && $formEntreprise.password !== $formEntreprise.password_confirmation) {
             errors.password_confirmation = "Les mots de passe ne correspondent pas";
             errors.password = " ";
         }
@@ -30,8 +62,18 @@
 
     function submit(e: Event) {
         e.preventDefault();
-        if (!validate()) return;
-        $form.post('/register');
+        if (role === 'etudiant') {
+            if (!validateEtudiant()) return;
+            $formEtudiant.post('/register');
+        } else {
+            if (!validateEntreprise()) return;
+            $formEntreprise.post('/newent');
+        }
+    }
+
+    function switchRole(r: 'etudiant' | 'entreprise') {
+        role = r;
+        errors = {};
     }
 </script>
 
@@ -49,63 +91,164 @@
     <div class="box">
         <h1>Créer un compte</h1>
 
-        <form id="creation_compte" onsubmit={submit}>
+        <div class="role-selector">
+            <button
+                type="button"
+                class="role-btn"
+                class:active={role === 'etudiant'}
+                onclick={() => switchRole('etudiant')}
+            >
+                🎓 Étudiant
+            </button>
+            <button
+                type="button"
+                class="role-btn"
+                class:active={role === 'entreprise'}
+                onclick={() => switchRole('entreprise')}
+            >
+                🏢 Entreprise
+            </button>
+        </div>
 
-            <div class="form-group">
-                <label for="nom">Nom <span class="required">*</span></label>
-                <input
-                    type="text" id="nom" placeholder="Nom"
-                    bind:value={$form.nom}
-                    class:input-error={errors.nom || $form.errors.nom}
-                />
-                <span class="error-message">{errors.nom || $form.errors.nom || ''}</span>
-            </div>
+        {#if role === 'etudiant'}
+            <form id="creation_compte" onsubmit={submit}>
+                <div class="form-group">
+                    <label for="nom">Nom <span class="required">*</span></label>
+                    <input type="text" id="nom" placeholder="Nom"
+                        bind:value={$formEtudiant.nom}
+                        class:input-error={errors.nom || $formEtudiant.errors.nom}
+                    />
+                    <span class="error-message">{errors.nom || $formEtudiant.errors.nom || ''}</span>
+                </div>
 
-            <div class="form-group">
-                <label for="prenom">Prénom <span class="required">*</span></label>
-                <input
-                    type="text" id="prenom" placeholder="Prénom"
-                    bind:value={$form.prenom}
-                    class:input-error={errors.prenom || $form.errors.prenom}
-                />
-                <span class="error-message">{errors.prenom || $form.errors.prenom || ''}</span>
-            </div>
+                <div class="form-group">
+                    <label for="prenom">Prénom <span class="required">*</span></label>
+                    <input type="text" id="prenom" placeholder="Prénom"
+                        bind:value={$formEtudiant.prenom}
+                        class:input-error={errors.prenom || $formEtudiant.errors.prenom}
+                    />
+                    <span class="error-message">{errors.prenom || $formEtudiant.errors.prenom || ''}</span>
+                </div>
 
-            <div class="form-group">
-                <label for="num_etudiant">Numéro étudiant <span class="required">*</span></label>
-                <input
-                    type="text" id="num_etudiant" placeholder="12345678"
-                    pattern="[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]"
-                    bind:value={$form.num_etudiant}
-                    class:input-error={errors.num_etudiant || $form.errors.num_etudiant}
-                />
-                <span class="error-message">{errors.num_etudiant || $form.errors.num_etudiant || ''}</span>
-            </div>
+                <div class="form-group form-group-full">
+                    <label for="num_etudiant">Numéro étudiant <span class="required">*</span></label>
+                    <input type="text" id="num_etudiant" placeholder="12345678"
+                        bind:value={$formEtudiant.num_etudiant}
+                        class:input-error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}
+                    />
+                    <span class="error-message">{errors.num_etudiant || $formEtudiant.errors.num_etudiant || ''}</span>
+                </div>
 
-            <div class="form-group form-group-full">
-                <label for="password">Mot de passe <span class="required">*</span></label>
-                <input
-                    type="password" id="password" placeholder="••••••••"
-                    bind:value={$form.password}
-                    class:input-error={errors.password || $form.errors.password}
-                />
-                <span class="error-message">{errors.password || $form.errors.password || ''}</span>
-            </div>
+                <div class="form-group form-group-full">
+                    <label for="password">Mot de passe <span class="required">*</span></label>
+                    <input type="password" id="password" placeholder="••••••••"
+                        bind:value={$formEtudiant.password}
+                        class:input-error={errors.password || $formEtudiant.errors.password}
+                    />
+                    <span class="error-message">{errors.password || $formEtudiant.errors.password || ''}</span>
+                </div>
 
-            <div class="form-group form-group-full">
-                <label for="password_confirmation">Confirmer le mot de passe <span class="required">*</span></label>
-                <input
-                    type="password" id="password_confirmation" placeholder="••••••••"
-                    bind:value={$form.password_confirmation}
-                    class:input-error={errors.password_confirmation || $form.errors.password_confirmation}
-                />
-                <span class="error-message">{errors.password_confirmation || $form.errors.password_confirmation || ''}</span>
-            </div>
+                <div class="form-group form-group-full">
+                    <label for="password_confirmation">Confirmer le mot de passe <span class="required">*</span></label>
+                    <input type="password" id="password_confirmation" placeholder="••••••••"
+                        bind:value={$formEtudiant.password_confirmation}
+                        class:input-error={errors.password_confirmation || $formEtudiant.errors.password_confirmation}
+                    />
+                    <span class="error-message">{errors.password_confirmation || $formEtudiant.errors.password_confirmation || ''}</span>
+                </div>
 
-            <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
+                <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
+                <input type="submit" id="creer" value="Créer le compte" />
+            </form>
+        {/if}
 
-            <input type="submit" id="creer" value="Créer le compte" />
-        </form>
+        {#if role === 'entreprise'}
+            <form id="creation_compte" onsubmit={submit}>
+                <div class="form-group">
+                    <label for="nom">Appellation <span class="required">*</span></label>
+                    <input type="text" id="nom" placeholder="Nom de l'entreprise"
+                        bind:value={$formEntreprise.nom}
+                        class:input-error={errors.nom || $formEntreprise.errors.nom}
+                    />
+                    <span class="error-message">{errors.nom || $formEntreprise.errors.nom || ''}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="siret">SIRET <span class="required">*</span></label>
+                    <input type="text" id="siret" placeholder="12345678901234"
+                        bind:value={$formEntreprise.siret}
+                        class:input-error={errors.siret || $formEntreprise.errors.siret}
+                    />
+                    <span class="error-message">{errors.siret || $formEntreprise.errors.siret || ''}</span>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="adresse">Adresse <span class="required">*</span></label>
+                    <input type="text" id="adresse" placeholder="666 rue du diable"
+                        bind:value={$formEntreprise.adresse}
+                        class:input-error={errors.adresse || $formEntreprise.errors.adresse}
+                    />
+                    <span class="error-message">{errors.adresse || $formEntreprise.errors.adresse || ''}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="code_postal">Code postal <span class="required">*</span></label>
+                    <input type="text" id="code_postal" placeholder="64000"
+                        bind:value={$formEntreprise.code_postal}
+                        class:input-error={errors.code_postal || $formEntreprise.errors.code_postal}
+                    />
+                    <span class="error-message">{errors.code_postal || $formEntreprise.errors.code_postal || ''}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="ville">Ville <span class="required">*</span></label>
+                    <input type="text" id="ville" placeholder="Pau"
+                        bind:value={$formEntreprise.ville}
+                        class:input-error={errors.ville || $formEntreprise.errors.ville}
+                    />
+                    <span class="error-message">{errors.ville || $formEntreprise.errors.ville || ''}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="pays">Pays <span class="required">*</span></label>
+                    <input type="text" id="pays" placeholder="France"
+                        bind:value={$formEntreprise.pays}
+                        class:input-error={errors.pays || $formEntreprise.errors.pays}
+                    />
+                    <span class="error-message">{errors.pays || $formEntreprise.errors.pays || ''}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="num_tel">Téléphone <span class="required">*</span></label>
+                    <input type="tel" id="num_tel" placeholder="06 06 06 06 06"
+                        bind:value={$formEntreprise.num_tel}
+                        class:input-error={errors.num_tel || $formEntreprise.errors.num_tel}
+                    />
+                    <span class="error-message">{errors.num_tel || $formEntreprise.errors.num_tel || ''}</span>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="password">Mot de passe <span class="required">*</span></label>
+                    <input type="password" id="password" placeholder="••••••••"
+                        bind:value={$formEntreprise.password}
+                        class:input-error={errors.password || $formEntreprise.errors.password}
+                    />
+                    <span class="error-message">{errors.password || $formEntreprise.errors.password || ''}</span>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label for="password_confirmation">Confirmer le mot de passe <span class="required">*</span></label>
+                    <input type="password" id="password_confirmation" placeholder="••••••••"
+                        bind:value={$formEntreprise.password_confirmation}
+                        class:input-error={errors.password_confirmation || $formEntreprise.errors.password_confirmation}
+                    />
+                    <span class="error-message">{errors.password_confirmation || $formEntreprise.errors.password_confirmation || ''}</span>
+                </div>
+
+                <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
+                <input type="submit" id="creer" value="Créer le compte" />
+            </form>
+        {/if}
 
         <div class="footer-links">
             <p>Déjà un compte ? <a href="/login">Se connecter</a></p>
@@ -121,7 +264,6 @@
         padding: 0;
     }
 
-    
     main {
         min-height: calc(100vh - 64px);
         background: #f8fafc;
@@ -144,10 +286,40 @@
         font-size: 1.5rem;
         font-weight: 700;
         color: #1e293b;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         text-align: center;
     }
 
+    .role-selector {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        background: #f1f5f9;
+        padding: 0.4rem;
+        border-radius: 10px;
+    }
+
+    .role-btn {
+        flex: 1;
+        padding: 0.65rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        background: transparent;
+        color: #64748b;
+        transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+    }
+
+    .role-btn.active {
+        background: #ffffff;
+        color: #1e40af;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Formulaire */
     form {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -161,9 +333,7 @@
         gap: 6px;
     }
 
-    .form-group.form-group-full {
-        grid-column: 1 / -1;
-    }
+    .form-group.form-group-full { grid-column: 1 / -1; }
 
     label {
         font-size: 0.875rem;
@@ -188,13 +358,9 @@
         box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
     }
 
-    .form-group input::placeholder {
-        color: #6c757d;
-    }
+    .form-group input::placeholder { color: #6c757d; }
 
-    .input-error {
-        border-color: #dc3545 !important;
-    }
+    .input-error { border-color: #dc3545 !important; }
 
     .error-message {
         color: #dc3545;
@@ -202,10 +368,7 @@
         min-height: 1em;
     }
 
-    .required {
-        color: #dc3545;
-        font-weight: bold;
-    }
+    .required { color: #dc3545; font-weight: bold; }
 
     .champ-obligatoire {
         grid-column: 1 / -1;
@@ -228,9 +391,7 @@
         transition: background 0.15s;
     }
 
-    input[type="submit"]#creer:hover {
-        background: #1d4ed8;
-    }
+    input[type="submit"]#creer:hover { background: #1d4ed8; }
 
     .footer-links {
         margin-top: 1.5rem;
@@ -245,7 +406,6 @@
         text-decoration: none;
     }
 
-    .footer-links a:hover {
-        text-decoration: underline;
-    }
+    .footer-links a:hover { text-decoration: underline; }
+
 </style>

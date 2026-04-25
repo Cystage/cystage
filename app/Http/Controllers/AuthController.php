@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Etudiant;
 use App\Models\Entreprise;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -39,7 +42,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'name' => 'e-'.$validated['prenom'][0].$validated['nom'],
-            'email' => $validated['prenom'].'.'.$validated['nom'].'@etu.test',
+            'email' => $validated['prenom'].'.'.$validated['nom'].'@etu.cyu.fr',
             'password' => Hash::make($validated['password']),
             'role_id' => 3
         ]);
@@ -148,5 +151,41 @@ class AuthController extends Controller
 
         return redirect('/profil')->with('success', 'Profil mis à jour !');
     }
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        $status = Password::sendResetLink($request->only('email'));
+        if ($status === Password::RESET_LINK_SENT) {
+           return back()->with('success', 'Un lien de réinitialisation a été envoyé à votre adresse email.');
+        }
+        return back()->withErrors(['email' => __($status)]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (User $user, string $password) {
+                $user->forceFill(['password' => Hash::make($password)])
+                    ->setRememberToken(Str::random(60));
+                $user->save();
+                event(new PasswordReset($user));
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect('/login')->with('success', 'Mot de passe réinitialisé avec succès !');
+        }
+
+        return back()->withErrors(['email' => __($status)]);
+    }
+
 
 }

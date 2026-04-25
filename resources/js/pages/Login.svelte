@@ -1,97 +1,91 @@
 <script lang="ts">
-    import { useForm } from '@inertiajs/svelte';
-
-    let { showLogin = $bindable() } = $props();
-    function disable_login() {
-        showLogin = !showLogin;
-    }
+    import Header from '@/components/Header.svelte';
+    import AppHead from '@/components/AppHead.svelte';
+    import { useForm, page } from '@inertiajs/svelte';
 
     const form = useForm({ email: '', password: '' });
 
-    function submit(e) {
+    let success = $derived($page.props.flash?.success);
+
+    function submit(e: Event) {
         e.preventDefault();
-        $form.post('/login', {
-            preserveState: true,
-            onSuccess: () => { $form.reset(); showLogin = false; }
-        });
+        $form.post('/login');
     }
 </script>
 
-<div class="overlay">
-    <div class="box">
-        <button class="close" onclick={disable_login}>✕</button>
+<AppHead title="Connexion" />
+<Header />
 
-        <h1 class="titre">
-            <img class="img-profil" src="https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" alt="Logo profil">
+<main>
+    <div class="box">
+        <div class="titre">
+            <img class="img-profil" src="https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" alt="Logo photo profil">
             <span>Connectez-vous</span>
-        </h1>
+        </div>
+
+        {#if success}
+            <div class="alert-success">{success}</div>
+        {/if}
 
         {#if $form.errors.email}
             <span class="erreur">{$form.errors.email}</span>
-        {/if}
-        {#if $form.errors.password}
-            <span class="erreur">{$form.errors.password}</span>
         {/if}
 
         <form onsubmit={submit}>
             <div class="field">
                 <label for="email">E-mail</label>
-                <input bind:value={$form.email} type="email" id="email" placeholder="jean.dupont@gmail.com"/>
+                <input
+                    bind:value={$form.email}
+                    type="email" id="email"
+                    placeholder="jean.dupont@gmail.com"
+                    class:input-error={$form.errors.email}
+                />
             </div>
 
             <div class="field">
                 <label for="password">Mot de passe</label>
-                <input bind:value={$form.password} type="password" id="password" placeholder="••••••••"/>
+                <input
+                    bind:value={$form.password}
+                    type="password" id="password"
+                    placeholder="••••••••"
+                    class:input-error={$form.errors.password}
+                />
             </div>
 
-            <input type="submit" class="button" value="Connexion"/>
+            <input type="submit" class="button" value="Connexion" />
         </form>
 
         <div class="footer-links">
-            <p>Vous n'avez pas de compte ? <a class="btn-secondary" href="/register">Créer un compte</a></p>
-            <p>Mot de passe oublié ? <a class="btn-secondary" href="/reset-password">Réinitialiser le mot de passe</a></p>
+            <p>Mot de passe oublié ? <a href="/forgot-password">Réinitialiser</a></p>
+            <p>Pas de compte ? <a href="/register">Créer un compte</a></p>
         </div>
     </div>
-</div>
+</main>
 
 <style>
-    .overlay {
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.6);
-        z-index: 200;
+    * {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    main {
+        min-height: calc(100vh - 64px);
+        background: #f8fafc;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 2rem 1rem;
     }
 
     .box {
-        position: relative;
         background: #ffffff;
         border-radius: 12px;
-        padding: 2.5rem 2rem 2rem;
+        padding: 2.5rem 2rem;
         width: 380px;
         max-width: 90vw;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .close {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        background: none;
-        border: none;
-        font-size: 1rem;
-        color: #94a3b8;
-        cursor: pointer;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-        transition: background 0.15s;
-    }
-
-    .close:hover {
-        background: #f1f5f9;
-        color: #1e293b;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
     }
 
     .titre {
@@ -105,8 +99,16 @@
         margin-bottom: 1.5rem;
     }
 
-    .img-profil {
-        width: 40px;
+    .img-profil { width: 40px; }
+
+    .alert-success {
+        background: #dcfce7;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
     }
 
     .erreur {
@@ -160,6 +162,8 @@
         box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
+    .input-error { border-color: #dc3545 !important; }
+
     input[type="submit"] {
         width: 100%;
         padding: 0.7rem;
@@ -175,9 +179,7 @@
         margin-top: 0.25rem;
     }
 
-    input[type="submit"]:hover {
-        background: #1d4ed8;
-    }
+    input[type="submit"]:hover { background: #1d4ed8; }
 
     .footer-links {
         margin-top: 1.25rem;
@@ -195,7 +197,5 @@
         font-weight: 600;
     }
 
-    .footer-links a:hover {
-        text-decoration: underline;
-    }
+    .footer-links a:hover { text-decoration: underline; }
 </style>

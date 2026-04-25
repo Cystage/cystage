@@ -23,6 +23,7 @@
                 <a use:inertia class="btn-ghost" href="/postulation">Consulter les postulations</a>
             {/if}
             {#if user.role_id==3 || user.role_id==2}
+            {#if user.role_id==3 || user.role_id==2 || user.role_id==1}
                 <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
             {/if}
             {#if user.role_id==2 || user.role_id==1}
@@ -30,11 +31,10 @@
             {/if}
             {#if user.role_id==1}
                 <a use:inertia class="btn-ghost" href="/register">Créer un compte étudiant</a>
-                <a use:inertia class="btn-ghost" href="/newent">Créer un compte entreprise</a>
             {/if}
             <button class="btn-primary" onclick={logout}>Déconnexion</button>
         {:else}
-            <button class="btn-primary" onclick={() => showLogin = !showLogin}>Connexion</button>
+            <a use:inertia class="btn-primary" href="/login">Connexion</a>
         {/if}
     </div>
 </header>
@@ -71,7 +71,7 @@
         letter-spacing: -0.5px;
     }
 
-    button, .btn-ghost {
+    button, .btn-primary, .btn-secondary, .btn-ghost {
         padding: 0.4rem 1rem;
         border-radius: 8px;
         font-size: 0.875rem;
