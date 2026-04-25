@@ -1,9 +1,9 @@
 ![Svelte](https://img.shields.io/badge/Svelte-FF3E00?style=for-the-badge&logo=svelte&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
-
 ![Taille repo](https://img.shields.io/github/repo-size/BerretMan/cystage)
 
+![Screen](https://github.com/BerretMan/cystage/blob/main/README_image.png?raw=true)
 # Cystage
 
 Le projet consiste à créer une application web permettant de simplifier et de centraliser la recherche de stage pour les étudiants de Cytech. Elle permettra également aux entreprises de diffuser des offres de stage ainsi qu’à l’administration de suivre les dossiers des étudiants.
@@ -39,14 +39,10 @@ Pour lancer le projet, vous aurez besoin de
 - **Composer** 
 
 ## Lancer le projet 
-Pour lancer le **front-end**, il faut executer:
+Pour lancer le site, il faut executer:
 
 ```console
 composer run dev 
 ```
 
-Pour lancer le **back-end**, il faut executer dans le dossier du projet 
 
-```console
-php artisan serve
-```
