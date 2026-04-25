@@ -22,7 +22,6 @@
             {#if user.role_id==2}
                 <a use:inertia class="btn-ghost" href="/postulation">Consulter les postulations</a>
             {/if}
-            {#if user.role_id==3 || user.role_id==2}
             {#if user.role_id==3 || user.role_id==2 || user.role_id==1}
                 <a use:inertia class="btn-ghost" href="/profil">Mon profil</a>
             {/if}
