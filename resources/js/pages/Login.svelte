@@ -179,7 +179,7 @@
         outline: none;
         box-sizing: border-box;
         background: #ffffff;
-        transition: border-color 0.15s;
+        transition: border-color 0.15s, box-shadow 0.15s;
     }
 
     input[type="email"]:focus,
@@ -207,8 +207,16 @@
     }
 
     input[type="submit"]:hover {
+        background: #1d4ed8;
         transform: translateY(-1px);
         box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
+    }
+
+    input[type="submit"]:focus-visible,
+    input[type="email"]:focus-visible,
+    input[type="password"]:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 2px;
     }
 
     .footer-links {

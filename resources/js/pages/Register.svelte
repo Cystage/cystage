@@ -359,7 +359,7 @@
     .form-group input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #d1d5db;
+        border: 1px solid #ced4da;
         border-radius: 10px;
         font-size: 15px;
         font-family: inherit;
@@ -409,8 +409,16 @@
     }
 
     input[type="submit"]#creer:hover {
+        background: #1d4ed8;
         transform: translateY(-1px);
         box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
+    }
+
+    .role-btn:focus-visible,
+    .form-group input:focus-visible,
+    input[type="submit"]#creer:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 2px;
     }
 
     .footer-links {

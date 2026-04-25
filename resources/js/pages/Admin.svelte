@@ -403,30 +403,37 @@
         background: #fee2e2;
         color: #dc2626;
         border: 1px solid #fecaca;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         font-family: inherit;
-        transition: background 0.15s;
+        transition: background 0.15s, transform 0.15s;
     }
 
-    .btn-danger:hover { background: #fecaca; }
+    .btn-danger:hover { background: #fecaca; transform: translateY(-1px); }
 
     .btn-role {
         padding: 0.35rem 0.75rem;
         background: #fef3c7;
         color: #d97706;
         border: 1px solid #fde68a;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         font-family: inherit;
-        transition: background 0.15s;
+        transition: background 0.15s, transform 0.15s;
     }
 
-    .btn-role:hover { background: #fde68a; }
+    .btn-role:hover { background: #fde68a; transform: translateY(-1px); }
+
+    .tab:focus-visible,
+    .btn-danger:focus-visible,
+    .btn-role:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 2px;
+    }
 
     .empty {
         padding: 3rem;

@@ -157,23 +157,32 @@
         font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.15s;
         box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
     }
     .submit:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
+    background: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
     }
     .erreur {
         color: #ef4444;
         font-size: 0.8rem;
     }
-    .drop-area {
-        border: 2px dashed var(--primary-100);
+    .drop-area { 
+        border: 2px dashed #93c5fd;
         border-radius: 10px;
         padding: 24px;
         text-align: center;
-        background: #f8fbff;
-        color: var(--ink-600);
+        background: #eff6ff;
+    }
+
+    .close:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    .submit:focus-visible,
+    .drop-area:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 2px;
     }
 </style>

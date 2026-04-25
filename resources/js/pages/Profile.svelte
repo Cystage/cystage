@@ -296,7 +296,7 @@
     .form-group input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #d1d5db;
+        border: 1px solid #ced4da;
         border-radius: 10px;
         font-size: 15px;
         font-family: inherit;
@@ -334,15 +334,24 @@
         font-family: inherit;
         text-decoration: none;
         display: inline-block;
-        transition: background 0.15s;
+        transition: background 0.15s, transform 0.15s;
     }
 
-    .btn-edit   { background: linear-gradient(135deg, var(--primary-600), var(--primary-700)); color: white; }
-    .btn-edit:hover   { transform: translateY(-1px); }
+    .btn-edit   { background: #2563eb; color: white; }
+    .btn-edit:hover   { background: #1d4ed8; transform: translateY(-1px); }
     .btn-save   { background: #16a34a; color: white; }
-    .btn-save:hover   { background: #15803d; }
+    .btn-save:hover   { background: #15803d; transform: translateY(-1px); }
     .btn-cancel { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
-    .btn-cancel:hover { background: #e2e8f0; }
+    .btn-cancel:hover { background: #e2e8f0; transform: translateY(-1px); }
+
+    .btn-edit:focus-visible,
+    .btn-save:focus-visible,
+    .btn-cancel:focus-visible,
+    .tab:focus-visible,
+    .form-group input:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 2px;
+    }
 
     .profile-header {
         display: flex;
