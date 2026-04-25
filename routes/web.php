@@ -113,7 +113,6 @@ Route::redirect('/progil', '/profil');
 Route::get('/register', fn() => inertia('Register'))->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-Route::get('/newent', fn() => inertia('NewEnt'))->name('newent');
 Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
