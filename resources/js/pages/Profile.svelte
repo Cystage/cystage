@@ -41,23 +41,29 @@
         });
     }
 
-    let fields = $derived(profile?.type == '3' ? [
-        { label: 'Nom',              key: 'nom',          value: profile?.nom },
-        { label: 'Prénom',           key: 'prenom',       value: profile?.prenom },
-        { label: 'Email',            key: null,           value: profile?.email,        full: true },
-        { label: 'Numéro étudiant',  key: 'num_etudiant', value: profile?.num_etudiant },
-        { label: 'Identifiant',      key: null,           value: profile?.identifiant },
-    ] : [
-        { label: 'Appellation',  key: 'nom',         value: profile?.nom,         full: true },
-        { label: 'Email',        key: null,           value: profile?.email,        full: true },
-        { label: 'Identifiant',  key: null,           value: profile?.identifiant },
-        { label: 'SIRET',        key: 'siret',        value: profile?.siret },
-        { label: 'Adresse',      key: 'adresse',      value: profile?.adresse,      full: true },
-        { label: 'Code postal',  key: 'code_postal',  value: profile?.code_postal },
-        { label: 'Ville',        key: 'ville',        value: profile?.ville },
-        { label: 'Pays',         key: 'pays',         value: profile?.pays },
-        { label: 'Téléphone',    key: 'num_tel',      value: profile?.num_tel },
-    ]);
+    let fields = $derived(
+        profile?.type == '1' ? [
+            { label: 'Identifiant', key: null, value: profile?.nom,   full: true },
+            { label: 'Email',       key: null, value: profile?.email, full: true },
+        ] :
+        profile?.type == '3' ? [
+            { label: 'Nom',              key: 'nom',          value: profile?.nom },
+            { label: 'Prénom',           key: 'prenom',       value: profile?.prenom },
+            { label: 'Email',            key: null,           value: profile?.email,        full: true },
+            { label: 'Numéro étudiant',  key: 'num_etudiant', value: profile?.num_etudiant },
+            { label: 'Identifiant',      key: null,           value: profile?.identifiant },
+        ] : [
+            { label: 'Appellation', key: 'nom',        value: profile?.nom,        full: true },
+            { label: 'Email',       key: null,          value: profile?.email,       full: true },
+            { label: 'Identifiant', key: null,          value: profile?.identifiant },
+            { label: 'SIRET',       key: 'siret',       value: profile?.siret },
+            { label: 'Adresse',     key: 'adresse',     value: profile?.adresse,     full: true },
+            { label: 'Code postal', key: 'code_postal', value: profile?.code_postal },
+            { label: 'Ville',       key: 'ville',       value: profile?.ville },
+            { label: 'Pays',        key: 'pays',        value: profile?.pays },
+            { label: 'Téléphone',   key: 'num_tel',     value: profile?.num_tel },
+        ]
+    );
     
     function getFullName() {
         const prenom = profile?.prenom?.trim() ?? '';

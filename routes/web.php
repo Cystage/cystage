@@ -20,6 +20,7 @@ use App\Models\Domaine;
 use App\Models\Role;
 use App\Models\Postulation;
 use Illuminate\Http\Request;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function (Request $request) {
     if ($request->user()) {
@@ -114,6 +115,17 @@ Route::get('/profil', function (Request $request) {
             ],
         ]);
     }
+    if ($user->role_id == 1) {
+        return Inertia::render('Profile', [
+            'profile' => [
+                'nom'        => $user->name,
+                'prenom'     => null,
+                'email'      => $user->email,
+                'identifiant'=> $user->name,
+                'type'       => $user->role_id,
+            ],
+        ]);
+    }
 })->middleware('auth')->name('profile');
 
 Route::redirect('/progil', '/profil');
@@ -136,3 +148,10 @@ Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('passwor
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
 Route::get('/reset-password/{token}', fn($token) => inertia('ResetPassword', ['token' => $token]))->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin');
+Route::delete('/admin/user/{id}', [AdminController::class, 'deleteUser'])->middleware('auth')->name('admin.delete');
+Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->middleware('auth')->name('admin.role');
+
+Route::delete('/admin/offre/{id}', [AdminController::class, 'deleteOffre'])->middleware('auth')->name('admin.offre.delete');
+Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->middleware('auth')->name('admin.role');
