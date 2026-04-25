@@ -39,7 +39,11 @@ Pour lancer le projet, vous aurez besoin de
 - **Composer** 
 
 ## Lancer le projet 
+<<<<<<< HEAD
 Pour lancer le **front-end**, il faut executer.
+=======
+Pour lancer le **front-end**, il faut executer:
+>>>>>>> 8f55180a704c043dfefc77ee95b7f3063183cbfb
 
 ```console
 composer run dev 

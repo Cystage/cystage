@@ -8,11 +8,18 @@
  import Login from './Login.svelte'
  import logo from './img/logo.png'
 
+<<<<<<< HEAD
  let {entreprises = $bindable(), offres, competences = $bindable(), domaines = $bindable(), links_offres_competences, links_offres_domaines } = $props()
 
 let showModal = $state(false)
  
  let showLogin = $state(false)
+=======
+    import logo from './img/logo.png';
+    import Unconnect from './Unconnect.svelte';
+
+    let { entreprises=$bindable(), offres, competences=$bindable(), domaines=$bindable(), links_offres_competences, links_offres_domaines, etudiant=$bindable() }= $props();
+>>>>>>> 8f55180a704c043dfefc77ee95b7f3063183cbfb
 
 
  function recupDomaines(offre, liens, listeDomaines){
@@ -95,9 +102,23 @@ let showModal = $state(false)
     <div class="zoneLogo">
      <img src={logo} alt="Logo CyStage" class="logoHero">
     </div>
+<<<<<<< HEAD
 
     <div class="petitBadge">
      Plateforme de gestion de stages
+=======
+    {#if user}
+    <div class="offres-list">
+        {#if user.role_id == 2}
+            {#each offres as o}
+                <OffreDeStage offre={o} entreprise={entreprises} doms={getdoms(o,links_offres_domaines,domaines)} skills={getskills(o,links_offres_competences,competences)}/>
+            {/each}
+        {:else}
+            {#each offres as o}
+                <OffreDeStage  etudiant={etudiant} offre={o} entreprise={getent(o,entreprises)} doms={getdoms(o,links_offres_domaines,domaines)} skills={getskills(o,links_offres_competences,competences)}/>
+            {/each}
+        {/if}
+>>>>>>> 8f55180a704c043dfefc77ee95b7f3063183cbfb
     </div>
 
     <h1>
@@ -517,8 +538,16 @@ let showModal = $state(false)
  {/if}
 </main>
 
+<<<<<<< HEAD
 
 
+=======
+<center>
+    {#if !user}
+        <Unconnect/>
+    {/if}
+</center>
+>>>>>>> 8f55180a704c043dfefc77ee95b7f3063183cbfb
 
 {#if showModal}
 

@@ -4,7 +4,7 @@
     import ModalPoste from "./ModalPoste.svelte";
     import { createInertiaApp,page } from '@inertiajs/svelte';
 
-    let { offre = $bindable(), entreprise = $bindable(), doms , skills }= $props();
+    let { offre = $bindable(), entreprise = $bindable(), doms , skills, etudiant = $bindable()}= $props();
 //'user_id','nom','siret','adresse','code_postal','ville','pays','num_tel'
 //'nom','ent_id','nb_week','week_hour','paye_hour','teletrav','poste_desc','profil_desc'
     let showModalPostuler = $state(false);
@@ -52,7 +52,7 @@
             <input type="submit" class="button" value="Postuler" onclick={modalPostuler}/>
 
             {#if showModalPostuler}
-                <ModalPoste bind:showModalPostuler={showModalPostuler} offre={offre}/>
+                <ModalPoste etudiant={etudiant} bind:showModalPostuler={showModalPostuler} offre={offre}/>
             {/if}
         {/if}
 

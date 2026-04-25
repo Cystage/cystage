@@ -8,6 +8,7 @@ use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\DomaineController;
 use App\Http\Controllers\Offre_CompetenceController;
 use App\Http\Controllers\Offre_DomaineController;
+use App\Http\Controllers\PostulationController;
 use Inertia\Inertia;
 use App\Models\Offre_Competence;
 use App\Models\Offre_Domaine;
@@ -17,11 +18,13 @@ use App\Models\Competence;
 use App\Models\Etudiant;
 use App\Models\Domaine;
 use App\Models\Role;
+use App\Models\Postulation;
 use Illuminate\Http\Request;
 
 Route::get('/', function (Request $request) {
     if ($request->user()) {
         $user = $request->user();
+        $etu = Etudiant::where('user_id',$user->id)->first();
         if($user->role_id==3){
             return Inertia::render('Welcome', [
                 'offres' => Offre::latest()->get(),
@@ -30,7 +33,8 @@ Route::get('/', function (Request $request) {
                 'links_offres_competences' => Offre_Competence::latest()->get(),
                 'links_offres_domaines' => Offre_Domaine::latest()->get(),
                 'entreprises' => Entreprise::latest()->get(),
-                'etudiant' => Etudiant::where('user_id',$user->id)->get(),
+                'etudiant' => $etu,
+                'postulations' => Postulation::where('etu_id',$etu->pluck('id'))->get(),
             ]);
         }
         if($user->role_id==2){
@@ -44,6 +48,7 @@ Route::get('/', function (Request $request) {
                 'domaines' => Domaine::latest()->get(),
                 'links_offres_competences' => Offre_Competence::whereIn('offre_id', $offreIds)->latest()->get(),
                 'links_offres_domaines' => Offre_Domaine::whereIn('offre_id', $offreIds)->latest()->get(),
+                'postulations' => Postulation::whereIn('offre_id', $offreIds)->latest()->get(),
             ]);
         }
         if($user->role_id==1){
@@ -54,6 +59,7 @@ Route::get('/', function (Request $request) {
                 'links_offres_competences' => Offre_Competence::latest()->get(),
                 'links_offres_domaines' => Offre_Domaine::latest()->get(),
                 'entreprises' => Entreprise::latest()->get(),
+                'postulations' => Postulation::latest()->get(),
             ]);
         }
     }else{
@@ -61,6 +67,8 @@ Route::get('/', function (Request $request) {
         ]);
     }
 })->name('home');
+
+Route::post('/postulation', [PostulationController::class, 'poste'])->name('links.postulation');
 
 Route::post('/offre', [OffreController::class, 'poste'])->name('links.offre');
 
@@ -118,3 +126,6 @@ Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::get('/postulation', fn() => inertia('EntreprisePostulation'))->name('postulation');
+Route::post('/postulation', [PostulationController::class, 'poste'])->name('postulation');

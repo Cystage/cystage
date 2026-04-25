@@ -1,18 +1,21 @@
 <script lang="ts">
     import { useForm } from '@inertiajs/svelte';
-    let { showModalPostuler = $bindable(), offre} = $props();
+    let { showModalPostuler = $bindable(), offre = $bindable(), etudiant = $bindable()} = $props();
     function disable_modal() {
         showModalPostuler=!showModalPostuler;
         console.log(showModalPostuler);
     }
-    //'nom','entreprise','adresse','description'
-    const form = useForm({ nom: '',entreprise: '', adresse: '',description:''});
-    function submit(e) {
+   
+
+    const form = useForm({ offre_id: offre.id,etu_id: etudiant.id, state:1 ,motiv:'',path:''});
+
+    function submit(e:Event) {
         e.preventDefault();
-        $form.post('/offre', {
+        $form.post('/postulation', {
             preserveState: true,
             onSuccess: () => { $form.reset(); showModalPostuler = false; }
         });
+
     }
 </script>
 
@@ -31,15 +34,17 @@
                 <textarea 
                     name="" 
                     id=""
+                    bind:value={$form.motiv}
                     rows=10>
                 </textarea>
             </div>
 
             <div class="field">
                 <label for="">Déposer votre cv ici</label>
-                    <div class="drop-area" ondragover={(e) => e.preventDefault()} ondrop={(e) => { e.preventDefault(); $form.fichier = e.dataTransfer.files[0]; }}>
-                        {#if $form.fichier}
-                            Fichier prêt : {$form.fichier.name}
+                    <div class="drop-area" ondragover={(e) => e.preventDefault()} ondrop={(e) => { e.preventDefault(); $form.path = e.dataTransfer.files[0].name; }}>
+                        
+                        {#if $form.path}
+                            Fichier prêt : {$form.path}
                         {:else}
                             Déposez votre fichier ici
                         {/if}
