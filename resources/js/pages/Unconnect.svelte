@@ -1,6 +1,8 @@
 <script lang="ts">
     import AppHead from '@/components/AppHead.svelte';
     import logo from './img/logo.png';
+
+    let showModal = false;
 </script>
 
 <AppHead title="Bienvenu">
