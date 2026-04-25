@@ -113,9 +113,16 @@ Route::redirect('/progil', '/profil');
 Route::get('/register', fn() => inertia('Register'))->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
+Route::get('/login', fn() => inertia('Login'))->name('login');
+
 Route::post('/newent', [AuthController::class, 'newent'])->name('newent.post');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::patch('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
+
+Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+Route::get('/reset-password/{token}', fn($token) => inertia('ResetPassword', ['token' => $token]))->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
