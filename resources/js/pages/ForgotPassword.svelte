@@ -46,26 +46,7 @@
 </main>
 
 <style>
-    * { box-sizing: border-box; }
 
-    :global(body) {
-        --primary-700: #1d4ed8;
-        --primary-600: #2563eb;
-        --border-200: #e2e8f0;
-        --ink-900: #0f172a;
-        --ink-600: #475569;
-        margin: 0;
-        font-family: "Plus Jakarta Sans", sans-serif;
-        background: linear-gradient(180deg, #f3f8ff 0%, #ffffff 30%, #f8fafc 100%);
-    }
-
-    main {
-        min-height: calc(100vh - 64px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 1rem;
-    }
 
     .box {
         background: #fff;

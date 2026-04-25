@@ -6,7 +6,7 @@
         children?: Snippet;
         type?: "button" | "submit" | "reset";
         href?: string | null;
-        variant?: "btnBleu" | "btnBlanc" | "btnGhost" | "btn-primary";
+        variant?: "btnBleu" | "btnBlanc" | "btn-ghost" | "btnBleu";
         size?: "large" | "small"; 
         onclick?: (e: MouseEvent) => void;
     }
@@ -17,7 +17,7 @@
         href = null,
         variant, 
         size="small",
-        onclick,
+        onclick = undefined,
     } = $props();
 </script>
 

@@ -170,7 +170,6 @@
 </main>
 
 <style>
-    * { box-sizing: border-box; }
 
     .greeting {
         margin: 0 0 16px;

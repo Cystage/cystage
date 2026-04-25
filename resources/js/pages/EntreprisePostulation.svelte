@@ -18,7 +18,7 @@
 
 <AppHead title="Postulations"/>
 
-<Header/>
+
 <main class="page-container">
     <section class="heading">
         <h1>Vous avez <b><span>{postulations.length} nouvelles</span> candidatures</b> !</h1>
@@ -40,17 +40,6 @@
 </main>
 
 <style>
-    :global(body) {
-        --primary-700: #1d4ed8;
-        --primary-600: #2563eb;
-        --primary-100: #dbeafe;
-        --ink-900: #0f172a;
-        --ink-600: #475569;
-        --border-200: #e2e8f0;
-        margin: 0;
-        font-family: "Plus Jakarta Sans", sans-serif;
-        background: linear-gradient(180deg, #f3f8ff 0%, #ffffff 30%, #f8fafc 100%);
-    }
 
     .page-container {
         padding: 2rem 1rem 3rem;

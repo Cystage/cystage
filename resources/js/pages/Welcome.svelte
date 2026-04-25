@@ -139,14 +139,7 @@
 
 <style>
 
- * {
-  box-sizing: border-box;
- }
 
- main {
-  width: 100%;
-  overflow: hidden;
- }
 
  .hero {
   position: relative;

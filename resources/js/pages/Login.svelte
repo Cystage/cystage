@@ -66,16 +66,7 @@
 </main>
 
 <style>
-    * { box-sizing: border-box; }
 
-
-    main {
-        min-height: calc(100vh - 64px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 1rem;
-    }
 
     .box {
         background: #fff;
