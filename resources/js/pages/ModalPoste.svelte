@@ -146,14 +146,6 @@
                         Envoyer ma candidature →
                     {/if}
                </Button>
-                <!--
-                <button type="submit" class="submit" disabled={$form.processing}>
-                    {#if $form.processing}
-                        <span class="spinner"></span> Envoi en cours...
-                    {:else}
-                        Envoyer ma candidature →
-                    {/if}
-                </button> -->
             </form>
         {/if}
     </div>

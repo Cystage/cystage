@@ -1,6 +1,7 @@
 <script lang="ts">
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
+    import Button from '@/components/Button.svelte';
     import { useForm, page } from '@inertiajs/svelte';
 
     let { showLogin = $bindable() } = $props();
@@ -54,8 +55,7 @@
                     class:input-error={$form.errors.password}
                 />
             </div>
-
-            <input type="submit" class="button" value="Connexion" />
+            <Button type="submit" variant="btnBleu">Connexion</Button>   
         </form>
 
         <div class="footer-links">
@@ -169,29 +169,6 @@
 
     .input-error { border-color: #dc3545 !important; }
 
-    input[type="submit"] {
-        width: 100%;
-        padding: 0.78rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        margin-top: 0.25rem;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-    }
-
-    input[type="submit"]:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-        box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
-    }
-
-    input[type="submit"]:focus-visible,
     input[type="email"]:focus-visible,
     input[type="password"]:focus-visible {
         outline: 3px solid rgba(37, 99, 235, 0.35);

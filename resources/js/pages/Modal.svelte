@@ -94,7 +94,7 @@
                 <textarea bind:value={$form.profil_desc} id="profil_desc" rows="3" placeholder="Décrivez le profil..."></textarea>
                 {#if $form.errors.profil_desc}<span class="erreur">{$form.errors.profil_desc}</span>{/if}
             </div>
-            <Button type="sumbit" variant="btnBleu">Publier l'offre</Button>
+            <Button type="submit" variant="btnBleu">Publier l'offre</Button>
         </form>
     </div>
 </div>
@@ -191,30 +191,10 @@
         resize: vertical;
     }
 
-    .submit {
-        margin-top: 0.5rem;
-        padding: 0.75rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.15s;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-    }
-
-    .submit:hover {
-    background: #1d4ed8;
-    transform: translateY(-1px);
-    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
-    }
 
     .close:focus-visible,
     input:focus-visible,
-    textarea:focus-visible,
-    .submit:focus-visible {
+    textarea:focus-visible {
         outline: 3px solid rgba(37, 99, 235, 0.35);
         outline-offset: 2px;
     }

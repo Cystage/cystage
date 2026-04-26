@@ -3,6 +3,7 @@
     import { useForm } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import FormInput from '@/components/FormInput.svelte';
+    import Button from '@/components/Button.svelte';
 
     let role: 'etudiant' | 'entreprise' = $state('etudiant');
 
@@ -120,7 +121,9 @@
                 <FormInput id="password_confirmation" label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password_confirmation} error={errors.password_confirmation || $formEtudiant.errors.password_confirmation}></FormInput>
 
                 <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
-                <input type="submit" id="creer" value="Créer le compte" />
+                <div class="subm">
+                    <Button type="submit" variant="btnBleu" isFull>Créer le compte</Button>
+                </div>
             </form>
         {/if}
 
@@ -137,7 +140,10 @@
                 <FormInput id="password_confirmation" isFull label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEntreprise.password_confirmation} error={errors.password_confirmation || $formEntreprise.errors.password_confirmation}></FormInput>
 
                 <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
-                <input type="submit" id="creer" value="Créer le compte" />
+                <div class="subm">
+                    <Button type="submit" variant="btnBleu" isFull>Créer le compte</Button>
+
+                </div>
             </form>
         {/if}
 
@@ -230,35 +236,6 @@
         margin-top: -0.25rem;
     }
 
-    input[type="submit"]#creer {
-        grid-column: 1 / -1;
-        width: 100%;
-        padding: 0.85rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-    }
-
-    input[type="submit"]#creer:hover {
-        background: linear-gradient(135deg, var(--primary-700), #1d4ed8);
-        transform: translateY(-1px);
-        box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
-    }
-
-    .role-btn:focus-visible,
-    .form-group input:focus-visible,
-    input[type="submit"]#creer:focus-visible {
-        outline: 3px solid rgba(37, 99, 235, 0.35);
-        outline-offset: 2px;
-    }
-
     .footer-links {
         margin-top: 1.5rem;
         text-align: center;
@@ -284,6 +261,11 @@
             grid-template-columns: 1fr;
             gap: 14px;
         }
+    }
+
+    .subm {
+        grid-column: 1 / -1; 
+        width: 100%;
     }
 
 </style>

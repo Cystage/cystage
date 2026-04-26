@@ -2,6 +2,7 @@
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { useForm } from '@inertiajs/svelte';
+    import Button from '@/components/Button.svelte';
 
     let { token }: { token: string } = $props();
 
@@ -56,7 +57,6 @@
                 />
                 <span class="error-message">{$form.errors.password_confirmation || ''}</span>
             </div>
-
             <input type="submit" id="creer" value="Réinitialiser le mot de passe" />
         </form>
     </div>

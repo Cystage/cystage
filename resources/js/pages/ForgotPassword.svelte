@@ -1,7 +1,11 @@
 <script lang="ts">
+	import FormInput from '@/components/FormInput.svelte';
+    import Button from '@/components/Button.svelte'
+
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
     import { useForm, page } from '@inertiajs/svelte';
+
 
     const form = useForm({ email: '' });
 
@@ -26,17 +30,8 @@
         {/if}
 
         <form onsubmit={submit}>
-            <div class="form-group form-group-full">
-                <label for="email">Email <span class="required">*</span></label>
-                <input
-                    type="email" id="email" placeholder="jean.dupont@gmail.com"
-                    bind:value={$form.email}
-                    class:input-error={$form.errors.email}
-                />
-                <span class="error-message">{$form.errors.email || ''}</span>
-            </div>
-
-            <input type="submit" id="creer" value="Envoyer le lien" />
+            <FormInput id="email" isFull label="Email" placeholder="Email " required bind:value={$form.email} error={$form.errors.email}></FormInput>
+            <Button type="submit" variant="btnBleu">Envoyer le lien</Button>
         </form>
 
         <div class="footer-links">
@@ -90,50 +85,6 @@
         gap: 18px;
     }
 
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group.form-group-full { grid-column: 1 / -1; }
-
-    label { font-size: 0.875rem; font-weight: 600; color: #374151; }
-
-    .form-group input {
-        width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ced4da;
-        border-radius: 10px;
-        font-size: 15px;
-        font-family: inherit;
-        outline: none;
-        transition: border-color 0.15s;
-    }
-
-    .form-group input:focus {
-        border-color: var(--primary-600);
-        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
-    }
-
-    .input-error { border-color: #dc3545 !important; }
-    .error-message { color: #dc3545; font-size: 13px; min-height: 1em; }
-    .required { color: #dc3545; font-weight: bold; }
-
-    input[type="submit"]#creer {
-        width: 100%;
-        padding: 0.82rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        font-family: inherit;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
-    }
-
-    input[type="submit"]#creer:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
-    }
 
     .footer-links {
         margin-top: 1.5rem;

@@ -7,8 +7,9 @@
         type?: "button" | "submit" | "reset";
         href?: string | null;
         variant?: "btnBleu" | "btnBlanc" | "btn-ghost" | "btnBleu" | "btnGreen" | "btnGrey";
-        disabled?: "true" | "false";
+        disabled?: boolean;
         onclick?: (e: MouseEvent) => void;
+        isFull?: boolean;
     }
 
     let {
@@ -17,16 +18,17 @@
         href = null,
         variant = "btnBleu", 
         onclick = undefined,
-        disabled = false
+        disabled = false,
+        isFull =false
     } = $props();
 </script>
 
     {#if href}
-        <a href="{href}" use:inertia class="btn {variant}">
+        <a href="{href}" use:inertia class="btn {variant}" class:full={isFull}>
             {@render children?.()}
         </a>
     {:else}
-        <button {type} {onclick} class="btn {variant}" {disabled}>
+        <button {type} {onclick} class="btn {variant}" class:full={isFull} {disabled}>
             {@render children?.()}
         </button>
     {/if}
@@ -118,5 +120,10 @@
         .hero {
             width: 100%;
         } 
+    }
+
+    .full {
+        width: 100%;
+        display: flex;
     }
 </style>
