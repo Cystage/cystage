@@ -228,9 +228,6 @@
   </section>
 </main>
 
-<footer>
- <p>© CyStage - Tous droits réservés 2026</p>
-</footer>
 
 <style>
 
