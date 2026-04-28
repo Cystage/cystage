@@ -14,6 +14,15 @@
             });
         }
     }
+
+
+    function accepter(id: number) {
+        if (confirm("Etes vous sûr de vouloir accepter ce candidat?")) {
+            router.post(`/accepte/${id}`, {
+                preserveScroll: true,
+            });
+        }
+    }
 </script>
 
 <AppHead title="Postulations"/>
@@ -32,8 +41,13 @@
             <br>
             <h3>Voir cv : <span style="color:blue"><a href="/storage/{p.path}">ici</a></span></h3>
             <center>
-              <button class="close" onclick={() => console.log(p)}><p>✅</p></button>
-                <button class="close" onclick={() => supprimer(p.id)}><p>❌</p></button>
+                
+                {#if p.state==1}
+                    <button class="close" onclick={() => {accepter(p.id)}}><p>✅</p></button>
+                    <button class="close" onclick={() => supprimer(p.id)}><p>❌</p></button>
+                {:else}
+                    <p>En attente de la confirmation de l'étudiant...</p>
+                {/if}
             </center>
         </div>
     {/each}

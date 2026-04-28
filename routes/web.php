@@ -184,6 +184,8 @@ Route::delete('/postulation/{id}', function ($id) {
 })->middleware('auth');
 
 
+Route::post('/accepte/{id}', [PostulationController::class, 'accepte'])->name('accepte');
+
 Route::post('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
 
 Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('password.request');

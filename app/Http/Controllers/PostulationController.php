@@ -34,4 +34,13 @@ class PostulationController extends Controller
 
         return back()->with('success','Code partagé avec succès');
     }
+
+    public function accepte(int $id) {
+        $postulation = \App\Models\Postulation::findOrFail($id);
+        $postulation->update([
+                'state' => 2,
+            ]);
+
+        return back()->with('success','Code partagé avec succès');
+    }
 }
