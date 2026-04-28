@@ -3,8 +3,8 @@
     import AppHead from '@/components/AppHead.svelte';
     import { useForm } from '@inertiajs/svelte';
     import { router } from '@inertiajs/svelte';
-    let { postulations=[] } = $props();
-    
+    let { postulations=[], profil} = $props();
+    let nomOffres = $state({});
     function supprimer(id: number) {
         if (confirm("Etes vous sûr de voulour refuser ce candidat?")) {
             router.delete(`/postulation/${id}`, {
@@ -23,6 +23,14 @@
             });
         }
     }
+    
+    async function getNom(node: HTMLElement, id: number) {
+        if (nomOffres[id]) return;
+        const resp = await fetch(`/getNomOffre/${id}`);
+        const data = await resp.json();
+        nomOffres[id] = data.nom;
+    }
+
 </script>
 
 <AppHead title="Postulations"/>
@@ -30,24 +38,45 @@
 
 <main class="page-container">
     <section class="heading">
-        <h1>Vous avez <b><span>{postulations.length} nouvelles</span> candidatures</b> !</h1>
+        {#if $profil?.type ==2}
+            <h1>Vous avez <b><span>{postulations.length} nouvelles</span> candidatures</b> !</h1>
+        {:else}
+            <h1>Vous avez fait <b><span>{postulations.length} postulations</span></b> !</h1>
+        {/if}
         <p>Consultez-les maintenant.</p>
     </section>
     {#each postulations as p}
-        <div class="main">
-            <h2>{p?.etudiant?.nom || "Nom de l'étudiant"} {p?.etudiant?.prenom || ""}</h2>
+        <div class="main" use:getNom={p.offre_id}>
+            {#if $profil?.type ==2}
+                <h2>{p?.etudiant?.nom || "Nom de l'étudiant"} {p?.etudiant?.prenom || ""}</h2>
+            {:else}
+                <h2>{nomOffres[p.offre_id]}</h2>
+            {/if}
             <hr><br>
             <h3>{p?.motiv || "Motivation de l'étudiant"}</h3>
             <br>
             <h3>Voir cv : <span style="color:blue"><a href="/storage/{p.path}">ici</a></span></h3>
             <center>
                 
-                {#if p.state==1}
-                    <button class="close" onclick={() => {accepter(p.id)}}><p>✅</p></button>
-                    <button class="close" onclick={() => supprimer(p.id)}><p>❌</p></button>
+                {#if $profil?.type ==2}
+                    {#if p.state==1}
+                        <button class="close" onclick={() => {accepter(p.id)}}><p>✅</p></button>
+                        <button class="close" onclick={() => supprimer(p.id)}><p>❌</p></button>
+                    {:else}
+                        <p>En attente de la confirmation de l'étudiant...</p>
+                    {/if}
+
                 {:else}
-                    <p>En attente de la confirmation de l'étudiant...</p>
+                    {#if p.state==1}
+                        <p>En attente de validation de l'entreprise</p>
+                    {:else}
+                        <p>L'entreprise a validé</p>
+                        <p>Voulez vous acceptez?</p>
+                            <button class="close" ><p>✅</p></button>
+                            <button class="close"><p>❌</p></button>
+                    {/if}
                 {/if}
+
             </center>
         </div>
     {/each}

@@ -87,6 +87,11 @@ Route::get('/profil', function (Request $request) {
     $user = $request->user();
     if($user->role_id==3){
         $etud = Etudiant::where('user_id',$user->id)->first();
+        $postulations = Postulation::whereIn('etu_id',[$etud->id])
+            ->with(['etudiant', 'offre']) 
+            ->latest()
+            ->get();
+        
         return Inertia::render('Profile', [
             'profile' => [
                 'nom' => $etud->nom,
@@ -96,6 +101,7 @@ Route::get('/profil', function (Request $request) {
                 'identifiant' => $user->name,
                 'type'=> $user->role_id,
             ],
+            'postulations' => $postulations,
         ]);
     }
     if($user->role_id==2){
@@ -199,3 +205,11 @@ Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->m
 
 Route::delete('/admin/offre/{id}', [AdminController::class, 'deleteOffre'])->middleware('auth')->name('admin.offre.delete');
 Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->middleware('auth')->name('admin.role');
+
+Route::get('/getNomOffre/{id}',function ($id) {
+    $offre = Offre::find($id);
+    
+    return response()->json([
+        'nom' => $offre->nom
+    ]);
+})->middleware('auth');
