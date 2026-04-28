@@ -6,7 +6,7 @@
         children?: Snippet;
         type?: "button" | "submit" | "reset";
         href?: string | null;
-        variant?: "btnBleu" | "btnBlanc" | "btn-ghost" | "btnBleu" | "btnGreen" | "btnGrey";
+        variant?: "btnBleu" | "btnBlanc" | "btn-ghost" | "btnGreen" | "btnGrey";
         disabled?: boolean;
         onclick?: (e: MouseEvent) => void;
         isFull?: boolean;

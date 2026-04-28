@@ -22,9 +22,6 @@
     <div class="header-right">
         {#if user}
         
-            {#if user.role_id==2}
-                <Button variant="btn-ghost" href="/postulation">Consulter les postulations</Button>
-            {/if}
             {#if user}
                 <Button variant="btn-ghost" href="/profil">Mon profil</Button>
             {/if}

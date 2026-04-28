@@ -20,11 +20,10 @@
         logo?: string,
         type?: string,
     };
-    let { profile }: { profile: Profile } = $props();
+    let { profile, postulations =[]}: { profile: Profile } = $props();
 
     let editing = $state(false);
     let activeTab = $state('profil');
-
     const form = useForm({
         nom:          profile?.nom          ?? '',
         prenom:       profile?.prenom       ?? '',
@@ -187,7 +186,7 @@
         {/if}
 
         {#if activeTab === 'candidatures'}
-            <EntreprisePostulation />
+            <EntreprisePostulation {postulations} />
         {/if}
     </div>
 

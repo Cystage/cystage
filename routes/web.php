@@ -100,6 +100,12 @@ Route::get('/profil', function (Request $request) {
     }
     if($user->role_id==2){
         $ent = Entreprise::where('user_id',$user->id)->first();
+        $offreIds = $ent->offres->pluck('id');
+        $postulations = Postulation::whereIn('offre_id',$offreIds)
+        ->with(['etudiant', 'offre']) 
+        ->latest()
+        ->get();
+
         return Inertia::render('Profile', [
             'profile' => [
                 'nom' => $ent->nom,
@@ -114,6 +120,7 @@ Route::get('/profil', function (Request $request) {
                 'type'=> $user->role_id,
                 'logo' => $ent->logo,
             ],
+            'postulations' => $postulations,
         ]);
     }
     if ($user->role_id == 1) {
