@@ -65,6 +65,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'nom'         => 'required|string|max:255',
             'siret'       => 'required|string|max:255',
+            'email'       => 'required|email|unique:users,email',
             'adresse'     => 'required|string|max:255',
             'code_postal' => 'required|string|max:255',
             'ville'       => 'required|string|max:255',
@@ -78,7 +79,7 @@ class AuthController extends Controller
 
         $user = User::create([
             'name'     => 'ent-' . $validated['nom'],
-            'email'    => $validated['nom'] . '@ent.test',
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role_id'  => 2,
         ]);
