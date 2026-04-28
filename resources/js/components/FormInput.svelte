@@ -15,6 +15,7 @@
         placeholder="",
         required=false,
         isFull=false
+        
     } = $props();
 </script>
     <div class="form-group {isFull ? 'form-group-full' : ''}">
