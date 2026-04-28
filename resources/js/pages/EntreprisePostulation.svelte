@@ -33,7 +33,7 @@
             <h3>Voir cv : <span style="color:blue"><a href="/storage/{p.path}">ici</a></span></h3>
             <center>
               <button class="close" onclick={() => console.log(p)}><p>✅</p></button>
-                <button class="close" onclick={() => supprimer(p.offre_id)}><p>❌</p></button>
+                <button class="close" onclick={() => supprimer(p.id)}><p>❌</p></button>
             </center>
         </div>
     {/each}
