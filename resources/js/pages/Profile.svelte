@@ -186,7 +186,7 @@
         {/if}
 
         {#if activeTab === 'candidatures'}
-            <EntreprisePostulation {postulations} />
+            <EntreprisePostulation {postulations} {profile}/>
         {/if}
     </div>
 

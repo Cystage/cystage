@@ -66,7 +66,7 @@
                 <span class="success-icon">✅</span>
                 <div>
                     <p class="success-title">Candidature en cours d'envoie</p>
-                    <p class="success-sub">Veuillez patienter quelques secondes...</p>
+                    <p class="success-sub attente">Veuillez patienter quelques secondes</p>
                 </div>
             </div>
         {:else}
@@ -141,7 +141,7 @@
                 
                 <Button type="submit" variant="btnBleu" disabled={$form.processing}>
                     {#if $form.processing}
-                        <span class="spinner"></span> Envoi en cours...
+                        <span class="spinner"></span> <p class="attente">Envoi en cours</p>
                     {:else}
                         Envoyer ma candidature →
                     {/if}
@@ -338,5 +338,16 @@
 
     @keyframes spin {
         to { transform: rotate(360deg); }
+    }
+
+    p.attente::after {
+        content:'';
+        animation: dotAnimation 1.5s infinite;
+    }
+    @keyframes dotAnimation {
+        0%  {content: '';}
+        33% {content: ' .';}
+        66% {content: ' ..';}
+        100% {content:' ...';}
     }
 </style>
