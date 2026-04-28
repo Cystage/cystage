@@ -66,7 +66,7 @@
                 <span class="success-icon">✅</span>
                 <div>
                     <p class="success-title">Candidature en cours d'envoie</p>
-                    <p class="success-sub">Veuillez patienter quelques secondes...</p>
+                    <p class="success-sub attente">Veuillez patienter quelques secondes</p>
                 </div>
             </div>
         {:else}
