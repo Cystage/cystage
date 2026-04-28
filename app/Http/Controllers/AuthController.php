@@ -73,9 +73,9 @@ class AuthController extends Controller
             'password'    => 'required|min:8|confirmed',
             'num_tel'     => 'required|digits:10',
         ]);
-
+        
         $domain = explode('@', $validated['nom'] . '.com')[0];
-        $logo = "https://img.logo.dev/{$domain}.com?token=TON_TOKEN_ICI";
+        $logo = "https://img.logo.dev/{$domain}?token=pk_FrA0KHUJRGyvwsX08nZ1ow";
 
         $user = User::create([
             'name'     => 'ent-' . $validated['nom'],

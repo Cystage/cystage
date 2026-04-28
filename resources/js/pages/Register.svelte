@@ -119,7 +119,7 @@
             <form id="creation_compte" onsubmit={submit}>
                 <FormInput id="nom" label="Nom" placeholder="Nom" required bind:value={$formEtudiant.nom} error={errors.nom || $formEtudiant.errors.nom}></FormInput>
                 <FormInput id="prenom" label="Prénom" placeholder="Prénom" required bind:value={$formEtudiant.prenom} error={errors.prenom || $formEtudiant.errors.prenom}></FormInput>
-                <FormInput id="num_etudiant" label="Numéro étudiant" placeholder="06 00 00 00 00" required bind:value={$formEtudiant.num_etudiant} error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}></FormInput>
+                <FormInput id="num_etudiant" label="Numéro étudiant" placeholder="0612345678" required bind:value={$formEtudiant.num_etudiant} error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}></FormInput>
                 <FormInput type="password" id="password" label="Mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password} error={errors.password || $formEtudiant.errors.password}></FormInput>
                 <FormInput type="password" id="password_confirmation" label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password_confirmation} error={errors.password_confirmation || $formEtudiant.errors.password_confirmation}></FormInput>
 
@@ -139,7 +139,7 @@
                 <FormInput id="code_postal" label="Code postal" placeholder="64000" required bind:value={$formEntreprise.code_postal} error={errors.code_postal || $formEntreprise.errors.code_postal}></FormInput>
                 <FormInput id="ville"  label="Ville" placeholder="Pau" required bind:value={$formEntreprise.ville} error={errors.ville || $formEntreprise.errors.ville}></FormInput>
                 <FormInput id="pays"  label="Pays" placeholder="France" required bind:value={$formEntreprise.pays} error={errors.pays || $formEntreprise.errors.pays}></FormInput>
-                <FormInput id="num_tel"  label="Téléphone" placeholder="06 00 00 00 00" required bind:value={$formEntreprise.num_tel} error={errors.num_tel || $formEntreprise.errors.num_tel}></FormInput>
+                <FormInput id="num_tel"  label="Téléphone" placeholder="0612345678" required bind:value={$formEntreprise.num_tel} error={errors.num_tel || $formEntreprise.errors.num_tel}></FormInput>
                 <FormInput type="password" id="password" isFull label="Mot de passe" placeholder="••••••••" required bind:value={$formEntreprise.password} error={errors.password || $formEntreprise.errors.password }></FormInput>
                 <FormInput type="password" id="password_confirmation" isFull label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEntreprise.password_confirmation} error={errors.password_confirmation || $formEntreprise.errors.password_confirmation}></FormInput>
 
