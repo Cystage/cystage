@@ -96,35 +96,54 @@ class AdminController extends Controller
     }
 
     public function deleteOffre(Request $request, $id)
-{
-    if ($request->user()->role_id !== 1) {
-        return redirect('/');
+    {
+        if ($request->user()->role_id !== 1) {
+            return redirect('/');
+        }
+
+        $offre = Offre::findOrFail($id);
+        
+        \App\Models\Offre_Competence::where('offre_id', $id)->delete();
+        \App\Models\Offre_Domaine::where('offre_id', $id)->delete();
+        \App\Models\Postulation::where('offre_id', $id)->delete();
+        
+        $offre->delete();
+
+        return back()->with('success', 'Offre supprimée.');
     }
-
-    $offre = Offre::findOrFail($id);
-    
-    \App\Models\Offre_Competence::where('offre_id', $id)->delete();
-    \App\Models\Offre_Domaine::where('offre_id', $id)->delete();
-    \App\Models\Postulation::where('offre_id', $id)->delete();
-    
-    $offre->delete();
-
-    return back()->with('success', 'Offre supprimée.');
-}
 
     public function deleteUser(Request $request, $id)
     {
         if ($request->user()->role_id !== 1) {
             return redirect('/');
         }
+
         $user = User::findOrFail($id);
-        
-        Etudiant::where('user_id', $id)->delete();
-        Entreprise::where('user_id', $id)->delete();
-        
+
+        if ($user->role_id === 3) {
+            $etu = Etudiant::where('user_id', $id)->first();
+            if ($etu) {
+                \App\Models\Postulation::where('etu_id', $etu->id)->delete();
+                $etu->delete();
+            }
+        }
+
+        if ($user->role_id === 2) {
+            $ent = Entreprise::where('user_id', $id)->first();
+            if ($ent) {
+                $offres = Offre::where('ent_id', $ent->id)->get();
+                foreach ($offres as $offre) {
+                    \App\Models\Offre_Competence::where('offre_id', $offre->id)->delete();
+                    \App\Models\Offre_Domaine::where('offre_id', $offre->id)->delete();
+                    \App\Models\Postulation::where('offre_id', $offre->id)->delete();
+                    $offre->delete();
+                }
+                $ent->delete();
+            }
+        }
+
         $user->delete();
 
         return back()->with('success', 'Utilisateur supprimé.');
     }
-    
 }
