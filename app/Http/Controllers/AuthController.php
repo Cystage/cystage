@@ -40,9 +40,12 @@ class AuthController extends Controller
             'num_etudiant' => 'required|min:8|max:8',
         ]);
 
+        $prenom = strtolower($validated['prenom']);
+        $nom    = strtolower($validated['nom']);
+
         $user = User::create([
-            'name' => 'e-'.$validated['prenom'][0].$validated['nom'],
-            'email' => $validated['prenom'].'.'.$validated['nom'].'@etu.cyu.fr',
+            'name' => 'e-'.$prenom[0].$nom,
+            'email' => $prenom.'.'.$nom.'@etu.cyu.fr',
             'password' => Hash::make($validated['password']),
             'role_id' => 3
         ]);
@@ -74,7 +77,7 @@ class AuthController extends Controller
             'num_tel'     => 'required|digits:10',
         ]);
         
-        $domain = explode('@', $validated['nom'] . '.com')[0];
+        $domain = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $validated['nom'])) . '.com';
         $logo = "https://img.logo.dev/{$domain}?token=pk_FrA0KHUJRGyvwsX08nZ1ow";
 
         $user = User::create([
@@ -127,9 +130,8 @@ class AuthController extends Controller
                 'num_etudiant' => $validated['num_etudiant'],
             ]);
 
-            // Met à jour le name du user aussi
             $user->update([
-                'name' => 'e-' . $validated['prenom'][0] . $validated['nom'],
+                'name' => 'e-' . strtolower($validated['prenom'][0]) . strtolower($validated['nom']),
             ]);
         }
 

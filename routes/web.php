@@ -70,7 +70,7 @@ Route::get('/', function (Request $request) {
 
 Route::post('/postulation', [PostulationController::class, 'poste'])->middleware(['auth', 'role:3'])->name('links.postulation');
 
-Route::post('/offre', [OffreController::class, 'poste'])->middleware(['auth', 'role:2'])->name('links.offre');
+Route::post('/offre', [OffreController::class, 'poste'])->middleware(['auth', 'role:1,2'])->name('links.offre');
 
 Route::post('/domaine', [DomaineController::class, 'poste'])->middleware(['auth', 'role:1'])->name('links.domaine');
 
