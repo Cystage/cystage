@@ -13,10 +13,6 @@ class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->user()->role_id !== 1) {
-            return redirect('/');
-        }
-
         $etudiants = Etudiant::with('user')->get()->map(function ($etu) {
             return [
                 'id'           => $etu->user->id,
@@ -70,10 +66,6 @@ class AdminController extends Controller
 
     public function changeRole(Request $request, $id)
     {
-        if ($request->user()->role_id !== 1) {
-            return redirect('/');
-        }
-
         $request->validate(['role_id' => 'required|integer|in:1,2,3']);
 
         $user = User::findOrFail($id);
@@ -97,10 +89,6 @@ class AdminController extends Controller
 
     public function deleteOffre(Request $request, $id)
     {
-        if ($request->user()->role_id !== 1) {
-            return redirect('/');
-        }
-
         $offre = Offre::findOrFail($id);
         
         \App\Models\Offre_Competence::where('offre_id', $id)->delete();
@@ -114,10 +102,6 @@ class AdminController extends Controller
 
     public function deleteUser(Request $request, $id)
     {
-        if ($request->user()->role_id !== 1) {
-            return redirect('/');
-        }
-
         $user = User::findOrFail($id);
 
         if ($user->role_id === 3) {

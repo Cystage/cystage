@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OffreController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\EntrepriseController;
 use App\Http\Controllers\CompetenceController;
 use App\Http\Controllers\DomaineController;
 use App\Http\Controllers\Offre_CompetenceController;
@@ -69,19 +68,17 @@ Route::get('/', function (Request $request) {
     }
 })->name('home');
 
-Route::post('/postulation', [PostulationController::class, 'poste'])->name('links.postulation');
+Route::post('/postulation', [PostulationController::class, 'poste'])->middleware(['auth', 'role:3'])->name('links.postulation');
 
-Route::post('/offre', [OffreController::class, 'poste'])->name('links.offre');
+Route::post('/offre', [OffreController::class, 'poste'])->middleware(['auth', 'role:2'])->name('links.offre');
 
-Route::post('/entreprise', [EntrepriseController::class, 'poste'])->name('links.entreprise');
+Route::post('/domaine', [DomaineController::class, 'poste'])->middleware(['auth', 'role:1'])->name('links.domaine');
 
-Route::post('/domaine', [DomaineController::class, 'poste'])->name('links.domaine');
+Route::post('/competence', [CompetenceController::class, 'poste'])->middleware(['auth', 'role:1'])->name('links.competence');
 
-Route::post('/competence', [CompetenceController::class, 'poste'])->name('links.competence');
+Route::post('/offre_domaine', [Offre_DomaineController::class, 'poste'])->middleware(['auth', 'role:2'])->name('links.offre_domaine');
 
-Route::post('/offre_domaine', [Offre_DomaineController::class, 'poste'])->name('links.offre_domaine');
-
-Route::post('/offre_competence', [Offre_CompetenceController::class, 'poste'])->name('links.offre_competence');
+Route::post('/offre_competence', [Offre_CompetenceController::class, 'poste'])->middleware(['auth', 'role:2'])->name('links.offre_competence');
 
 Route::get('/profil', function (Request $request) {
     $user = $request->user();
@@ -190,7 +187,7 @@ Route::delete('/postulation/{id}', function ($id) {
 })->middleware('auth');
 
 
-Route::post('/accepte/{id}', [PostulationController::class, 'accepte'])->name('accepte');
+Route::post('/accepte/{id}', [PostulationController::class, 'accepte'])->middleware(['auth', 'role:2'])->name('accepte');
 
 Route::post('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
 
@@ -199,12 +196,12 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name
 Route::get('/reset-password/{token}', fn($token) => inertia('ResetPassword', ['token' => $token]))->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
-Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin');
-Route::delete('/admin/user/{id}', [AdminController::class, 'deleteUser'])->middleware('auth')->name('admin.delete');
-Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->middleware('auth')->name('admin.role');
-
-Route::delete('/admin/offre/{id}', [AdminController::class, 'deleteOffre'])->middleware('auth')->name('admin.offre.delete');
-Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->middleware('auth')->name('admin.role');
+Route::middleware(['auth', 'role:1'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+    Route::delete('/admin/user/{id}', [AdminController::class, 'deleteUser'])->name('admin.delete');
+    Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->name('admin.role');
+    Route::delete('/admin/offre/{id}', [AdminController::class, 'deleteOffre'])->name('admin.offre.delete');
+});
 
 Route::get('/getNomOffre/{id}',function ($id) {
     $offre = Offre::find($id);
