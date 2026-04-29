@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('commentaire__stages');
+        
         Schema::create('commentaire__stages', function (Blueprint $table) {
             $table->unsignedBigInteger('stage_id');
             $table->unsignedBigInteger('comm_id');
