@@ -171,9 +171,9 @@
         max-width: 100%;
         max-height: 90vh;
         overflow-y: auto;
-        background: #fff;
+        background: var(--surface-card);
         border-radius: 20px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--border-200);
         padding: 2rem;
         box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
     }
@@ -192,13 +192,13 @@
     .success-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #16a34a;
+        color: var(--badge-green-text);
         margin: 0 0 0.25rem 0;
     }
 
     .success-sub {
         font-size: 0.875rem;
-        color: #64748b;
+        color: var(--ink-600);
         margin: 0;
     }
 
@@ -213,7 +213,7 @@
 
     .pre-titre {
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--ink-600);
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -223,16 +223,16 @@
     .titre {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--ink-900);
         margin: 0;
         line-height: 1.3;
     }
 
     .close {
-        background: #f1f5f9;
+        background: var(--surface-muted);
         border: none;
         font-size: 0.9rem;
-        color: #64748b;
+        color: var(--ink-600);
         cursor: pointer;
         padding: 0.4rem 0.6rem;
         border-radius: 8px;
@@ -240,7 +240,7 @@
         flex-shrink: 0;
     }
 
-    .close:hover { background: #e2e8f0; color: #0f172a; }
+    .close:hover { background: var(--border-200); color: var(--ink-900); }
 
     /* Form */
     form { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -250,7 +250,7 @@
     label {
         font-size: 0.875rem;
         font-weight: 700;
-        color: #374151;
+        color: var(--ink-600);
     }
 
     .label-hint {
@@ -264,11 +264,13 @@
     textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--border-200);
         border-radius: 10px;
         font-size: 0.9rem;
         outline: none;
         font-family: inherit;
+        background: var(--surface-subtle);
+        color: var(--ink-900);
         box-sizing: border-box;
         resize: vertical;
         transition: border-color 0.15s, box-shadow 0.15s;
@@ -276,28 +278,28 @@
     }
 
     textarea:focus {
-        border-color: #2563eb;
+        border-color: var(--primary-600);
         box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
     }
 
     /* Drop area */
     .drop-area {
-        border: 2px dashed #cbd5e1;
+        border: 2px dashed var(--border-200);
         border-radius: 12px;
         padding: 1.5rem;
         text-align: center;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         cursor: pointer;
         transition: border-color 0.15s, background 0.15s;
     }
 
-    .drop-area:hover { border-color: #2563eb; background: #eff6ff; }
-    .drop-area.dragging { border-color: #2563eb; background: #eff6ff; }
-    .drop-area.has-file { border-color: #16a34a; background: #f0fdf4; border-style: solid; }
+    .drop-area:hover { border-color: var(--primary-600); background: var(--primary-50); }
+    .drop-area.dragging { border-color: var(--primary-600); background: var(--primary-50); }
+    .drop-area.has-file { border-color: var(--badge-green-text); background: var(--badge-green-bg); border-style: solid; }
 
     .drop-icon { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
-    .drop-text { font-size: 0.9rem; font-weight: 600; color: #374151; margin: 0; }
-    .drop-hint { font-size: 0.8rem; color: #94a3b8; margin: 0.2rem 0 0 0; }
+    .drop-text { font-size: 0.9rem; font-weight: 600; color: var(--ink-900); margin: 0; }
+    .drop-hint { font-size: 0.8rem; color: var(--ink-600); margin: 0.2rem 0 0 0; }
 
     .file-ready {
         display: flex;
@@ -307,8 +309,8 @@
     }
 
     .file-icon { font-size: 1.5rem; }
-    .file-name { font-size: 0.9rem; font-weight: 600; color: #16a34a; margin: 0; }
-    .file-hint { font-size: 0.78rem; color: #94a3b8; margin: 0.15rem 0 0 0; }
+    .file-name { font-size: 0.9rem; font-weight: 600; color: var(--badge-green-text); margin: 0; }
+    .file-hint { font-size: 0.78rem; color: var(--ink-600); margin: 0.15rem 0 0 0; }
 
     .erreur { color: #ef4444; font-size: 0.8rem; }
 

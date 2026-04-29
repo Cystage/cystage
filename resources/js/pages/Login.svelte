@@ -69,7 +69,7 @@
 
 
     .box {
-        background: #fff;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 20px;
         padding: 2.5rem 2rem;
@@ -107,9 +107,9 @@
     }
 
     .alert-success {
-        background: #dcfce7;
-        color: #16a34a;
-        border: 1px solid #bbf7d0;
+        background: var(--badge-green-bg);
+        color: var(--badge-green-text);
+        border: 1px solid var(--badge-green-bg);
         border-radius: 8px;
         padding: 0.75rem 1rem;
         margin-bottom: 1rem;
@@ -137,12 +137,12 @@
 
     label {
         position: absolute;
-        background: #fff;
+        background: var(--surface-card);
         margin-left: 0.75rem;
         margin-top: -0.55rem;
         padding: 0 0.35rem;
         font-size: 0.83rem;
-        color: #374151;
+        color: var(--ink-600);
         font-weight: 600;
         z-index: 1;
     }
@@ -151,13 +151,14 @@
     input[type="password"] {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--border-200);
         border-radius: 10px;
         font-size: 0.9rem;
         font-family: inherit;
         outline: none;
         box-sizing: border-box;
-        background: #ffffff;
+        background: var(--surface-subtle);
+        color: var(--ink-900);
         transition: border-color 0.15s, box-shadow 0.15s;
     }
 
@@ -179,14 +180,14 @@
         margin-top: 1.25rem;
         text-align: center;
         font-size: 0.875rem;
-        color: #64748b;
+        color: var(--ink-600);
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
     }
 
     .footer-links a {
-        color: #2563eb;
+        color: var(--primary-600);
         text-decoration: none;
         font-weight: 600;
     }

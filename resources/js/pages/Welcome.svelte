@@ -340,7 +340,7 @@
 
     /* Sidebar */
     .sidebar {
-        background: #fff;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 16px;
         padding: 1.25rem;
@@ -410,6 +410,8 @@
         border-radius: 8px;
         font-size: 0.875rem;
         font-family: inherit;
+        background: var(--surface-card);
+        color: var(--ink-900);
         outline: none;
         transition: border-color 0.15s;
     }
@@ -432,7 +434,7 @@
         font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         color: var(--ink-600);
         font-family: inherit;
         transition: all 0.15s;
@@ -484,7 +486,7 @@
         font-size: 0.78rem;
         font-weight: 600;
         cursor: pointer;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         color: var(--ink-600);
         font-family: inherit;
         transition: all 0.15s;
@@ -514,7 +516,7 @@
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        background: #fff;
+        background: var(--surface-card);
         border-radius: 16px;
         border: 1px solid var(--border-200);
     }

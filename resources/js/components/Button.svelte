@@ -36,7 +36,7 @@
 <style>
 
   a {
-    text-decoration:"none";
+    text-decoration: none;
   }
   .btn {
   display: inline-flex;
@@ -64,21 +64,16 @@
   box-shadow: var(--shadow-medium);
  }
 
- .btnBleu:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 28px 52px rgba(37, 99, 235, 0.24);
+ .btnBleu:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
  }
 
-    .btnBleu:not(:disabled):hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
-    }
-
-    .btnBleu:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-    }
+ .btnBleu:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+ }
 
  .btnBlanc {
   background: var(--surface-0);
@@ -113,14 +108,9 @@
     
    .btnGreen:hover   { background: #15803d; transform: translateY(-1px); }
 
-    .btnGrey { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
+    .btnGrey { background: var(--surface-muted); color: var(--ink-900); border: 1px solid var(--border-200); }
 
-    .btnGrey:hover { background: #e2e8f0; transform: translateY(-1px); }
-  @media (max-width: 768px) {
-        .hero {
-            width: 100%;
-        } 
-    }
+    .btnGrey:hover { background: var(--border-200); transform: translateY(-1px); }
 
     .full {
         width: 100%;

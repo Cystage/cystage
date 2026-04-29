@@ -125,7 +125,7 @@
 
 
     .card {
-        background: #fff;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 20px;
         padding: 1.5rem;
@@ -159,7 +159,7 @@
         object-fit: contain;
         border-radius: 12px;
         border: 1px solid var(--border-200);
-        background: #f8fafc;
+        background: var(--surface-subtle);
         padding: 5px;
         flex-shrink: 0;
     }
@@ -168,7 +168,7 @@
         width: 56px;
         height: 56px;
         border-radius: 12px;
-        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+        background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
         color: #2563eb;
         display: flex;
         align-items: center;
@@ -210,9 +210,9 @@
         white-space: nowrap;
     }
 
-    .badge-green { background: #dcfce7; color: #16a34a; }
-    .badge-gray  { background: #f1f5f9; color: #64748b; }
-    .badge-blue  { background: #eff6ff; color: #2563eb; }
+    .badge-green { background: var(--badge-green-bg);  color: var(--badge-green-text); }
+    .badge-gray  { background: var(--badge-gray-bg);   color: var(--badge-gray-text);  }
+    .badge-blue  { background: var(--primary-50);       color: var(--primary-600);      }
 
     /* Divider */
     .divider {
@@ -232,7 +232,7 @@
         display: flex;
         align-items: center;
         gap: 0.6rem;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         border-radius: 10px;
         padding: 0.6rem 0.8rem;
         border: 1px solid var(--border-200);
@@ -285,7 +285,7 @@
 
     .skill-tag {
         padding: 0.3rem 0.75rem;
-        background: #f1f5f9;
+        background: var(--surface-muted);
         border: 1px solid var(--border-200);
         border-radius: 999px;
         font-size: 0.8rem;

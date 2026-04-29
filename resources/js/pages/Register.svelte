@@ -161,7 +161,7 @@
 
 
     .box {
-        background: #ffffff;
+        background: var(--surface-card);
         border-radius: 20px;
         border: 1px solid var(--border-200);
         padding: 2.5rem;
@@ -189,7 +189,7 @@
         display: flex;
         gap: 1rem;
         margin-bottom: 1.7rem;
-        background: #f1f5f9;
+        background: var(--surface-muted);
         padding: 0.4rem;
         border-radius: 12px;
         border: 1px solid var(--border-200);
@@ -205,13 +205,13 @@
         cursor: pointer;
         font-family: inherit;
         background: transparent;
-        color: #64748b;
+        color: var(--ink-600);
         transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .role-btn.active {
-        background: #ffffff;
-        color: #1d4ed8;
+        background: var(--surface-card);
+        color: var(--primary-700);
         box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
     }
 
@@ -226,7 +226,7 @@
     label {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #374151;
+        color: var(--ink-600);
     }
 
 
@@ -236,7 +236,7 @@
     .champ-obligatoire {
         grid-column: 1 / -1;
         font-size: 13px;
-        color: #6c757d;
+        color: var(--ink-600);
         margin-top: -0.25rem;
     }
 
@@ -244,11 +244,11 @@
         margin-top: 1.5rem;
         text-align: center;
         font-size: 0.875rem;
-        color: #64748b;
+        color: var(--ink-600);
     }
 
     .footer-links a {
-        color: #2563eb;
+        color: var(--primary-600);
         font-weight: 600;
         text-decoration: none;
     }

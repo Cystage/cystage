@@ -66,7 +66,7 @@
 
 
     .box {
-        background: #fff;
+        background: var(--surface-card);
         border-radius: 20px;
         border: 1px solid var(--border-200);
         padding: 2.5rem;
@@ -96,15 +96,17 @@
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.form-group-full { grid-column: 1 / -1; }
 
-    label { font-size: 0.875rem; font-weight: 600; color: #374151; }
+    label { font-size: 0.875rem; font-weight: 600; color: var(--ink-600); }
 
     .form-group input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #ced4da;
+        border: 1px solid var(--border-200);
         border-radius: 10px;
         font-size: 15px;
         font-family: inherit;
+        background: var(--surface-subtle);
+        color: var(--ink-900);
         outline: none;
         transition: border-color 0.15s;
     }

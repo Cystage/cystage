@@ -227,7 +227,7 @@
     }
 
     .Y1, .Y2 {
-        background: #fff;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 14px;
         padding: 18px;
@@ -249,7 +249,7 @@
         font-weight: 600;
         border: 1px solid var(--border-200);
         border-bottom: none;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         color: var(--ink-600);
         cursor: pointer;
         font-family: inherit;
@@ -260,9 +260,9 @@
     .tab:first-child { margin-right: 4px; }
 
     .tab.active {
-        background: #fff;
+        background: var(--surface-card);
         color: var(--primary-700);
-        border-color: #e5e7eb;
+        border-color: var(--border-200);
         position: relative;
         z-index: 1;
     }
@@ -285,23 +285,24 @@
     label {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #374151;
+        color: var(--ink-600);
     }
 
     .form-group input {
         width: 100%;
         padding: 12px 15px;
-        border: 1px solid #ced4da;
+        border: 1px solid var(--border-200);
         border-radius: 10px;
         font-size: 15px;
         font-family: inherit;
-        background-color: #fff;
+        background-color: var(--surface-card);
+        color: var(--ink-900);
         margin-bottom: 0;
     }
 
     .form-group input:disabled {
-        background-color: #f8fafc;
-        color: #64748b;
+        background-color: var(--surface-subtle);
+        color: var(--ink-600);
     }
 
     .form-group input:focus {
@@ -365,12 +366,12 @@
     .empty-title {
         font-size: 1.1rem;
         font-weight: 700;
-        color: #1e293b;
+        color: var(--ink-900);
     }
 
     .empty-sub {
         font-size: 0.9rem;
-        color: #64748b;
+        color: var(--ink-600);
         margin-bottom: 1rem;
     }
 
@@ -387,7 +388,7 @@
         height: 80px;
         object-fit: contain;
         border-radius: 8px;
-        border: 1px solid #e5e7eb;
+        border: 1px solid var(--border-200);
         margin-bottom: 0.5rem;
     }
 

@@ -128,7 +128,7 @@
         box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
         border-radius: 14px;
         border: 1px solid var(--border-200);
-        background: #fff;
+        background: var(--surface-card);
         margin: 0 0 1rem 0;
         min-width: 70%;
     }
@@ -146,12 +146,12 @@
         cursor: pointer;
         padding: 0.35rem 0.8rem;
         border-radius: 8px;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         transition: background 0.15s, transform 0.15s;
     }
 
     .close:hover {
-        background-color: #eef2ff;
+        background-color: var(--primary-50);
         transform: translateY(-1px);
     }
 

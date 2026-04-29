@@ -265,9 +265,9 @@
     .page-header p { color: var(--ink-600); margin: 0; }
 
     .alert-success {
-        background: #dcfce7;
-        color: #16a34a;
-        border: 1px solid #bbf7d0;
+        background: var(--badge-green-bg);
+        color: var(--badge-green-text);
+        border: 1px solid var(--badge-green-bg);
         border-radius: 8px;
         padding: 0.75rem 1rem;
         margin-bottom: 1.5rem;
@@ -282,7 +282,7 @@
     }
 
     .stat-card {
-        background: white;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 14px;
         padding: 1.25rem;
@@ -317,7 +317,7 @@
         font-weight: 600;
         border: 1px solid var(--border-200);
         border-bottom: none;
-        background: #f8fafc;
+        background: var(--surface-subtle);
         color: var(--ink-600);
         cursor: pointer;
         font-family: inherit;
@@ -326,12 +326,12 @@
     }
 
     .tab.active {
-        background: #fff;
+        background: var(--surface-card);
         color: var(--primary-700);
     }
 
     .table-container {
-        background: white;
+        background: var(--surface-card);
         border: 1px solid var(--border-200);
         border-radius: 0 14px 14px 14px;
         overflow: hidden;
@@ -341,8 +341,8 @@
     table { width: 100%; border-collapse: collapse; }
 
     thead {
-        background: #f8fafc;
-        border-bottom: 1px solid #e5e7eb;
+        background: var(--surface-subtle);
+        border-bottom: 1px solid var(--border-200);
     }
 
     th {
@@ -350,7 +350,7 @@
         text-align: left;
         font-size: 0.8rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--ink-600);
         text-transform: uppercase;
         letter-spacing: 0.05em;
     }
@@ -358,12 +358,12 @@
     td {
         padding: 0.85rem 1rem;
         font-size: 0.9rem;
-        color: #1e293b;
-        border-bottom: 1px solid #f1f5f9;
+        color: var(--ink-900);
+        border-bottom: 1px solid var(--border-200);
     }
 
     tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f8fafc; }
+    tr:hover td { background: var(--surface-subtle); }
 
     .email { color: var(--ink-600); font-size: 0.85rem; }
 
