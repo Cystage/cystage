@@ -37,10 +37,18 @@ class PostulationController extends Controller
 
     public function accepte(int $id) {
         $postulation = \App\Models\Postulation::findOrFail($id);
-        $postulation->update([
-                'state' => 2,
-            ]);
+        $postulation->update(['state' => 2]);
+        return back()->with('success', 'Candidature acceptée.');
+    }
 
-        return back()->with('success','Code partagé avec succès');
+    public function confirmer(Request $request, int $id) {
+        $postulation = \App\Models\Postulation::findOrFail($id);
+        $etudiant = \App\Models\Etudiant::where('user_id', $request->user()->id)->firstOrFail();
+
+        abort_if($postulation->etu_id !== $etudiant->id, 403);
+        abort_if($postulation->state !== 2, 403);
+
+        $postulation->update(['state' => 3]);
+        return back()->with('success', 'Stage confirmé.');
     }
 }

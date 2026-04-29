@@ -177,14 +177,29 @@ Route::get('/postulation', function (Request $request) {
     return redirect('/');
 })->middleware('auth')->name('postulation');
 
-Route::delete('/postulation/{id}', function ($id) {
+Route::delete('/postulation/{id}', function ($id, Request $request) {
     $postulation = Postulation::findOrFail($id);
-    if ($postulation->path && Storage::disk('public')->exists($postulation->path)) {
-        Storage::disk('public')->delete($postulation->path);
+    $user = $request->user();
+
+    if ($user->role_id === 3) {
+        $etudiant = \App\Models\Etudiant::where('user_id', $user->id)->firstOrFail();
+        abort_if($postulation->etu_id !== $etudiant->id, 403);
+    } elseif ($user->role_id === 2) {
+        $ent = \App\Models\Entreprise::where('user_id', $user->id)->firstOrFail();
+        $offreIds = $ent->offres->pluck('id');
+        abort_if(!$offreIds->contains($postulation->offre_id), 403);
+    } else {
+        abort(403);
+    }
+
+    if ($postulation->path && \Illuminate\Support\Facades\Storage::disk('public')->exists($postulation->path)) {
+        \Illuminate\Support\Facades\Storage::disk('public')->delete($postulation->path);
     }
     $postulation->delete();
-    return back()->with('success', 'delete');
+    return back()->with('success', 'Candidature supprimée.');
 })->middleware('auth');
+
+Route::post('/postulation/{id}/confirmer', [PostulationController::class, 'confirmer'])->middleware(['auth', 'role:3'])->name('postulation.confirmer');
 
 
 Route::post('/accepte/{id}', [PostulationController::class, 'accepte'])->middleware(['auth', 'role:2'])->name('accepte');
