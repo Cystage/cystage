@@ -41,7 +41,7 @@
 
     <div class="header-right">
         {#if user}
-            <Button variant="btn-ghost" href="/profil">Mon profil</Button>
+            <Button variant="btn-ghost" href="/profil">Mon espace</Button>
             {#if user.role_id == 2 || user.role_id == 1}
                 <Button variant="btnBlanc" onclick={() => showModal = !showModal}>Publier une offre</Button>
             {/if}
