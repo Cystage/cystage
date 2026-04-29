@@ -5,13 +5,7 @@
     
 </script>
 
-<AppHead title="Welcome">
- <link rel="preconnect" href="https://rsms.me/" />
- <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
- <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-</AppHead>
+<AppHead title="Bienvenue" />
 
 <main>
  <section class="hero">
@@ -20,7 +14,7 @@
   <div class="contenuHero">
    <div class="blocGauche apparition visible">
     <div class="zoneLogo">
-     <img src={logo} alt="Logo CyStage" class="logoHero">
+     <img src={logo} alt="Logo CyStage" class="logoHero" width="250" height="auto">
     </div>
 
     <div class="petitBadge">
@@ -39,7 +33,7 @@
     </p>
 
      <div class="actionsHero">
-      <Button href="/login" variant="btn btnBleu" size="large">Se connecter</Button>
+      <Button href="/login" variant="btn btnBleu">Se connecter</Button>
       <Button href="/register" variant="btn btnBlanc">Crée un compte</Button>
      </div>
 
@@ -473,12 +467,6 @@
   text-align: center;
  }
 
- .titreGauche {
-  text-align: left;
-  margin: 0 0 2rem;
-  max-width: unset;
- }
-
  .titreBloc span {
   display: inline-block;
   margin-bottom: 0.75rem;
@@ -624,30 +612,6 @@
   justify-content: center;
  }
 
- .zoneOffres {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
- }
-
- .listeOffres {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
- }
-
- footer {
-  padding: 1.4rem 1rem 2rem;
-  text-align: center;
-  color: var(--ink-600);
-  font-size: 0.9rem;
- }
-
- footer p {
-  margin: 0;
- }
-
  @media (max-width: 1024px) {
   .contenuHero {
    grid-template-columns: 1fr;
@@ -673,8 +637,7 @@
   }
 
   .section,
-  .sectionFin,
-  .zoneOffres {
+  .sectionFin {
    padding-left: 1rem;
    padding-right: 1rem;
   }
@@ -715,8 +678,7 @@
  @media (prefers-reduced-motion: reduce) {
   .carte,
   .blocInfo,
-  .petiteStat,
-  .btn {
+  .petiteStat {
    transition: none;
   }
  }

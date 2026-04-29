@@ -23,7 +23,7 @@
     <div class="card-header">
         <div class="header-left">
             {#if entreprise?.logo}
-                <img src={entreprise.logo} alt="Logo {entreprise.nom}" class="logo-ent"/>
+                <img src={entreprise.logo} alt="Logo {entreprise.nom}" class="logo-ent" loading="lazy" />
             {:else}
                 <div class="logo-placeholder">{entreprise?.nom?.[0] ?? '?'}</div>
             {/if}
@@ -109,9 +109,12 @@
     <div class="card-footer">
         <span class="contact">📞 {entreprise?.num_tel}</span>
 
-        {#if user?.role_id == 3}
-            <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
-        {/if}
+        <div class="footer-actions">
+            <a href="/offre/{offre.id}" class="btn-detail">Voir le détail</a>
+            {#if user?.role_id == 3}
+                <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
+            {/if}
+        </div>
     </div>
 
     {#if showModalPostuler}
@@ -308,24 +311,25 @@
         color: var(--ink-600);
     }
 
-    .btn-postuler {
-        padding: 0.6rem 1.4rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        font-weight: 700;
-        cursor: pointer;
-        font-family: inherit;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+    .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
     }
 
-    .btn-postuler:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 12px 25px rgba(37, 99, 235, 0.28);
+    .btn-detail {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--primary-600);
+        text-decoration: none;
+        padding: 0.4rem 0.85rem;
+        border: 1px solid var(--primary-200, #bfdbfe);
+        border-radius: 8px;
+        background: var(--primary-50);
+        transition: background 0.15s;
     }
+
+    .btn-detail:hover { background: var(--primary-100, #dbeafe); }
 
     @media (max-width: 768px) {
         .info-grid { grid-template-columns: repeat(2, 1fr); }

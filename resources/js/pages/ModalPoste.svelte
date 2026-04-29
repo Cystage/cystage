@@ -325,19 +325,6 @@
         display: inline-block;
     }
 
-    .overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.55);
-        backdrop-filter: blur(4px);
-        z-index: 200;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-        overflow: hidden;
-    }
-
     @keyframes spin {
         to { transform: rotate(360deg); }
     }

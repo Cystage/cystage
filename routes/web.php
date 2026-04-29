@@ -85,10 +85,10 @@ Route::get('/profil', function (Request $request) {
     if($user->role_id==3){
         $etud = Etudiant::where('user_id',$user->id)->first();
         $postulations = Postulation::whereIn('etu_id',[$etud->id])
-            ->with(['etudiant', 'offre']) 
+            ->with(['etudiant', 'offre', 'commentaires.user'])
             ->latest()
             ->get();
-        
+
         return Inertia::render('Profile', [
             'profile' => [
                 'nom' => $etud->nom,
@@ -97,6 +97,8 @@ Route::get('/profil', function (Request $request) {
                 'num_etudiant' => $etud->num_etudiant,
                 'identifiant' => $user->name,
                 'type'=> $user->role_id,
+                'notif_mail'         => $user->notif_mail,
+                'two_factor_enabled' => $user->two_factor_enabled,
             ],
             'postulations' => $postulations,
         ]);
@@ -105,7 +107,7 @@ Route::get('/profil', function (Request $request) {
         $ent = Entreprise::where('user_id',$user->id)->first();
         $offreIds = $ent->offres->pluck('id');
         $postulations = Postulation::whereIn('offre_id',$offreIds)
-        ->with(['etudiant', 'offre']) 
+        ->with(['etudiant', 'offre', 'commentaires.user'])
         ->latest()
         ->get();
 
@@ -122,6 +124,8 @@ Route::get('/profil', function (Request $request) {
                 'num_tel' => $ent->num_tel,
                 'type'=> $user->role_id,
                 'logo' => $ent->logo,
+                'notif_mail'         => $user->notif_mail,
+                'two_factor_enabled' => $user->two_factor_enabled,
             ],
             'postulations' => $postulations,
         ]);
@@ -134,6 +138,8 @@ Route::get('/profil', function (Request $request) {
                 'email'      => $user->email,
                 'identifiant'=> $user->name,
                 'type'       => $user->role_id,
+                'notif_mail'         => $user->notif_mail,
+                'two_factor_enabled' => $user->two_factor_enabled,
             ],
         ]);
     }
@@ -165,7 +171,7 @@ Route::get('/postulation', function (Request $request) {
 
         $offreIds = $ent->offres->pluck('id');
         $postulations = Postulation::whereIn('offre_id', $offreIds)
-            ->with(['etudiant', 'offre']) 
+            ->with(['etudiant', 'offre', 'commentaires.user'])
             ->latest()
             ->get();
 
@@ -205,6 +211,88 @@ Route::post('/postulation/{id}/confirmer', [PostulationController::class, 'confi
 Route::post('/accepte/{id}', [PostulationController::class, 'accepte'])->middleware(['auth', 'role:2'])->name('accepte');
 
 Route::post('/profil', [AuthController::class, 'updateProfil'])->middleware('auth')->name('profil.update');
+Route::patch('/settings/notif-mail', [AuthController::class, 'updateNotifMail'])->middleware('auth')->name('settings.notif');
+Route::delete('/account', [AuthController::class, 'deleteAccount'])->middleware('auth')->name('account.delete');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/notifs/{id}/lire', function ($id, Request $request) {
+        \App\Models\AppNotif::where('id', $id)->where('user_id', $request->user()->id)->update(['read_at' => now()]);
+        return back();
+    })->name('notifs.lire');
+
+    Route::post('/notifs/tout-lire', function (Request $request) {
+        \App\Models\AppNotif::where('user_id', $request->user()->id)->whereNull('read_at')->update(['read_at' => now()]);
+        return back();
+    })->name('notifs.tout-lire');
+
+    Route::delete('/notifs/lues', function (Request $request) {
+        \App\Models\AppNotif::where('user_id', $request->user()->id)->whereNotNull('read_at')->delete();
+        return back();
+    })->name('notifs.delete-lues');
+
+    Route::delete('/notifs', function (Request $request) {
+        \App\Models\AppNotif::where('user_id', $request->user()->id)->delete();
+        return back();
+    })->name('notifs.delete-all');
+
+    Route::delete('/notifs/{id}', function ($id, Request $request) {
+        \App\Models\AppNotif::where('id', $id)->where('user_id', $request->user()->id)->delete();
+        return back();
+    })->name('notifs.delete');
+
+    Route::post('/postulation/{id}/archiver', function ($id, Request $request) {
+        $postulation = Postulation::findOrFail($id);
+        $user = $request->user();
+        if ($user->role_id === 3) {
+            $etu = \App\Models\Etudiant::where('user_id', $user->id)->firstOrFail();
+            abort_if($postulation->etu_id !== $etu->id, 403);
+        } elseif ($user->role_id === 2) {
+            $ent = Entreprise::where('user_id', $user->id)->firstOrFail();
+            abort_if(!$ent->offres->pluck('id')->contains($postulation->offre_id), 403);
+        } else {
+            abort(403);
+        }
+        $postulation->update(['archived' => !$postulation->archived]);
+        return back()->with('success', $postulation->archived ? 'Candidature archivée.' : 'Candidature désarchivée.');
+    })->name('postulation.archiver');
+});
+
+Route::patch('/settings/two-factor', [AuthController::class, 'toggleTwoFactor'])->middleware('auth')->name('settings.2fa');
+
+Route::get('/two-factor', [AuthController::class, 'twoFactorShow'])->name('two-factor.show');
+Route::post('/two-factor/verify', [AuthController::class, 'twoFactorVerify'])->name('two-factor.verify');
+Route::post('/two-factor/resend', [AuthController::class, 'twoFactorResend'])->name('two-factor.resend');
+
+Route::middleware('auth')->group(function () {
+    Route::post('/postulation/{id}/commentaire', function ($id, Request $request) {
+        $request->validate(['body' => 'required|string|max:1000']);
+        $postulation = Postulation::findOrFail($id);
+        $user = $request->user();
+
+        if ($user->role_id === 3) {
+            $etu = \App\Models\Etudiant::where('user_id', $user->id)->firstOrFail();
+            abort_if($postulation->etu_id !== $etu->id, 403);
+        } elseif ($user->role_id === 2) {
+            $ent = Entreprise::where('user_id', $user->id)->firstOrFail();
+            abort_if(!$ent->offres->pluck('id')->contains($postulation->offre_id), 403);
+        }
+        abort_if($postulation->state !== 3, 403);
+
+        \App\Models\PostulationCommentaire::create([
+            'postulation_id' => $id,
+            'user_id'        => $user->id,
+            'body'           => $request->body,
+        ]);
+        return back()->with('success', 'Commentaire ajouté.');
+    })->name('commentaire.store');
+
+    Route::delete('/commentaire/{id}', function ($id, Request $request) {
+        $comment = \App\Models\PostulationCommentaire::findOrFail($id);
+        abort_if($comment->user_id !== $request->user()->id, 403);
+        $comment->delete();
+        return back();
+    })->name('commentaire.delete');
+});
 
 Route::get('/forgot-password', fn() => inertia('ForgotPassword'))->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
@@ -217,6 +305,35 @@ Route::middleware(['auth', 'role:1'])->group(function () {
     Route::patch('/admin/user/{id}/role', [AdminController::class, 'changeRole'])->name('admin.role');
     Route::delete('/admin/offre/{id}', [AdminController::class, 'deleteOffre'])->name('admin.offre.delete');
 });
+
+Route::get('/offre/{id}', function ($id, Request $request) {
+    $offre = Offre::with('entreprise')->findOrFail($id);
+    $competences = \App\Models\Competence::all();
+    $domaines = \App\Models\Domaine::all();
+    $links_competences = Offre_Competence::where('offre_id', $id)->get();
+    $links_domaines = Offre_Domaine::where('offre_id', $id)->get();
+
+    $user = $request->user();
+    $etudiant = null;
+    $dejaPostule = false;
+    if ($user && $user->role_id === 3) {
+        $etudiant = \App\Models\Etudiant::where('user_id', $user->id)->first();
+        if ($etudiant) {
+            $dejaPostule = Postulation::where('offre_id', $id)->where('etu_id', $etudiant->id)->exists();
+        }
+    }
+
+    return Inertia::render('OffreDetail', [
+        'offre'              => $offre,
+        'entreprise'         => $offre->entreprise,
+        'competences'        => $competences,
+        'domaines'           => $domaines,
+        'links_competences'  => $links_competences,
+        'links_domaines'     => $links_domaines,
+        'etudiant'           => $etudiant,
+        'dejaPostule'        => $dejaPostule,
+    ]);
+})->middleware('auth')->name('offre.detail');
 
 Route::get('/getNomOffre/{id}',function ($id) {
     $offre = Offre::find($id);

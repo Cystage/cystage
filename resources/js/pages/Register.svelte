@@ -81,13 +81,7 @@
     }
 </script>
 
-<AppHead title="Créer un compte">
-    <link rel="preconnect" href="https://rsms.me/" />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-</AppHead>
+<AppHead title="Créer un compte" />
 
 
 <Header/>
@@ -131,7 +125,7 @@
         {/if}
 
         {#if role === 'entreprise'}
-            <form id="creation_compte" onsubmit={submit}>
+            <form id="form_entreprise" onsubmit={submit}>
                 <FormInput id="nom" label="Nom" placeholder="Nom de l'entreprise" required bind:value={$formEntreprise.nom} error={errors.nom || $formEntreprise.errors.nom}></FormInput>
                 <FormInput id="siret" label="SIRET" placeholder="12345678901234" required bind:value={$formEntreprise.siret} error={errors.siret || $formEntreprise.errors.siret}></FormInput>
                 <FormInput id="email" label="Email" placeholder="email@entreprise.com" required bind:value={$formEntreprise.email} error={errors.email || $formEntreprise.errors.email}></FormInput>
@@ -221,14 +215,6 @@
         gap: 18px 24px;
         align-items: flex-start;
     }
-
-
-    label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--ink-600);
-    }
-
 
 
 

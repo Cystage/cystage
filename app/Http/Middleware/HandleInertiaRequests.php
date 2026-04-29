@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\AppNotif;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -44,6 +45,12 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'success' => $request->session()->get('success'),
             ],
+            'notifications' => $request->user()
+                ? AppNotif::where('user_id', $request->user()->id)->latest()->take(15)->get()
+                : [],
+            'notifs_unread' => $request->user()
+                ? AppNotif::where('user_id', $request->user()->id)->whereNull('read_at')->count()
+                : 0,
         ];
     }
 }

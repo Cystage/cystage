@@ -1,9 +1,17 @@
 <script lang="ts">
-    import { router } from '@inertiajs/svelte';
+    import { router, useForm, page } from '@inertiajs/svelte';
 
     let { postulations = [], profile } = $props();
 
     const isEntreprise = profile?.type == 2;
+
+    let showArchived = $state(false);
+
+    let visible = $derived(
+        showArchived ? postulations : postulations.filter((p: any) => !p.archived)
+    );
+
+    let archivedCount = $derived(postulations.filter((p: any) => p.archived).length);
 
     function supprimer(id: number, label: string) {
         if (confirm(label)) {
@@ -23,9 +31,37 @@
         }
     }
 
+    function archiver(id: number, archived: boolean) {
+        router.post(`/postulation/${id}/archiver`, {}, { preserveScroll: true });
+    }
+
+    function deleteComment(id: number) {
+        router.delete(`/commentaire/${id}`, { preserveScroll: true });
+    }
+
+    function commentForm(postulationId: number) {
+        return useForm({ body: '' });
+    }
+
+    let commentForms: Record<number, any> = $state({});
+
+    function getCommentForm(id: number) {
+        if (!commentForms[id]) commentForms[id] = useForm({ body: '' });
+        return commentForms[id];
+    }
+
+    function submitComment(e: Event, postulationId: number) {
+        e.preventDefault();
+        const f = getCommentForm(postulationId);
+        f.post(`/postulation/${postulationId}/commentaire`, {
+            preserveScroll: true,
+            onSuccess: () => { f.reset(); }
+        });
+    }
+
     const stateLabel: Record<number, string> = {
         1: 'En attente',
-        2: 'Acceptée — en attente de ta confirmation',
+        2: 'Acceptée — confirmation en attente',
         3: 'Stage confirmé',
     };
 
@@ -36,15 +72,24 @@
     };
 </script>
 
-<section class="heading">
-    {#if isEntreprise}
-        <h1>Vous avez <b><span>{postulations.length}</span> candidature{postulations.length > 1 ? 's' : ''}</b></h1>
-    {:else}
-        <h1>Vous avez <b><span>{postulations.length}</span> candidature{postulations.length > 1 ? 's' : ''}</b></h1>
+<div class="candidatures-header">
+    <div>
+        <h1 class="candidatures-title">
+            {isEntreprise ? 'Candidatures reçues' : 'Mes candidatures'}
+        </h1>
+        <p class="candidatures-sub">
+            {visible.length} candidature{visible.length > 1 ? 's' : ''}
+            {showArchived ? '' : archivedCount > 0 ? `· ${archivedCount} archivée${archivedCount > 1 ? 's' : ''}` : ''}
+        </p>
+    </div>
+    {#if archivedCount > 0}
+        <button class="btn-toggle-archived" onclick={() => showArchived = !showArchived}>
+            {showArchived ? 'Masquer archivées' : `Voir archivées (${archivedCount})`}
+        </button>
     {/if}
-</section>
+</div>
 
-{#if postulations.length === 0}
+{#if visible.length === 0}
     <div class="empty-state">
         <span class="empty-icon">📭</span>
         <p class="empty-title">{isEntreprise ? 'Aucune candidature reçue' : 'Aucune candidature envoyée'}</p>
@@ -53,10 +98,10 @@
         {/if}
     </div>
 {:else}
-    {#each postulations as p}
-        <div class="card">
+    {#each visible as p}
+        <div class="card" class:archived={p.archived}>
             <div class="card-header">
-                <div>
+                <div class="card-meta">
                     {#if isEntreprise}
                         <p class="card-title">{p?.etudiant?.prenom ?? ''} {p?.etudiant?.nom ?? 'Étudiant inconnu'}</p>
                         <p class="card-sub">Offre : {p?.offre?.nom ?? '—'}</p>
@@ -64,9 +109,14 @@
                         <p class="card-title">{p?.offre?.nom ?? 'Offre inconnue'}</p>
                     {/if}
                 </div>
-                <span class="badge {stateBadge[p.state] ?? 'badge-pending'}">
-                    {stateLabel[p.state] ?? 'Inconnu'}
-                </span>
+                <div class="card-header-right">
+                    <span class="badge {stateBadge[p.state] ?? 'badge-pending'}">
+                        {stateLabel[p.state] ?? 'Inconnu'}
+                    </span>
+                    {#if p.archived}
+                        <span class="badge badge-archived">Archivée</span>
+                    {/if}
+                </div>
             </div>
 
             <div class="card-body">
@@ -74,31 +124,67 @@
                 <p class="motiv">{p?.motiv ?? '—'}</p>
             </div>
 
+            {#if p.state === 3 && p.commentaires?.length > 0}
+                <div class="comments-section">
+                    <p class="comments-label">Commentaires</p>
+                    {#each p.commentaires as c}
+                        <div class="comment">
+                            <div class="comment-header">
+                                <span class="comment-author">{c.user?.email ?? '—'}</span>
+                                <span class="comment-time">{new Date(c.created_at).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <p class="comment-body">{c.body}</p>
+                            {#if c.user_id === ($page.props as any).auth?.user?.id}
+                                <button class="comment-delete" onclick={() => deleteComment(c.id)}>Supprimer</button>
+                            {/if}
+                        </div>
+                    {/each}
+                </div>
+            {/if}
+
+            {#if p.state === 3}
+                {@const f = getCommentForm(p.id)}
+                <form class="comment-form" onsubmit={(e) => submitComment(e, p.id)}>
+                    <input
+                        type="text"
+                        placeholder="Ajouter un commentaire sur ce stage…"
+                        bind:value={f.body}
+                    />
+                    <button type="submit" class="btn btn-comment" disabled={f.processing}>Envoyer</button>
+                </form>
+            {/if}
+
             <div class="card-footer">
                 <a class="cv-link" href="/storage/{p.path}" target="_blank" rel="noopener">
                     Voir le CV (PDF)
                 </a>
 
                 <div class="actions">
-                    {#if isEntreprise}
-                        {#if p.state === 1}
-                            <button class="btn btn-green" onclick={() => accepter(p.id)}>Accepter</button>
-                            <button class="btn btn-red" onclick={() => supprimer(p.id, 'Refuser ce candidat ?')}>Refuser</button>
-                        {:else if p.state === 2}
-                            <span class="attente">En attente de confirmation de l'étudiant</span>
-                        {:else if p.state === 3}
-                            <span class="confirmed">Stage confirmé ✓</span>
+                    {#if !p.archived}
+                        {#if isEntreprise}
+                            {#if p.state === 1}
+                                <button class="btn btn-green" onclick={() => accepter(p.id)}>Accepter</button>
+                                <button class="btn btn-red" onclick={() => supprimer(p.id, 'Refuser ce candidat ?')}>Refuser</button>
+                            {:else if p.state === 2}
+                                <span class="attente">En attente de confirmation de l'étudiant</span>
+                            {:else if p.state === 3}
+                                <span class="confirmed">Stage confirmé ✓</span>
+                                <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Archiver</button>
+                            {/if}
+                        {:else}
+                            {#if p.state === 1}
+                                <span class="attente">En attente de l'entreprise</span>
+                                <button class="btn btn-red" onclick={() => supprimer(p.id, 'Retirer cette candidature ?')}>Retirer</button>
+                            {:else if p.state === 2}
+                                <button class="btn btn-green" onclick={() => confirmer(p.id)}>Confirmer le stage</button>
+                                <button class="btn btn-red" onclick={() => supprimer(p.id, 'Refuser cette offre ?')}>Refuser</button>
+                            {:else if p.state === 3}
+                                <span class="confirmed">Stage confirmé ✓</span>
+                                <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Archiver</button>
+                            {/if}
                         {/if}
                     {:else}
-                        {#if p.state === 1}
-                            <span class="attente">En attente de l'entreprise</span>
-                            <button class="btn btn-red" onclick={() => supprimer(p.id, 'Retirer cette candidature ?')}>Retirer</button>
-                        {:else if p.state === 2}
-                            <button class="btn btn-green" onclick={() => confirmer(p.id)}>Confirmer le stage</button>
-                            <button class="btn btn-red" onclick={() => supprimer(p.id, 'Refuser cette offre ?')}>Refuser</button>
-                        {:else if p.state === 3}
-                            <span class="confirmed">Stage confirmé ✓</span>
-                        {/if}
+                        <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Désarchiver</button>
                     {/if}
                 </div>
             </div>
@@ -107,19 +193,44 @@
 {/if}
 
 <style>
-    .heading {
-        margin: 0 0 1.5rem;
+    .candidatures-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
     }
 
-    .heading h1 {
-        font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    .candidatures-title {
+        font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+        font-weight: 700;
         color: var(--ink-900);
+        margin: 0 0 4px;
+    }
+
+    .candidatures-sub {
+        font-size: 0.85rem;
+        color: var(--ink-600);
         margin: 0;
     }
 
-    .heading h1 span {
-        color: var(--primary-600);
+    .btn-toggle-archived {
+        padding: 0.4rem 0.9rem;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--ink-600);
+        background: var(--surface-subtle);
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+        transition: background 0.15s;
+        flex-shrink: 0;
     }
+
+    .btn-toggle-archived:hover { background: var(--surface-muted); }
 
     .empty-state {
         display: flex;
@@ -152,6 +263,12 @@
         padding: 1.1rem 1.3rem;
         margin-bottom: 1rem;
         box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+        transition: opacity 0.2s;
+    }
+
+    .card.archived {
+        opacity: 0.6;
+        border-style: dashed;
     }
 
     .card-header {
@@ -160,6 +277,14 @@
         justify-content: space-between;
         gap: 1rem;
         margin-bottom: 0.8rem;
+    }
+
+    .card-header-right {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        flex-shrink: 0;
     }
 
     .card-title {
@@ -181,16 +306,14 @@
         padding: 0.25rem 0.65rem;
         border-radius: 999px;
         white-space: nowrap;
-        flex-shrink: 0;
     }
 
     .badge-pending   { background: #fef3c7; color: #92400e; }
     .badge-accepted  { background: #dbeafe; color: #1e40af; }
     .badge-confirmed { background: #d1fae5; color: #065f46; }
+    .badge-archived  { background: #f1f5f9; color: #64748b; }
 
-    .card-body {
-        margin-bottom: 0.9rem;
-    }
+    .card-body { margin-bottom: 0.9rem; }
 
     .motiv-label {
         font-size: 0.8rem;
@@ -244,10 +367,11 @@
         transition: opacity 0.15s;
     }
 
-    .btn:hover { opacity: 0.85; }
+    .btn:hover { opacity: 0.82; }
 
-    .btn-green { background: #d1fae5; color: #065f46; }
-    .btn-red   { background: #fee2e2; color: #991b1b; }
+    .btn-green   { background: #d1fae5; color: #065f46; }
+    .btn-red     { background: #fee2e2; color: #991b1b; }
+    .btn-archive { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
     .attente {
         font-size: 0.85rem;
@@ -260,4 +384,93 @@
         font-weight: 600;
         color: #065f46;
     }
+
+    /* ── Comments ── */
+    .comments-section {
+        border-top: 1px solid var(--border-200);
+        padding-top: 0.85rem;
+        margin-bottom: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+
+    .comments-label {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--ink-600);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 0.2rem;
+    }
+
+    .comment {
+        background: var(--surface-subtle);
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        padding: 0.65rem 0.85rem;
+    }
+
+    .comment-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .comment-author {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--ink-700);
+    }
+
+    .comment-time {
+        font-size: 0.75rem;
+        color: var(--ink-500);
+    }
+
+    .comment-body {
+        font-size: 0.875rem;
+        color: var(--ink-900);
+        margin: 0;
+        line-height: 1.4;
+    }
+
+    .comment-delete {
+        background: none;
+        border: none;
+        color: #dc2626;
+        font-size: 0.75rem;
+        cursor: pointer;
+        font-family: inherit;
+        padding: 0;
+        margin-top: 0.25rem;
+    }
+
+    .comment-delete:hover { text-decoration: underline; }
+
+    .comment-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.85rem;
+        border-top: 1px solid var(--border-200);
+        padding-top: 0.85rem;
+    }
+
+    .comment-form input {
+        flex: 1;
+        padding: 0.5rem 0.85rem;
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-family: inherit;
+        background: var(--surface-subtle);
+        color: var(--ink-900);
+        outline: none;
+        transition: border-color 0.15s;
+    }
+
+    .comment-form input:focus { border-color: var(--primary-600); }
+
+    .btn-comment { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 </style>

@@ -125,13 +125,7 @@
     })
 </script>
 
-<AppHead title="Welcome">
-    <link rel="preconnect" href="https://rsms.me/" />
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
-</AppHead>
+<AppHead title="Accueil" />
 
 <Header bind:showModal={showModal} />
 
@@ -301,8 +295,6 @@
 </footer>
 
 <style>
-
-
     .zoneOffres {
         max-width: 1300px;
         margin: 0 auto;

@@ -23,6 +23,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'notif_mail',
+        'two_factor_enabled',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
     /**
@@ -43,8 +47,9 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'     => 'datetime',
+            'password'              => 'hashed',
+            'two_factor_expires_at' => 'datetime',
         ];
     }
 

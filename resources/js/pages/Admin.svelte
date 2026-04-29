@@ -3,7 +3,7 @@
     import AppHead from '@/components/AppHead.svelte';
     import { useForm, page } from '@inertiajs/svelte';
 
-    let { etudiants, entreprises, offres, admins} = $props();
+    let { etudiants, entreprises, offres, admins, logs = [] } = $props();
 
     let activeTab = $state('etudiants');
     let success = $derived($page.props.flash?.success);
@@ -36,6 +36,21 @@
         1: 'Admin',
         2: 'Entreprise',
         3: 'Étudiant',
+    };
+
+    const logActionLabel: Record<string, { label: string; color: string }> = {
+        login:              { label: 'Connexion',    color: '#2563eb' },
+        login_failed:       { label: 'Échec login',  color: '#dc2626' },
+        login_2fa:          { label: '2FA envoyé',   color: '#7c3aed' },
+        logout:             { label: 'Déconnexion',  color: '#64748b' },
+        register:           { label: 'Inscription',  color: '#16a34a' },
+        postulation:        { label: 'Candidature',  color: '#0891b2' },
+        acceptation:        { label: 'Acceptation',  color: '#15803d' },
+        confirmation:       { label: 'Confirmation', color: '#15803d' },
+        delete_account:     { label: 'Suppression',  color: '#dc2626' },
+        admin_role:         { label: 'Rôle modifié', color: '#d97706' },
+        admin_delete_offre: { label: 'Offre supp.',  color: '#dc2626' },
+        settings:           { label: 'Paramètres',   color: '#64748b' },
     };
 </script>
 
@@ -84,6 +99,9 @@
             </button>
             <button class="tab" class:active={activeTab === 'admins'} onclick={() => activeTab = 'admins'}>
                 🛠️ Admins ({admins.length})
+            </button>
+            <button class="tab" class:active={activeTab === 'logs'} onclick={() => activeTab = 'logs'}>
+                📜 Logs ({logs.length})
             </button>
         </div>
 
@@ -228,8 +246,16 @@
                                     <td class="email">{admin.email}</td>
                                     <td>{formatDate(admin.created_at)}</td>
                                     <td class="actions">
-                                        <button 
-                                            class="btn-danger" 
+                                        <button
+                                            class="btn-role"
+                                            onclick={() => changeRole(admin.id, 3)}
+                                            disabled={admins.length === 1}
+                                            title={admins.length === 1 ? 'Impossible de rétrograder le dernier admin' : ''}
+                                        >
+                                            → Étudiant
+                                        </button>
+                                        <button
+                                            class="btn-danger"
                                             onclick={() => deleteUser(admin.id)}
                                             disabled={admins.length === 1}
                                             title={admins.length === 1 ? 'Impossible de supprimer le dernier admin' : ''}
@@ -244,6 +270,42 @@
                 {/if}
             </div>
         {/if}
+        {#if activeTab === 'logs'}
+            <div class="table-container">
+                {#if logs.length === 0}
+                    <div class="empty">Aucun événement enregistré.</div>
+                {:else}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Utilisateur</th>
+                                <th>Action</th>
+                                <th>Description</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each logs as log}
+                                {@const meta = logActionLabel[log.action] ?? { label: log.action, color: '#64748b' }}
+                                <tr>
+                                    <td class="log-date">{formatDate(log.created_at)}</td>
+                                    <td class="email">{log.email}</td>
+                                    <td>
+                                        <span class="log-badge" style="background:{meta.color}22;color:{meta.color}">
+                                            {meta.label}
+                                        </span>
+                                    </td>
+                                    <td class="log-desc">{log.description}</td>
+                                    <td class="log-ip">{log.ip ?? '—'}</td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                {/if}
+            </div>
+        {/if}
+
     </div>
 </main>
 
@@ -422,6 +484,19 @@
         text-align: center;
         color: var(--ink-600);
     }
+
+    .log-badge {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .log-date { font-size: 0.8rem; color: var(--ink-600); white-space: nowrap; }
+    .log-desc { font-size: 0.85rem; color: var(--ink-700); }
+    .log-ip   { font-size: 0.78rem; color: var(--ink-500); font-family: monospace; }
 
     @media (max-width: 1100px) {
         .stats {

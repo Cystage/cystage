@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Etudiant;
 use App\Models\Entreprise;
+use App\Models\AppLog;
+use App\Mail\TwoFactorCode;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
@@ -21,14 +24,72 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            return redirect()->intended('/');
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            AppLog::log(null, 'login_failed', "Tentative de connexion échouée pour {$credentials['email']}");
+            return back()->withErrors(['email' => 'Email ou mot de passe incorrect.'])->onlyInput('email');
         }
 
-        return back()->withErrors([
-            'email' => 'Email ou mot de passe incorrect.',
-        ])->onlyInput('email');
+        if ($user->two_factor_enabled) {
+            $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $user->update([
+                'two_factor_code'       => $code,
+                'two_factor_expires_at' => now()->addMinutes(5),
+            ]);
+            Mail::to($user->email)->send(new TwoFactorCode($user));
+            $request->session()->put('2fa_user_id', $user->id);
+            AppLog::log($user->id, 'login_2fa', "Code 2FA envoyé à {$user->email}");
+            return redirect('/two-factor');
+        }
+
+        Auth::login($user, $request->boolean('remember'));
+        $request->session()->regenerate();
+        AppLog::log($user->id, 'login', "Connexion de {$user->email}");
+        return redirect()->intended('/');
+    }
+
+    public function twoFactorShow(Request $request)
+    {
+        if (!$request->session()->has('2fa_user_id')) return redirect('/login');
+        return inertia('TwoFactorVerify');
+    }
+
+    public function twoFactorVerify(Request $request)
+    {
+        $request->validate(['code' => 'required|string|size:6']);
+        $userId = $request->session()->get('2fa_user_id');
+        $user   = User::findOrFail($userId);
+
+        if ($user->two_factor_code !== $request->code || now()->isAfter($user->two_factor_expires_at)) {
+            return back()->withErrors(['code' => 'Code invalide ou expiré.']);
+        }
+
+        $user->update(['two_factor_code' => null, 'two_factor_expires_at' => null]);
+        $request->session()->forget('2fa_user_id');
+        Auth::login($user);
+        $request->session()->regenerate();
+        AppLog::log($user->id, 'login', "Connexion 2FA validée pour {$user->email}");
+        return redirect('/');
+    }
+
+    public function twoFactorResend(Request $request)
+    {
+        $userId = $request->session()->get('2fa_user_id');
+        if (!$userId) return redirect('/login');
+        $user = User::findOrFail($userId);
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $user->update(['two_factor_code' => $code, 'two_factor_expires_at' => now()->addMinutes(5)]);
+        Mail::to($user->email)->send(new TwoFactorCode($user));
+        return back()->with('success', 'Nouveau code envoyé.');
+    }
+
+    public function toggleTwoFactor(Request $request)
+    {
+        $user = $request->user();
+        $user->update(['two_factor_enabled' => !$user->two_factor_enabled]);
+        AppLog::log($user->id, 'settings', "2FA " . ($user->two_factor_enabled ? 'activée' : 'désactivée') . " pour {$user->email}");
+        return back()->with('success', $user->two_factor_enabled ? 'Double authentification activée.' : 'Double authentification désactivée.');
     }
 
     public function register(Request $request)
@@ -59,7 +120,7 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
-
+        AppLog::log($user->id, 'register', "Nouvel étudiant inscrit : {$user->email}");
         return redirect('/');
     }
 
@@ -101,11 +162,13 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+        AppLog::log($user->id, 'register', "Nouvelle entreprise inscrite : {$validated['nom']} ({$validated['email']})");
         return redirect('/');
     }
 
     public function logout(Request $request)
     {
+        AppLog::log($request->user()?->id, 'logout', "Déconnexion de " . ($request->user()?->email ?? '?'));
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -197,5 +260,48 @@ class AuthController extends Controller
         return back()->withErrors(['email' => __($status)]);
     }
 
+    public function updateNotifMail(Request $request)
+    {
+        $request->user()->update(['notif_mail' => $request->boolean('notif_mail')]);
+        return back()->with('success', 'Préférences mises à jour.');
+    }
 
+    public function deleteAccount(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user->role_id === 3) {
+            $etu = \App\Models\Etudiant::where('user_id', $user->id)->first();
+            if ($etu) {
+                \App\Models\Postulation::where('etu_id', $etu->id)->each(function ($p) {
+                    if ($p->path) \Storage::disk('public')->delete($p->path);
+                    $p->delete();
+                });
+                $etu->delete();
+            }
+        }
+
+        if ($user->role_id === 2) {
+            $ent = \App\Models\Entreprise::where('user_id', $user->id)->first();
+            if ($ent) {
+                \App\Models\Offre::where('ent_id', $ent->id)->each(function ($offre) {
+                    \App\Models\Offre_Competence::where('offre_id', $offre->id)->delete();
+                    \App\Models\Offre_Domaine::where('offre_id', $offre->id)->delete();
+                    \App\Models\Postulation::where('offre_id', $offre->id)->delete();
+                    $offre->delete();
+                });
+                if ($ent->logo && !\Str::startsWith($ent->logo, 'http')) {
+                    \Storage::disk('public')->delete($ent->logo);
+                }
+                $ent->delete();
+            }
+        }
+
+        AppLog::log($user->id, 'delete_account', "Suppression du compte {$user->email} (rôle {$user->role_id})");
+        Auth::logout();
+        $user->delete();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/');
+    }
 }
