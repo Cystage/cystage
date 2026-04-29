@@ -44,7 +44,7 @@
 
 
     .box {
-        background: #fff;
+        background: var(--surface-card);
         border-radius: 20px;
         border: 1px solid var(--border-200);
         padding: 2.5rem;
@@ -70,9 +70,9 @@
     }
 
     .alert-success {
-        background: #dcfce7;
-        color: #16a34a;
-        border: 1px solid #bbf7d0;
+        background: var(--badge-green-bg);
+        color: var(--badge-green-text);
+        border: 1px solid var(--badge-green-bg);
         border-radius: 8px;
         padding: 0.75rem 1rem;
         margin-bottom: 1.5rem;
@@ -90,10 +90,10 @@
         margin-top: 1.5rem;
         text-align: center;
         font-size: 0.875rem;
-        color: #64748b;
+        color: var(--ink-600);
     }
 
-    .footer-links a { color: #2563eb; font-weight: 600; text-decoration: none; }
+    .footer-links a { color: var(--primary-600); font-weight: 600; text-decoration: none; }
     .footer-links a:hover { text-decoration: underline; }
 
     @media (max-width: 640px) {

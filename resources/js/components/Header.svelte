@@ -1,39 +1,56 @@
 <script lang="ts">
     import { inertia, page } from '@inertiajs/svelte';
     import { useForm } from '@inertiajs/svelte';
+    import { onMount } from 'svelte';
     import Button from '@/components/Button.svelte';
 
-
     let { showModal = $bindable(false), showLogin = $bindable(false) } = $props();
-    
+
     const logoutForm = useForm({});
     function logout() {
         $logoutForm.post('/logout');
     }
 
     let user = $derived($page.props.auth?.user);
+    let dark = $state(false);
+
+    onMount(() => {
+        dark = localStorage.getItem('theme') === 'dark';
+        document.documentElement.classList.toggle('dark', dark);
+    });
+
+    function toggleDark() {
+        document.documentElement.classList.add('theme-transitioning');
+        dark = !dark;
+        document.documentElement.classList.toggle('dark', dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        setTimeout(() => document.documentElement.classList.remove('theme-transitioning'), 300);
+    }
 </script>
 
 <header>
-    <div class="header-left"></div>
+    <div class="header-left">
+        <button class="theme-btn" onclick={toggleDark} title={dark ? 'Passer en mode clair' : 'Passer en mode sombre'}>
+            {dark ? '☀️' : '🌙'}
+        </button>
+    </div>
+
     <div class="header-center">
         <a use:inertia href="/" class="header-logo-text">CyStage</a>
     </div>
+
     <div class="header-right">
         {#if user}
-        
-            {#if user}
-                <Button variant="btn-ghost" href="/profil">Mon profil</Button>
-            {/if}
-            {#if user.role_id==2 || user.role_id==1}
+            <Button variant="btn-ghost" href="/profil">Mon espace</Button>
+            {#if user.role_id == 2 || user.role_id == 1}
                 <Button variant="btnBlanc" onclick={() => showModal = !showModal}>Publier une offre</Button>
             {/if}
-            {#if user.role_id==1}
+            {#if user.role_id == 1}
                 <Button variant="btn-ghost" href="/admin">Administration</Button>
             {/if}
-                <Button variant="btnBleu"onclick={logout}>Déconnexion</Button>
+            <Button variant="btnBleu" onclick={logout}>Déconnexion</Button>
         {:else}
-                <Button variant="btnBleu" href={"/login"}>Connexion</Button>
+            <Button variant="btnBleu" href="/login">Connexion</Button>
         {/if}
     </div>
 </header>
@@ -48,14 +65,16 @@
         justify-content: space-between;
         padding: 0.75rem 1.5rem;
         min-height: 64px;
-        background: rgba(255, 255, 255, 0.94);
-        border-bottom: 1px solid #e2e8f0;
+        background: var(--header-bg);
+        border-bottom: 1px solid var(--border-200);
         box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
         backdrop-filter: blur(8px);
         gap: 0.75rem;
     }
 
-    .header-left, .header-center, .header-right {
+    .header-left,
+    .header-center,
+    .header-right {
         flex: 1;
         display: flex;
         align-items: center;
@@ -67,52 +86,40 @@
     .header-logo-text {
         font-size: 1.35rem;
         font-weight: 800;
-        color: #1d4ed8;
+        color: var(--primary-700);
         text-decoration: none;
         letter-spacing: -0.03em;
     }
 
-    button, .btn-primary, .btn-secondary, .btn-ghost {
-        padding: 0.45rem 0.9rem;
+    /* ─── Dark mode toggle ─── */
+    .theme-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
         border-radius: 10px;
-        font-size: 0.84rem;
-        font-weight: 600;
+        border: 1px solid var(--border-200);
+        background: var(--surface-subtle);
+        color: var(--ink-900);
         cursor: pointer;
-        border: none;
-        text-decoration: none;
-        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-        font-family: inherit;
-        white-space: nowrap;
+        transition: background-color 0.2s ease, transform 0.15s ease;
+        flex-shrink: 0;
     }
 
-    .btn-primary { background: #2563eb; color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .theme-btn:hover {
+        background: var(--surface-muted);
+        transform: scale(1.08);
+    }
 
-    .btn-secondary { background: #f1f5f9; color: #1e293b; border: 1px solid #e2e8f0; }
-    .btn-secondary:hover { background: #e2e8f0; }
-
-    .btn-ghost { background: transparent; color: #2563eb; display: inline-flex; align-items: center; }
-    .btn-ghost:hover { background: #eff6ff; }
-
-    .btn-primary:focus-visible,
-    .btn-secondary:focus-visible,
-    .btn-ghost:focus-visible {
+    .theme-btn:focus-visible {
         outline: 3px solid rgba(37, 99, 235, 0.35);
         outline-offset: 2px;
     }
 
     @media (max-width: 900px) {
-        header {
-            padding: 0.65rem 1rem;
-        }
-
-        .header-center {
-            justify-content: flex-start;
-        }
-
-        .header-left {
-            display: none;
-        }
+        header { padding: 0.65rem 1rem; }
+        .header-center { justify-content: flex-start; }
     }
 
     @media (max-width: 700px) {
@@ -120,7 +127,6 @@
             align-items: flex-start;
             flex-direction: column;
         }
-
         .header-center,
         .header-right {
             width: 100%;

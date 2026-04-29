@@ -68,9 +68,10 @@
         border-radius: 10px;
         font-size: 0.95rem;
         font-family: inherit;
+        background: var(--surface-subtle, #f8fafc);
+        color: var(--ink-900, #0f172a);
         outline: none;
         transition: border-color 0.15s, box-shadow 0.15s;
-        
         box-sizing: border-box;
     }
 

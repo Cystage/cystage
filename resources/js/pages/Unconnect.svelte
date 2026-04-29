@@ -338,7 +338,7 @@
   min-width: 116px;
   padding: 0.9rem 1rem;
   border-radius: 16px;
-  background: #ffffff;
+  background: var(--surface-card);
   border: 1px solid var(--primary-100);
   box-shadow: 0 8px 20px rgba(37, 99, 235, 0.1);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -424,7 +424,7 @@
   justify-content: space-between;
   gap: 0.8rem;
   padding: 0.95rem 0;
-  border-top: 1px solid #edf2f7;
+  border-top: 1px solid var(--border-soft);
  }
 
  .miniOffre:first-of-type {
@@ -516,8 +516,8 @@
  }
 
  .blocInfo {
-  background: #ffffff;
-  border: 1px solid #e5edf5;
+  background: var(--surface-card);
+  border: 1px solid var(--border-soft);
   border-radius: 20px;
   padding: 1.45rem;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
@@ -538,7 +538,7 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
   color: var(--primary-700);
   font-weight: 800;
   font-size: 1.05rem;
@@ -599,7 +599,7 @@
   text-align: center;
   border-radius: 28px;
   border: 1px solid var(--primary-100);
-  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+  background: var(--blocfin-bg);
   box-shadow: 0 20px 46px rgba(37, 99, 235, 0.1);
  }
 
