@@ -16,7 +16,6 @@
     });
 
     let isDragging = $state(false);
-    let success = $state(false);
 
     function handleFile(file: File) {
         if (file && file.type === 'application/pdf') {
@@ -46,11 +45,7 @@
             preserveState: true,
             onSuccess: () => {
                 $form.reset();
-                success = true;
-                setTimeout(() => {
-                    success = false;
-                    showModalPostuler = false;
-                }, 3000);
+                showModalPostuler = false;
             }
         });
     }
@@ -61,17 +56,7 @@
 <div class="overlay">
     <div class="modal">
 
-        {#if success}
-            <div class="success-banner">
-                <span class="success-icon">✅</span>
-                <div>
-                    <p class="success-title">Candidature en cours d'envoie</p>
-                    <p class="success-sub attente">Veuillez patienter quelques secondes</p>
-                </div>
-            </div>
-        {:else}
-
-            <div class="header">
+        <div class="header">
                 <div class="header-info">
                     <p class="pre-titre">Candidature pour</p>
                     <h1 class="titre">{offre.nom}</h1>
@@ -141,13 +126,12 @@
                 
                 <Button type="submit" variant="btnBleu" disabled={$form.processing}>
                     {#if $form.processing}
-                        <span class="spinner"></span> <p class="attente">Envoi en cours</p>
+                        <span class="spinner"></span> Envoi en cours
                     {:else}
                         Envoyer ma candidature →
                     {/if}
                </Button>
             </form>
-        {/if}
     </div>
 </div>
 
@@ -176,30 +160,6 @@
         border: 1px solid var(--border-200);
         padding: 2rem;
         box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
-    }
-
-    /* Succès */
-    .success-banner {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        padding: 2rem;
-        text-align: left;
-    }
-
-    .success-icon { font-size: 2.5rem; }
-
-    .success-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: var(--badge-green-text);
-        margin: 0 0 0.25rem 0;
-    }
-
-    .success-sub {
-        font-size: 0.875rem;
-        color: var(--ink-600);
-        margin: 0;
     }
 
     /* Header */

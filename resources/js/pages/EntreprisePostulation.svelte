@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { router, useForm, page } from '@inertiajs/svelte';
+    import { router, page } from '@inertiajs/svelte';
 
     let { postulations = [], profile } = $props();
 
@@ -47,26 +47,28 @@
         router.delete(`/commentaire/${id}`, { preserveScroll: true });
     }
 
-    function commentForm(postulationId: number) {
-        return useForm({ body: '' });
-    }
+    let commentBodies: Record<number, string> = $state({});
 
-    let commentForms: Record<number, any> = {};
-
-    function getCommentForm(id: number) {
-        if (!commentForms[id]) {
-            commentForms[id] = useForm({ body: '' });
+    $effect(() => {
+        for (const p of postulations) {
+            if (commentBodies[p.id] === undefined) {
+                commentBodies[p.id] = '';
+            }
         }
-        return commentForms[id];
-    }
+    });
 
     function submitComment(e: Event, postulationId: number) {
         e.preventDefault();
-        const f = getCommentForm(postulationId);
-        f.post(`/postulation/${postulationId}/commentaire`, {
-            preserveScroll: true,
-            onSuccess: () => { f.reset(); }
-        });
+        const body = commentBodies[postulationId];
+        if (!body?.trim()) return;
+        router.post(
+            `/postulation/${postulationId}/commentaire`,
+            { body },
+            {
+                preserveScroll: true,
+                onSuccess: () => { commentBodies[postulationId] = ''; },
+            }
+        );
     }
 
     const stateLabel: Record<number, string> = {
@@ -155,14 +157,13 @@
             {/if}
 
             {#if p.state === 3}
-                {@const f = getCommentForm(p.id)}
                 <form class="comment-form" onsubmit={(e) => submitComment(e, p.id)}>
                     <input
                         type="text"
                         placeholder="Ajouter un commentaire sur ce stage…"
-                        bind:value={f.body}
+                        bind:value={commentBodies[p.id]}
                     />
-                    <button type="submit" class="btn btn-comment" disabled={f.processing}>Envoyer</button>
+                    <button type="submit" class="btn btn-comment">Envoyer</button>
                 </form>
             {/if}
 

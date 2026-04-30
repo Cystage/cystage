@@ -133,7 +133,6 @@
         <p class="greeting">Bonjour, {getFullName()}</p>
 
         <div class="Y1">
-            <div class="Bande">Mon espace</div>
             <div class="profile-header">
                 {#if profile?.logo}
                     <img src={profile.logo} alt="Logo {profile.nom}" class="logo-preview" loading="lazy" />
@@ -335,19 +334,10 @@
 <style>
     .greeting {
         margin: 0 0 16px;
-        font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+        font-size: clamp(1.3rem, 2.2vw, 1.6rem);
         font-weight: 700;
         color: var(--ink-900);
-    }
-
-    .Bande {
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
-        color: white;
-        margin-bottom: 14px;
-        padding: 22px 24px;
-        font-size: clamp(1.45rem, 2.8vw, 1.9rem);
-        font-weight: bold;
-        border-radius: 14px;
+        letter-spacing: -0.025em;
     }
 
     .page-container {
@@ -367,9 +357,9 @@
     .Y1, .Y2 {
         background: var(--surface-card);
         border: 1px solid var(--border-200);
-        border-radius: 14px;
-        padding: 18px;
-        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow-soft);
     }
 
     .Y1 { margin-bottom: 0; }
@@ -377,31 +367,32 @@
 
     .tabs {
         display: flex;
-        gap: 0;
-        margin-top: 16px;
+        gap: 4px;
+        margin-top: 12px;
+        background: var(--surface-muted);
+        border: 1px solid var(--border-200);
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        padding: 6px 6px 0;
     }
 
     .tab {
-        padding: 0.7rem 1.2rem;
-        font-size: 0.95rem;
+        padding: 0.55rem 1.1rem;
+        font-size: 0.875rem;
         font-weight: 600;
-        border: 1px solid var(--border-200);
-        border-bottom: none;
-        background: var(--surface-subtle);
+        border: none;
+        background: transparent;
         color: var(--ink-600);
         cursor: pointer;
         font-family: inherit;
-        border-radius: 10px 10px 0 0;
+        border-radius: 8px 8px 0 0;
         transition: background 0.15s, color 0.15s;
-        margin-right: 4px;
+        letter-spacing: -0.01em;
     }
 
     .tab.active {
         background: var(--surface-card);
-        color: var(--primary-700);
-        border-color: var(--border-200);
-        position: relative;
-        z-index: 1;
+        color: var(--primary-600);
     }
 
     /* ── Profile form — mobile-first ── */
