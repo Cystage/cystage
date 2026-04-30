@@ -81,7 +81,7 @@
     }
 </script>
 
-<AppHead title="Créer un compte" />
+<AppHead title="Créer un compte" description="Inscrivez-vous sur CyStage en tant qu'étudiant ou entreprise pour accéder à la plateforme de stages." />
 
 
 <Header/>
@@ -209,11 +209,16 @@
         box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
     }
 
+    /* mobile-first */
     form {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px 24px;
+        grid-template-columns: 1fr;
+        gap: 14px;
         align-items: flex-start;
+    }
+
+    @media (min-width: 640px) {
+        form { grid-template-columns: 1fr 1fr; gap: 18px 24px; }
     }
 
 
@@ -241,16 +246,8 @@
 
     .footer-links a:hover { text-decoration: underline; }
 
-    @media (max-width: 800px) {
-        .box {
-            padding: 1.8rem 1.2rem;
-            border-radius: 16px;
-        }
-
-        form {
-            grid-template-columns: 1fr;
-            gap: 14px;
-        }
+    @media (max-width: 640px) {
+        .box { padding: 1.5rem 1rem; border-radius: 16px; }
     }
 
     .subm {

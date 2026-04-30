@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Link;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class DomaineController extends Controller
@@ -18,10 +18,9 @@ class DomaineController extends Controller
             'name' => 'required|string',
         ]);
 
-        \App\Models\Domaine::create([
-            'name' => $request->name
-        ]);
+        \App\Models\Domaine::create(['name' => $request->name]);
+        Cache::forget('domaines');
 
-        return back()->with('success','Code partagé avec succès');
+        return back()->with('success', 'Domaine ajouté.');
     }
 }

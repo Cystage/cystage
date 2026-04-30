@@ -255,19 +255,26 @@
   background: radial-gradient(circle, rgba(29, 78, 216, 0.14) 0%, rgba(29, 78, 216, 0) 70%);
  }
 
+ /* hero grid — mobile-first : 1 colonne, puis 2 sur grand écran */
  .contenuHero {
   position: relative;
   z-index: 1;
   max-width: 1220px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 2.2rem;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
   align-items: center;
  }
 
- .blocGauche {
-  max-width: 680px;
+ .blocGauche { max-width: unset; }
+
+ @media (min-width: 1024px) {
+  .contenuHero {
+   grid-template-columns: 1.1fr 0.9fr;
+   gap: 2.2rem;
+  }
+  .blocGauche { max-width: 680px; }
  }
 
  .zoneLogo {
@@ -491,16 +498,21 @@
   font-size: 1rem;
  }
 
- .grille4 {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.2rem;
- }
-
+ /* grilles — mobile-first */
+ .grille4,
  .grille3 {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.2rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+ }
+
+ @media (min-width: 540px) {
+  .grille4, .grille3 { grid-template-columns: 1fr 1fr; }
+ }
+
+ @media (min-width: 1024px) {
+  .grille4 { grid-template-columns: repeat(4, 1fr); }
+  .grille3 { grid-template-columns: repeat(3, 1fr); }
  }
 
  .blocInfo {
@@ -612,67 +624,13 @@
   justify-content: center;
  }
 
- @media (max-width: 1024px) {
-  .contenuHero {
-   grid-template-columns: 1fr;
-   gap: 1.6rem;
-  }
-
-  .blocGauche {
-   max-width: unset;
-  }
-
-  .grille4 {
-   grid-template-columns: repeat(2, 1fr);
-  }
-
-  .grille3 {
-   grid-template-columns: repeat(2, 1fr);
-  }
- }
-
+ /* adaptations supplémentaires desktop */
  @media (max-width: 768px) {
-  .hero {
-   padding-top: 3.6rem;
-  }
-
-  .section,
-  .sectionFin {
-   padding-left: 1rem;
-   padding-right: 1rem;
-  }
-
-  .logoHero {
-   width: 210px;
-  }
-
-  h1 {
-   font-size: clamp(2rem, 9vw, 2.8rem);
-  }
-
-  .texteHero {
-   font-size: 1rem;
-   line-height: 1.65;
-  }
-
-  .ligneCartes,
-  .grille4,
-  .grille3 {
-   grid-template-columns: 1fr;
-  }
-
-  .ligneEtapes {
-   display: none;
-  }
-
-  .actionsHero {
-   flex-direction: column;
-  }
-
-
-  .blocFin {
-   padding: 2rem 1.2rem;
-  }
+  .hero { padding-top: 3.6rem; }
+  .section, .sectionFin { padding-left: 1rem; padding-right: 1rem; }
+  .logoHero { width: 200px; }
+  .ligneEtapes { display: none; }
+  .blocFin { padding: 2rem 1.2rem; }
  }
 
  @media (prefers-reduced-motion: reduce) {

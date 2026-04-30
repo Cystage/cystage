@@ -404,12 +404,19 @@
         z-index: 1;
     }
 
-    /* ── Profile form ── */
+    /* ── Profile form — mobile-first ── */
     .Y2 form {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px 24px;
+        grid-template-columns: 1fr;
+        gap: 14px;
         align-items: flex-start;
+    }
+
+    @media (min-width: 640px) {
+        .Y2 form {
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 24px;
+        }
     }
 
     .form-group {

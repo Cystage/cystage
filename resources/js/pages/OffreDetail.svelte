@@ -36,7 +36,10 @@
     );
 </script>
 
-<AppHead title={offre?.nom ?? 'Offre de stage'} />
+<AppHead
+    title={offre?.nom ?? 'Offre de stage'}
+    description="{offre?.nom ?? 'Offre'} chez {entreprise?.nom ?? ''} — {offre?.nb_week} semaines, {offre?.paye_hour}€/h. Postulez sur CyStage."
+/>
 <Header />
 
 <main class="detail-page">

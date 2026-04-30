@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Link;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class CompetenceController extends Controller
@@ -18,10 +18,9 @@ class CompetenceController extends Controller
             'name' => 'required|string',
         ]);
 
-        \App\Models\Competence::create([
-            'name' => $request->name
-        ]);
+        \App\Models\Competence::create(['name' => $request->name]);
+        Cache::forget('competences');
 
-        return back()->with('success','Code partagé avec succès');
+        return back()->with('success', 'Compétence ajoutée.');
     }
 }

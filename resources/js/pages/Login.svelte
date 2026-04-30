@@ -16,7 +16,7 @@
     }
 </script>
 
-<AppHead title="Connexion" />
+<AppHead title="Connexion" description="Connectez-vous à votre espace CyStage pour suivre vos offres et candidatures." />
 <Header />
 
 <main>

@@ -336,11 +336,16 @@
         font-size: 0.9rem;
     }
 
+    /* stats — mobile-first */
     .stats {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr 1fr;
         gap: 1rem;
         margin-bottom: 2rem;
+    }
+
+    @media (min-width: 1100px) {
+        .stats { grid-template-columns: repeat(4, 1fr); }
     }
 
     .stat-card {
@@ -367,23 +372,24 @@
         font-size: 0.9rem;
     }
 
+    /* tabs — mobile-first : tous arrondis, wrappés */
     .tabs {
         display: flex;
         gap: 6px;
+        flex-wrap: wrap;
         margin-bottom: 0;
     }
 
     .tab {
-        padding: 0.65rem 1.5rem;
-        font-size: 0.95rem;
+        padding: 0.55rem 1rem;
+        font-size: 0.9rem;
         font-weight: 600;
         border: 1px solid var(--border-200);
-        border-bottom: none;
         background: var(--surface-subtle);
         color: var(--ink-600);
         cursor: pointer;
         font-family: inherit;
-        border-radius: 10px 10px 0 0;
+        border-radius: 10px;
         transition: background 0.15s, color 0.15s;
     }
 
@@ -395,9 +401,21 @@
     .table-container {
         background: var(--surface-card);
         border: 1px solid var(--border-200);
-        border-radius: 0 14px 14px 14px;
-        overflow: hidden;
+        border-radius: 14px;
+        overflow-x: auto;
         box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    /* desktop : onglets style tabbar classique */
+    @media (min-width: 1100px) {
+        .tabs { flex-wrap: nowrap; }
+        .tab {
+            padding: 0.65rem 1.5rem;
+            font-size: 0.95rem;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+        }
+        .table-container { border-radius: 0 14px 14px 14px; }
     }
 
     table { width: 100%; border-collapse: collapse; }
@@ -498,33 +516,8 @@
     .log-desc { font-size: 0.85rem; color: var(--ink-700); }
     .log-ip   { font-size: 0.78rem; color: var(--ink-500); font-family: monospace; }
 
-    @media (max-width: 1100px) {
-        .stats {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .tabs {
-            flex-wrap: wrap;
-        }
-
-        .tab {
-            border-radius: 10px;
-            border-bottom: 1px solid var(--border-200);
-        }
-
-        .table-container {
-            border-radius: 14px;
-            overflow-x: auto;
-        }
-    }
-
     @media (max-width: 720px) {
-        main {
-            padding: 1.2rem 0.8rem;
-        }
-
-        .stats {
-            grid-template-columns: 1fr;
-        }
+        main { padding: 1.2rem 0.8rem; }
+        .stats { grid-template-columns: 1fr; }
     }
 </style>

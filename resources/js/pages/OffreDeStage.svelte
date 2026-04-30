@@ -18,9 +18,8 @@
     }
 </script>
 
-<div class="card">
-    <!-- Header -->
-    <div class="card-header">
+<article class="card">
+    <header class="card-header">
         <div class="header-left">
             {#if entreprise?.logo}
                 <img src={entreprise.logo} alt="Logo {entreprise.nom}" class="logo-ent" loading="lazy" />
@@ -43,7 +42,7 @@
                 <span class="badge badge-blue">#{d.name}</span>
             {/each}
         </div>
-    </div>
+    </header>
 
     <hr class="divider"/>
 
@@ -77,9 +76,7 @@
                 <span class="info-value">{entreprise?.ville}, {entreprise?.pays}</span>
             </div>
         </div>
-
-
-        </div>
+    </div>
     <hr class="divider"/>
 
     <!-- Description -->
@@ -105,8 +102,7 @@
         </div>
     {/if}
 
-    <!-- Footer -->
-    <div class="card-footer">
+    <footer class="card-footer">
         <span class="contact">📞 {entreprise?.num_tel}</span>
 
         <div class="footer-actions">
@@ -115,14 +111,14 @@
                 <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
             {/if}
         </div>
-    </div>
+    </footer>
 
     {#if showModalPostuler}
         <div use:portal>
             <ModalPoste etudiant={etudiant} bind:showModalPostuler={showModalPostuler} offre={offre}/>
         </div>
     {/if}
-</div>
+</article>
 
 <style>
 
@@ -141,13 +137,21 @@
         transform: translateY(-2px);
     }
 
-    /* Header */
+    /* Header — mobile-first */
     .card-header {
         display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 1rem;
-        flex-wrap: wrap;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    @media (min-width: 600px) {
+        .card-header {
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
     }
 
     .header-left {
@@ -202,7 +206,11 @@
         flex-wrap: wrap;
         gap: 0.4rem;
         align-items: flex-start;
-        justify-content: flex-end;
+        justify-content: flex-start;
+    }
+
+    @media (min-width: 600px) {
+        .badges { justify-content: flex-end; }
     }
 
     .badge {
@@ -224,11 +232,15 @@
         margin: 1rem 0;
     }
 
-    /* Info grid */
+    /* Info grid — mobile-first */
     .info-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 1fr 1fr;
         gap: 0.75rem;
+    }
+
+    @media (min-width: 600px) {
+        .info-grid { grid-template-columns: repeat(4, 1fr); }
     }
 
     .info-item {
@@ -331,13 +343,9 @@
 
     .btn-detail:hover { background: var(--primary-100, #dbeafe); }
 
-    @media (max-width: 768px) {
-        .info-grid { grid-template-columns: repeat(2, 1fr); }
-        .card-header { flex-direction: column; }
-        .badges { justify-content: flex-start; }
-    }
-
-    @media (max-width: 480px) {
-        .info-grid { grid-template-columns: 1fr 1fr; }
+    /* card-footer — stack sur mobile */
+    .card-footer {
+        flex-wrap: wrap;
+        gap: 0.75rem;
     }
 </style>

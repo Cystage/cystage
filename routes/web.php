@@ -19,6 +19,7 @@ use App\Models\Domaine;
 use App\Models\Role;
 use App\Models\Postulation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\AdminController;
 
 Route::get('/', function (Request $request) {
@@ -28,8 +29,8 @@ Route::get('/', function (Request $request) {
             $etu = Etudiant::where('user_id',$user->id)->first();
             return Inertia::render('Welcome', [
                 'offres' => Offre::latest()->get(),
-                'competences' => Competence::latest()->get(),
-                'domaines' => Domaine::latest()->get(),
+                'competences' => Cache::remember('competences', 600, fn() => Competence::latest()->get()),
+                'domaines'    => Cache::remember('domaines',    600, fn() => Domaine::latest()->get()),
                 'links_offres_competences' => Offre_Competence::latest()->get(),
                 'links_offres_domaines' => Offre_Domaine::latest()->get(),
                 'entreprises' => Entreprise::latest()->get(),
@@ -257,7 +258,7 @@ Route::middleware('auth')->group(function () {
     })->name('postulation.archiver');
 });
 
-Route::patch('/settings/two-factor', [AuthController::class, 'toggleTwoFactor'])->middleware('auth')->name('settings.2fa');
+Route::patch('/settings/two-factor', [AuthController::class, 'toggleTwoFactor'])->middleware('auth')->name('settings.two-factor');
 
 Route::get('/two-factor', [AuthController::class, 'twoFactorShow'])->name('two-factor.show');
 Route::post('/two-factor/verify', [AuthController::class, 'twoFactorVerify'])->name('two-factor.verify');
