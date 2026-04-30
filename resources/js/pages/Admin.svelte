@@ -1,9 +1,9 @@
 <script lang="ts">
     import Header from '@/components/Header.svelte';
     import AppHead from '@/components/AppHead.svelte';
-    import { useForm, page } from '@inertiajs/svelte';
+    import { useForm, page, router } from '@inertiajs/svelte';
 
-    let { etudiants, entreprises, offres, admins, logs = [] } = $props();
+    let { etudiants, entreprises, offres, admins, logs = [], stages = [] } = $props();
 
     let activeTab = $state('etudiants');
     let success = $derived($page.props.flash?.success);
@@ -26,6 +26,10 @@
     function deleteOffre(id: number) {
         if (!confirm('Supprimer cette offre ?')) return;
         $deleteOffreForm.delete(`/admin/offre/${id}`);
+    }
+
+    function archiverStage(id: number, archived: boolean) {
+        router.post(`/postulation/${id}/archiver`, {}, { preserveScroll: true });
     }
 
     function formatDate(date: string) {
@@ -60,8 +64,11 @@
 <main>
     <div class="content">
         <div class="page-header">
-            <h1>🛠️ Administration</h1>
-            <p>Gestion des utilisateurs et des offres de la plateforme</p>
+            <div>
+                <h1>🛠️ Administration</h1>
+                <p>Gestion des utilisateurs et des offres de la plateforme</p>
+            </div>
+            <a href="/register" class="btn-create-account">+ Créer un compte</a>
         </div>
 
         {#if success}
@@ -82,8 +89,8 @@
                 <span>Entreprises</span>
             </div>
             <div class="stat-card">
-                <strong>{admins.length}</strong>
-                <span>Administrateurs</span>
+                <strong>{stages.filter((s: any) => !s.archived).length}</strong>
+                <span>Stages en cours</span>
             </div>
         </div>
 
@@ -96,6 +103,9 @@
             </button>
             <button class="tab" class:active={activeTab === 'entreprises'} onclick={() => activeTab = 'entreprises'}>
                 🏢 Entreprises ({entreprises.length})
+            </button>
+            <button class="tab" class:active={activeTab === 'stages'} onclick={() => activeTab = 'stages'}>
+                🏁 Stages ({stages.length})
             </button>
             <button class="tab" class:active={activeTab === 'admins'} onclick={() => activeTab = 'admins'}>
                 🛠️ Admins ({admins.length})
@@ -225,6 +235,49 @@
             </div>
         {/if}
 
+        {#if activeTab === 'stages'}
+            <div class="table-container">
+                {#if stages.length === 0}
+                    <div class="empty">Aucun stage confirmé.</div>
+                {:else}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Étudiant</th>
+                                <th>Offre</th>
+                                <th>Entreprise</th>
+                                <th>Confirmé le</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each stages as stage}
+                                <tr>
+                                    <td>{stage.etudiant}</td>
+                                    <td>{stage.offre}</td>
+                                    <td>{stage.entreprise}</td>
+                                    <td>{formatDate(stage.created_at)}</td>
+                                    <td>
+                                        {#if stage.archived}
+                                            <span class="badge badge-archived">Archivé</span>
+                                        {:else}
+                                            <span class="badge badge-3">En cours</span>
+                                        {/if}
+                                    </td>
+                                    <td class="actions">
+                                        <button class="btn-role" onclick={() => archiverStage(stage.id, stage.archived)}>
+                                            {stage.archived ? 'Désarchiver' : 'Archiver'}
+                                        </button>
+                                    </td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                {/if}
+            </div>
+        {/if}
+
         {#if activeTab === 'admins'}
             <div class="table-container">
                 {#if admins.length === 0}
@@ -322,7 +375,14 @@
         margin: 0 auto;
     }
 
-    .page-header { margin-bottom: 2rem; }
+    .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
     .page-header h1 {
         font-size: 1.8rem;
         font-weight: 800;
@@ -330,6 +390,24 @@
         margin: 0 0 0.25rem 0;
     }
     .page-header p { color: var(--ink-600); margin: 0; }
+
+    .btn-create-account {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1.1rem;
+        border-radius: 8px;
+        background: var(--primary-600);
+        color: #fff;
+        font-size: 0.875rem;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: opacity 0.15s;
+        flex-shrink: 0;
+    }
+    .btn-create-account:hover { opacity: 0.88; }
+
+    .badge-archived { background: #f1f5f9; color: #64748b; }
 
     .alert-success {
         background: var(--badge-green-bg);

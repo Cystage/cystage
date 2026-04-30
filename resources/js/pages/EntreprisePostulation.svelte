@@ -39,10 +39,6 @@
         }
     }
 
-    function archiver(id: number, archived: boolean) {
-        router.post(`/postulation/${id}/archiver`, {}, { preserveScroll: true });
-    }
-
     function deleteComment(id: number) {
         router.delete(`/commentaire/${id}`, { preserveScroll: true });
     }
@@ -186,7 +182,6 @@
                                 <span class="attente">En attente de confirmation de l'étudiant</span>
                             {:else if p.state === 3}
                                 <span class="confirmed">Stage confirmé ✓</span>
-                                <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Archiver</button>
                             {/if}
                         {:else}
                             {#if p.state === 1}
@@ -197,11 +192,8 @@
                                 <button class="btn btn-red" onclick={() => supprimer(p.id, 'Refuser cette offre ?')}>Refuser</button>
                             {:else if p.state === 3}
                                 <span class="confirmed">Stage confirmé ✓</span>
-                                <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Archiver</button>
                             {/if}
                         {/if}
-                    {:else}
-                        <button class="btn btn-archive" onclick={() => archiver(p.id, p.archived)}>Désarchiver</button>
                     {/if}
                 </div>
             </div>

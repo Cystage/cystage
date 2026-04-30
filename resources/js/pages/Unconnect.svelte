@@ -34,7 +34,6 @@
 
      <div class="actionsHero">
       <Button href="/login" variant="btn btnBleu">Se connecter</Button>
-      <Button href="/register" variant="btn btnBlanc">Crée un compte</Button>
      </div>
 
      <div class="statsHero apparition">
@@ -211,12 +210,11 @@
     <span class="miniTitreFin">Rejoindre la plateforme</span>
     <h2>Prêt à démarrer avec CyStage ?</h2>
     <p>
-     Connectez-vous ou créez votre espace pour accéder aux offres,
+     Connectez-vous ou demander à un administrateur de créer votre espace pour accéder aux offres,
      publier des opportunités et structurer votre parcours.
     </p>
     <div class="actionsHero centre">
     <Button href="/login" variant="btn btnBleu">Connexion</Button>
-    <Button href="/register" variant="btn btnBlanc">Inscription</Button>
     </div>
    </div>
   </section>
