@@ -50,5 +50,17 @@ class Offre_CompetenceTableSeeder extends Seeder
             'offre_id' => '6',
             'skill_id' => '7',
         ]);
+        // Offre 7 - DevOps : Docker, Git, Python
+        foreach ([10, 11, 8] as $skill_id) {
+            DB::table('offre__competences')->insert(['offre_id' => 7, 'skill_id' => $skill_id]);
+        }
+        // Offre 8 - Backend Java : Java, SQL, Git
+        foreach ([1, 9, 11] as $skill_id) {
+            DB::table('offre__competences')->insert(['offre_id' => 8, 'skill_id' => $skill_id]);
+        }
+        // Offre 9 - IA/ML : Python, R, Data Mining, SQL
+        foreach ([8, 5, 7, 9] as $skill_id) {
+            DB::table('offre__competences')->insert(['offre_id' => 9, 'skill_id' => $skill_id]);
+        }
     }
 }

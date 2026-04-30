@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(DomainesTableSeeder::class);
         $this->call(Offre_CompetenceTableSeeder::class);
         $this->call(Offre_DomaineTableSeeder::class);
+        $this->call(PostulationsTableSeeder::class);
+        $this->call(PostulationCommentairesTableSeeder::class);
     }
 }

@@ -34,5 +34,11 @@ class Offre_DomaineTableSeeder extends Seeder
             'offre_id' => '6',
             'dom_id' => '3',
         ]);
+        DB::table('offre__domaines')->insert(['offre_id' => 7, 'dom_id' => 7]); // DevOps
+        DB::table('offre__domaines')->insert(['offre_id' => 7, 'dom_id' => 5]); // Dev Logiciel
+        DB::table('offre__domaines')->insert(['offre_id' => 8, 'dom_id' => 5]); // Dev Logiciel
+        DB::table('offre__domaines')->insert(['offre_id' => 8, 'dom_id' => 1]); // Dev Web
+        DB::table('offre__domaines')->insert(['offre_id' => 9, 'dom_id' => 8]); // IA
+        DB::table('offre__domaines')->insert(['offre_id' => 9, 'dom_id' => 3]); // Data Science
     }
 }

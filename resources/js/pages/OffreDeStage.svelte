@@ -1,12 +1,18 @@
 <script lang="ts">
     import ModalPoste from "./ModalPoste.svelte";
-    import { page } from '@inertiajs/svelte';
+    import { page, router } from '@inertiajs/svelte';
     import Button from '@/components/Button.svelte';
 
-    let { offre = $bindable(), entreprise = $bindable(), doms, skills, etudiant = $bindable() } = $props();
+    let { offre = $bindable(), entreprise = $bindable(), doms, skills, etudiant = $bindable(), canManage = false, onedit = null } = $props();
 
     let showModalPostuler = $state(false);
     let user = $derived($page.props.auth?.user);
+
+    function supprimerOffre() {
+        if (confirm(`Supprimer l'offre "${offre.nom}" ? Cette action supprimera aussi toutes les candidatures associées.`)) {
+            router.delete(`/offre/${offre.id}`, { preserveScroll: true });
+        }
+    }
 
     function portal(node: HTMLElement) {
         document.body.appendChild(node);
@@ -106,6 +112,10 @@
         <span class="contact">📞 {entreprise?.num_tel}</span>
 
         <div class="footer-actions">
+            {#if canManage}
+                <button class="btn-edit" onclick={() => onedit && onedit(offre)}>Modifier</button>
+                <button class="btn-del" onclick={supprimerOffre}>Supprimer</button>
+            {/if}
             <a href="/offre/{offre.id}" class="btn-detail">Voir le détail</a>
             {#if user?.role_id == 3}
                 <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
@@ -342,6 +352,22 @@
     }
 
     .btn-detail:hover { background: var(--primary-100, #dbeafe); }
+
+    .btn-edit, .btn-del {
+        font-size: 0.82rem;
+        font-weight: 600;
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity 0.15s;
+    }
+
+    .btn-edit { background: var(--surface-muted); color: var(--ink-600); border: 1px solid var(--border-200); }
+    .btn-edit:hover { opacity: 0.8; }
+    .btn-del  { background: #fee2e2; color: #991b1b; }
+    .btn-del:hover  { opacity: 0.8; }
 
     /* card-footer — stack sur mobile */
     .card-footer {

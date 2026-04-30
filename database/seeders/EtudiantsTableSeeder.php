@@ -32,5 +32,17 @@ class EtudiantsTableSeeder extends Seeder
             'nom'          => 'Martin',
             'num_etudiant' => '22105678',
         ]);
+        DB::table('etudiants')->insert([
+            'user_id'      => 10,
+            'prenom'       => 'Thomas',
+            'nom'          => 'Dubois',
+            'num_etudiant' => '22107890',
+        ]);
+        DB::table('etudiants')->insert([
+            'user_id'      => 11,
+            'prenom'       => 'Camille',
+            'nom'          => 'Lefèvre',
+            'num_etudiant' => '22103456',
+        ]);
     }
 }

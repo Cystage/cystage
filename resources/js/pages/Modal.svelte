@@ -2,26 +2,28 @@
     import { useForm } from '@inertiajs/svelte';
     import Button from '@/components/Button.svelte';
 
-    let { showModal = $bindable(), entreprises = $bindable(), competences = $bindable(), domaines = $bindable(), user } = $props();
+    let { showModal = $bindable(), entreprises = $bindable(), competences = $bindable(), domaines = $bindable(), user, editOffre = null, editDoms = [] as number[], editSkills = [] as number[] } = $props();
+
+    const isEdit = editOffre !== null;
 
     function disable_modal() {
         showModal = false;
     }
 
     const form = useForm({
-        nom: '',
-        ent_id: '',
-        nb_week: '',
-        week_hour: '',
-        paye_hour: '',
-        teletrav: false,
-        poste_desc: '',
-        profil_desc: '',
-        domaines: [] as number[],
-        competences: [] as number[],
+        nom:         isEdit ? (editOffre.nom         ?? '') : '',
+        ent_id:      isEdit ? (editOffre.ent_id       ?? '') : '',
+        nb_week:     isEdit ? (editOffre.nb_week      ?? '') : '',
+        week_hour:   isEdit ? (editOffre.week_hour    ?? '') : '',
+        paye_hour:   isEdit ? (editOffre.paye_hour    ?? '') : '',
+        teletrav:    isEdit ? !!editOffre.teletrav : false,
+        poste_desc:  isEdit ? (editOffre.poste_desc   ?? '') : '',
+        profil_desc: isEdit ? (editOffre.profil_desc  ?? '') : '',
+        domaines:    isEdit ? [...editDoms]   : [] as number[],
+        competences: isEdit ? [...editSkills] : [] as number[],
     });
 
-    if (user.role_id == 2) {
+    if (!isEdit && user.role_id == 2) {
         $form.ent_id = entreprises.id;
     }
 
@@ -43,10 +45,17 @@
 
     function submit(e: Event) {
         e.preventDefault();
-        $form.post('/offre', {
-            preserveState: true,
-            onSuccess: () => { $form.reset(); showModal = false; }
-        });
+        if (isEdit) {
+            $form.patch(`/offre/${editOffre.id}`, {
+                preserveState: true,
+                onSuccess: () => { showModal = false; }
+            });
+        } else {
+            $form.post('/offre', {
+                preserveState: true,
+                onSuccess: () => { $form.reset(); showModal = false; }
+            });
+        }
     }
 </script>
 
@@ -58,8 +67,8 @@
             <div class="modal-title">
                 <div class="modal-icon">📋</div>
                 <div>
-                    <h1>Publier une offre</h1>
-                    <p class="modal-subtitle">Remplissez les informations de votre offre de stage</p>
+                    <h1>{isEdit ? 'Modifier l\'offre' : 'Publier une offre'}</h1>
+                    <p class="modal-subtitle">{isEdit ? 'Modifiez les informations de votre offre' : 'Remplissez les informations de votre offre de stage'}</p>
                 </div>
             </div>
             <button class="close-btn" onclick={disable_modal} title="Fermer">
@@ -203,7 +212,7 @@
             <!-- Footer -->
             <div class="modal-footer">
                 <Button type="button" variant="btnGrey" onclick={disable_modal}>Annuler</Button>
-                <Button type="submit" variant="btnBleu">Publier l'offre →</Button>
+                <Button type="submit" variant="btnBleu">{isEdit ? 'Enregistrer les modifications' : 'Publier l\'offre →'}</Button>
             </div>
 
         </form>

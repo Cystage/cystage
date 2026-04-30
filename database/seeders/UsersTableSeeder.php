@@ -69,5 +69,29 @@ class UsersTableSeeder extends Seeder
             'email'    => 'lea.martin@etu.cyu.fr',
             'password' => bcrypt('1234'),
         ]);
+        DB::table('users')->insert([
+            'role_id'  => 3,
+            'name'     => 'eTDubois',
+            'email'    => 'thomas.dubois@etu.cyu.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 3,
+            'name'     => 'eCLefevre',
+            'email'    => 'camille.lefevre@etu.cyu.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 2,
+            'name'     => 'ent-Capgemini',
+            'email'    => 'contact@capgemini.fr',
+            'password' => bcrypt('1234'),
+        ]);
+        DB::table('users')->insert([
+            'role_id'  => 2,
+            'name'     => 'ent-BNP',
+            'email'    => 'contact@bnpparibas.fr',
+            'password' => bcrypt('1234'),
+        ]);
     }
 }

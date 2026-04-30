@@ -6,6 +6,15 @@
 
     let { showModal = $bindable(false), showLogin = $bindable(false) } = $props();
 
+    function openPublierOffre() {
+        const url = ($page.url as string).split('?')[0];
+        if (url === '/') {
+            showModal = true;
+        } else {
+            router.visit('/?newOffre=1');
+        }
+    }
+
     const logoutForm = useForm({});
     function logout() {
         $logoutForm.post('/logout');
@@ -173,7 +182,7 @@
 
             <Button variant="btn-ghost" href="/profil">Mon espace</Button>
             {#if user.role_id == 2 || user.role_id == 1}
-                <Button variant="btnBlanc" onclick={() => showModal = !showModal}>Publier une offre</Button>
+                <Button variant="btnBlanc" onclick={openPublierOffre}>Publier une offre</Button>
             {/if}
             {#if user.role_id == 1}
                 <Button variant="btn-ghost" href="/admin">Administration</Button>

@@ -41,39 +41,78 @@
   --badge-gray-text:  #64748b;
 }
 
-/* ─── Dark mode ─────────────────────────────────────────────────────────────── */
+/* ─── Dark mode ─────────────────────────────────────────────── */
 html.dark {
   color-scheme: dark;
 
-  --primary-50:  #1e3a5f;
-  --primary-100: #1e40af;
-  --primary-200: #1d4ed8;
+  /* Primary —   */
+  --primary-700:   #0066cc;
+  --primary-600:   #0a84ff;
+  --primary-200:   #1a4a8a;
+  --primary-100:   #0d2546;
+  --primary-50:    #071830;
 
-  --ink-900: #f1f5f9;
-  --ink-700: #cbd5e1;
-  --ink-600: #94a3b8;
-  --ink-500: #64748b;
-  --ink-400: #475569;
+  /* Text —   */
+  --ink-900: #f5f5f7;
+  --ink-700: #d1d1d6;
+  --ink-600: #8e8e93;
+  --ink-500: #636366;
+  --ink-400: #48484a;
 
-  --border-200:     #334155;
-  --border-soft:    #334155;
-  --surface-0:      #1e293b;
-  --surface-card:   #1e293b;
-  --surface-subtle: #0f172a;
-  --surface-muted:  #273244;
+  /* Surfaces  */
+  --border-200:     #38383a;
+  --border-soft:    #2c2c2e;
+  --surface-0:      #1c1c1e;
+  --surface-card:   #1c1c1e;
+  --surface-subtle: #141414;
+  --surface-muted:  #2c2c2e;
 
-  --body-bg:    linear-gradient(180deg, #0a1628 0%, #0f172a 28%, #0f172a 100%);
-  --header-bg:  rgba(15, 23, 42, 0.94);
-  --blocfin-bg: linear-gradient(180deg, #0a1628 0%, #1e293b 100%);
+  /* Backgrounds */
+  --body-bg:    #000000;
+  --header-bg:  rgba(28, 28, 30, 0.88);
+  --blocfin-bg: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
 
-  --shadow-medium: 0 24px 48px rgba(0, 0, 0, 0.4);
-  --shadow-soft:   0 12px 30px rgba(0, 0, 0, 0.3);
+  /* Shadows */
+  --shadow-medium: 0 24px 48px rgba(0, 0, 0, 0.65);
+  --shadow-soft:   0 12px 30px rgba(0, 0, 0, 0.45);
 
-  --badge-green-bg:   #14532d;
-  --badge-green-text: #4ade80;
-  --badge-gray-bg:    #273244;
-  --badge-gray-text:  #94a3b8;
+  /* Badges */
+  --badge-green-bg:   #1c3a28;
+  --badge-green-text: #30d158;
+  --badge-gray-bg:    #2c2c2e;
+  --badge-gray-text:  #8e8e93;
 }
+
+/* ─── Dark mode — overrides pour couleurs hardcodées dans les composants ─────── */
+html.dark .badge-pending   { background: #3d2b00 !important; color: #ffd60a !important; }
+html.dark .badge-accepted  { background: #071830 !important; color: #0a84ff !important; }
+html.dark .badge-confirmed { background: #1c3a28 !important; color: #30d158 !important; }
+html.dark .badge-archived  { background: #2c2c2e !important; color: #8e8e93 !important; }
+
+html.dark .btn-green   { background: #1c3a28 !important; color: #30d158 !important; }
+html.dark .btn-red     { background: #3d0f0f !important; color: #ff453a !important; }
+html.dark .btn-archive { background: #2c2c2e !important; color: #8e8e93 !important; border-color: #38383a !important; }
+html.dark .btn-comment { background: #071830 !important; color: #0a84ff !important; border-color: #1a4a8a !important; }
+
+html.dark .already-applied,
+html.dark .already-applied-lg {
+  background: #1c3a28 !important;
+  border-color: #264d36 !important;
+  color: #30d158 !important;
+}
+
+html.dark .logo-placeholder { color: #0a84ff !important; }
+
+html.dark .btn-del { background: #3d0f0f !important; color: #ff453a !important; }
+
+/* ─── Dark mode — notifications ─────────────────────────────────────────────── */
+html.dark .notif-item.unread       { background: #071830 !important; }
+html.dark .notif-item.unread:hover { background: #0d2546 !important; }
+html.dark .notif-delete:hover      { background: #3d0f0f !important; color: #ff453a !important; }
+html.dark .notif-action-del        { color: #ff453a !important; }
+html.dark .notif-delete-all        { color: #ff453a !important; }
+html.dark .notif-dot               { background: #0a84ff !important; }
+html.dark .notif-panel             { box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5) !important; }
 
 /* ─── Smooth theme transition ───────────────────────────────────────────────── */
 html.theme-transitioning *,

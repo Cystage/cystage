@@ -27,7 +27,7 @@ class EntreprisesTableSeeder extends Seeder
             'logo'        => null,
         ]);
         DB::table('entreprises')->insert([
-            'user_id'     => 3,
+            'user_id'     => 4,
             'nom'         => 'testEnt2',
             'siret'       => 'test',
             'adresse'     => 'testAdr',
@@ -69,6 +69,28 @@ class EntreprisesTableSeeder extends Seeder
             'pays'        => 'France',
             'num_tel'     => '0567890123',
             'logo'        => "https://img.logo.dev/airbus.com?token={$token}",
+        ]);
+        DB::table('entreprises')->insert([
+            'user_id'     => 12,
+            'nom'         => 'Capgemini',
+            'siret'       => '34987654321098',
+            'adresse'     => '11 rue de Tilsitt',
+            'code_postal' => '75017',
+            'ville'       => 'Paris',
+            'pays'        => 'France',
+            'num_tel'     => '0142378500',
+            'logo'        => "https://img.logo.dev/capgemini.com?token={$token}",
+        ]);
+        DB::table('entreprises')->insert([
+            'user_id'     => 13,
+            'nom'         => 'BNP Paribas',
+            'siret'       => '66265832600017',
+            'adresse'     => '16 boulevard des Italiens',
+            'code_postal' => '75009',
+            'ville'       => 'Paris',
+            'pays'        => 'France',
+            'num_tel'     => '0140148000',
+            'logo'        => "https://img.logo.dev/bnpparibas.com?token={$token}",
         ]);
     }
 }

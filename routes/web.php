@@ -72,6 +72,8 @@ Route::get('/', function (Request $request) {
 Route::post('/postulation', [PostulationController::class, 'poste'])->middleware(['auth', 'role:3'])->name('links.postulation');
 
 Route::post('/offre', [OffreController::class, 'poste'])->middleware(['auth', 'role:1,2'])->name('links.offre');
+Route::patch('/offre/{id}', [OffreController::class, 'update'])->middleware(['auth', 'role:1,2'])->name('offre.update');
+Route::delete('/offre/{id}', [OffreController::class, 'destroy'])->middleware(['auth', 'role:1,2'])->name('offre.destroy');
 
 Route::post('/domaine', [DomaineController::class, 'poste'])->middleware(['auth', 'role:1'])->name('links.domaine');
 

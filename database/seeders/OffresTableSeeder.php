@@ -74,5 +74,35 @@ class OffresTableSeeder extends Seeder
             'poste_desc' => 'testPosteDesc',
             'profil_desc' => 'testProfilDesc',
         ]);
+        DB::table('offres')->insert([
+            'nom'         => 'Stage DevOps / Cloud',
+            'ent_id'      => 6,
+            'nb_week'     => 14,
+            'week_hour'   => 35,
+            'paye_hour'   => 4.35,
+            'teletrav'    => 1,
+            'poste_desc'  => 'Intégration et déploiement continu sur des infrastructures cloud (AWS/Azure). Automatisation des pipelines CI/CD avec GitLab, gestion des conteneurs Docker et orchestration Kubernetes. Participation aux astreintes et à la supervision des environnements de production.',
+            'profil_desc' => 'Étudiant en informatique ou systèmes réseaux, avec des bases en Linux et scripting. Une expérience avec Docker ou un outil CI/CD est appréciée. Vous êtes rigoureux, curieux et aimez automatiser.',
+        ]);
+        DB::table('offres')->insert([
+            'nom'         => 'Stage Développeur Backend Java',
+            'ent_id'      => 7,
+            'nb_week'     => 12,
+            'week_hour'   => 35,
+            'paye_hour'   => 4.05,
+            'teletrav'    => 0,
+            'poste_desc'  => 'Développement de microservices en Java Spring Boot pour nos systèmes bancaires. Participation à la conception des APIs REST, rédaction de tests unitaires et d\'intégration. Travail en équipe agile dans un contexte financier réglementé.',
+            'profil_desc' => 'Étudiant Bac+4/+5 en informatique, avec de bonnes bases en Java. La connaissance de Spring Boot ou d\'une architecture microservices est un atout. Rigueur et sens du détail obligatoires.',
+        ]);
+        DB::table('offres')->insert([
+            'nom'         => 'Stage IA / Machine Learning',
+            'ent_id'      => 4,
+            'nb_week'     => 16,
+            'week_hour'   => 35,
+            'paye_hour'   => 4.20,
+            'teletrav'    => 1,
+            'poste_desc'  => 'Conception et entraînement de modèles de machine learning pour l\'optimisation de processus industriels. Utilisation de Python, TensorFlow et de pipelines de données MLOps. Présentation des résultats à l\'équipe R&D.',
+            'profil_desc' => 'Étudiant en data science, mathématiques appliquées ou informatique. Maîtrise de Python et des bases en algèbre linéaire / statistiques. Connaissance de scikit-learn ou TensorFlow appréciée.',
+        ]);
     }
 }

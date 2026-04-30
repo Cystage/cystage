@@ -13,6 +13,14 @@
 
     let archivedCount = $derived(postulations.filter((p: any) => p.archived).length);
 
+    // Pagination
+    const PER_PAGE = 5;
+    let pageNum = $state(1);
+    let totalPages = $derived(Math.ceil(visible.length / PER_PAGE));
+    let paginated = $derived(visible.slice((pageNum - 1) * PER_PAGE, pageNum * PER_PAGE));
+
+    $effect(() => { showArchived; pageNum = 1; });
+
     function supprimer(id: number, label: string) {
         if (confirm(label)) {
             router.delete(`/postulation/${id}`, { preserveScroll: true });
@@ -43,10 +51,12 @@
         return useForm({ body: '' });
     }
 
-    let commentForms: Record<number, any> = $state({});
+    let commentForms: Record<number, any> = {};
 
     function getCommentForm(id: number) {
-        if (!commentForms[id]) commentForms[id] = useForm({ body: '' });
+        if (!commentForms[id]) {
+            commentForms[id] = useForm({ body: '' });
+        }
         return commentForms[id];
     }
 
@@ -93,12 +103,14 @@
     <div class="empty-state">
         <span class="empty-icon">📭</span>
         <p class="empty-title">{isEntreprise ? 'Aucune candidature reçue' : 'Aucune candidature envoyée'}</p>
-        {#if !isEntreprise}
+        {#if isEntreprise}
+            <p class="empty-sub">Aucun étudiant n'a encore postulé à vos offres.</p>
+        {:else}
             <p class="empty-sub">Postulez à des offres depuis la page d'accueil.</p>
         {/if}
     </div>
 {:else}
-    {#each visible as p}
+    {#each paginated as p}
         <div class="card" class:archived={p.archived}>
             <div class="card-header">
                 <div class="card-meta">
@@ -155,9 +167,13 @@
             {/if}
 
             <div class="card-footer">
-                <a class="cv-link" href="/storage/{p.path}" target="_blank" rel="noopener">
-                    Voir le CV (PDF)
-                </a>
+                {#if p.path}
+                    <a class="cv-link" href="/storage/{p.path}" target="_blank" rel="noopener">
+                        Voir le CV (PDF)
+                    </a>
+                {:else}
+                    <span class="cv-none">Pas de CV joint</span>
+                {/if}
 
                 <div class="actions">
                     {#if !p.archived}
@@ -190,6 +206,16 @@
             </div>
         </div>
     {/each}
+
+    {#if totalPages > 1}
+        <div class="pagination">
+            <button class="pg-btn" disabled={pageNum === 1} onclick={() => pageNum--}>←</button>
+            {#each Array.from({length: totalPages}, (_, i) => i + 1) as p}
+                <button class="pg-btn" class:pg-active={p === pageNum} onclick={() => pageNum = p}>{p}</button>
+            {/each}
+            <button class="pg-btn" disabled={pageNum === totalPages} onclick={() => pageNum++}>→</button>
+        </div>
+    {/if}
 {/if}
 
 <style>
@@ -473,4 +499,37 @@
     .comment-form input:focus { border-color: var(--primary-600); }
 
     .btn-comment { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+    .cv-none {
+        font-size: 0.875rem;
+        color: var(--ink-500);
+        font-style: italic;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 1.25rem;
+    }
+
+    .pg-btn {
+        min-width: 34px;
+        height: 34px;
+        padding: 0 0.5rem;
+        border: 1px solid var(--border-200);
+        border-radius: 8px;
+        background: var(--surface-card);
+        color: var(--ink-600);
+        font-size: 0.875rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .pg-btn:hover:not(:disabled) { background: var(--surface-muted); }
+    .pg-btn:disabled { opacity: 0.4; cursor: default; }
+    .pg-btn.pg-active { background: var(--primary-600); color: #fff; border-color: var(--primary-600); }
 </style>

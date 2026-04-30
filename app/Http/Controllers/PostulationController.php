@@ -15,11 +15,23 @@ use App\Models\PostulationCommentaire;
 
 class PostulationController extends Controller
 {
-    public function index() {
-    return Inertia::render('Welcome', [
-        'postulation' => \App\Models\Postulation::latest()->first() 
-    ]);
+    public function index(Request $request) {
+        $user = $request->user();
+
+        $postulations = \App\Models\Postulation::with([
+            'etudiant',
+            'offre'
+        ])
+        ->whereHas('offre.entreprise', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+        ->get();
+
+        return Inertia::render('Welcome', [
+            'postulations' => $postulations
+        ]);
     }
+    
     public function poste(Request $request) {
         $validated = $request->validate([
             'offre_id' => 'required|integer',

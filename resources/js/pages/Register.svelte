@@ -113,7 +113,7 @@
             <form id="creation_compte" onsubmit={submit}>
                 <FormInput id="nom" label="Nom" placeholder="Nom" required bind:value={$formEtudiant.nom} error={errors.nom || $formEtudiant.errors.nom}></FormInput>
                 <FormInput id="prenom" label="Prénom" placeholder="Prénom" required bind:value={$formEtudiant.prenom} error={errors.prenom || $formEtudiant.errors.prenom}></FormInput>
-                <FormInput id="num_etudiant" label="Numéro étudiant" placeholder="0612345678" required bind:value={$formEtudiant.num_etudiant} error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}></FormInput>
+                <FormInput id="num_etudiant" label="Numéro étudiant" placeholder="22100700" required bind:value={$formEtudiant.num_etudiant} error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}></FormInput>
                 <FormInput type="password" id="password" label="Mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password} error={errors.password || $formEtudiant.errors.password}></FormInput>
                 <FormInput type="password" id="password_confirmation" label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password_confirmation} error={errors.password_confirmation || $formEtudiant.errors.password_confirmation}></FormInput>
 

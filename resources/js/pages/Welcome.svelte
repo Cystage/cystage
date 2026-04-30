@@ -8,8 +8,21 @@
     import Unconnect from './Unconnect.svelte';
 
     let showModal = $state(false)
+    let editOffre: any = $state(null);
+    let showEditModal = $state(false);
+
+    $effect(() => { if (!showEditModal) editOffre = null; });
+
+    function startEdit(offre: any) {
+        editOffre = offre;
+        showEditModal = true;
+    }
 
     let { entreprises=$bindable(), offres=[], competences=$bindable([]), domaines=$bindable([]), links_offres_competences=[], links_offres_domaines=[], etudiant=$bindable() } = $props();
+
+    // Pagination
+    const PAGE_SIZE = 6;
+    let currentPage = $state(1);
 
     // Filtres
     let recherche = $state('');
@@ -41,6 +54,11 @@
         filtreTeletrav = null;
         filtreWeekMax = null;
     }
+
+    $effect(() => {
+        recherche; filtreDomaineIds.length; filtreSkillIds.length; filtreTeletrav; filtreWeekMax;
+        currentPage = 1;
+    });
 
     let offresFiltrees = $derived(() => {
         if (!offres) return [];
@@ -112,6 +130,12 @@
     let utilisateur = $derived($page?.props?.auth?.user ?? null)
 
     onMount(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('newOffre') === '1') {
+            showModal = true;
+            window.history.replaceState({}, '', '/');
+        }
+
         let observer = new IntersectionObserver((entrees) => {
             entrees.forEach((entree) => {
                 if (entree.isIntersecting) entree.target.classList.add('visible')
@@ -253,25 +277,36 @@
                     {:else}
                         <p class="nb-resultats">{offresFiltrees().length} offre{offresFiltrees().length > 1 ? 's' : ''} trouvée{offresFiltrees().length > 1 ? 's' : ''}</p>
                         {#if utilisateur.role_id == 2}
-                            {#each offresFiltrees() as offre}
+                            {#each offresFiltrees().slice(0, currentPage * PAGE_SIZE) as offre}
                                 <OffreDeStage
                                     offre={offre}
                                     entreprise={entreprises}
                                     doms={recupDomaines(offre, links_offres_domaines, domaines)}
                                     skills={recupCompetences(offre, links_offres_competences, competences)}
                                     etudiant={etudiant}
+                                    canManage={true}
+                                    onedit={startEdit}
                                 />
                             {/each}
                         {:else}
-                            {#each offresFiltrees() as offre}
+                            {#each offresFiltrees().slice(0, currentPage * PAGE_SIZE) as offre}
                                 <OffreDeStage
                                     offre={offre}
                                     entreprise={recupEntreprise(offre, entreprises)}
                                     doms={recupDomaines(offre, links_offres_domaines, domaines)}
                                     skills={recupCompetences(offre, links_offres_competences, competences)}
                                     etudiant={etudiant}
+                                    canManage={utilisateur?.role_id === 1}
+                                    onedit={startEdit}
                                 />
                             {/each}
+                        {/if}
+                        {#if offresFiltrees().length > currentPage * PAGE_SIZE}
+                            <div class="load-more">
+                                <button class="btn-load-more" onclick={() => currentPage++}>
+                                    Afficher plus · {offresFiltrees().length - currentPage * PAGE_SIZE} offre{offresFiltrees().length - currentPage * PAGE_SIZE > 1 ? 's' : ''} restante{offresFiltrees().length - currentPage * PAGE_SIZE > 1 ? 's' : ''}
+                                </button>
+                            </div>
                         {/if}
                     {/if}
                 </div>
@@ -287,6 +322,19 @@
         bind:competences={competences}
         bind:entreprises={entreprises}
         user={utilisateur}
+    />
+{/if}
+
+{#if showEditModal && editOffre}
+    <Modal
+        bind:showModal={showEditModal}
+        bind:domaines={domaines}
+        bind:competences={competences}
+        bind:entreprises={entreprises}
+        user={utilisateur}
+        editOffre={editOffre}
+        editDoms={links_offres_domaines.filter((l: any) => l.offre_id === editOffre.id).map((l: any) => l.dom_id)}
+        editSkills={links_offres_competences.filter((l: any) => l.offre_id === editOffre.id).map((l: any) => l.skill_id)}
     />
 {/if}
 
@@ -516,6 +564,27 @@
     .empty-icon { font-size: 2.5rem; margin: 0; }
     .empty-title { font-size: 1.1rem; font-weight: 700; color: var(--ink-900); margin: 0.5rem 0 0.25rem; }
     .empty-sub { color: var(--ink-600); font-size: 0.9rem; margin: 0 0 1rem; }
+
+    .load-more {
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .btn-load-more {
+        padding: 0.6rem 1.5rem;
+        background: var(--surface-card);
+        border: 1px solid var(--border-200);
+        border-radius: 10px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--primary-600);
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.15s;
+    }
+
+    .btn-load-more:hover { background: var(--surface-muted); }
 
     .reset-btn-center {
         padding: 0.5rem 1.25rem;
