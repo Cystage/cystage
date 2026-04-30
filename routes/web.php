@@ -150,8 +150,8 @@ Route::get('/profil', function (Request $request) {
 
 Route::redirect('/progil', '/profil');
 
-Route::get('/register', fn() => inertia('Register'))->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::get('/register', fn() => inertia('Register'))->middleware(['auth', 'role:1'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->middleware(['auth', 'role:1'])->name('register.post');
 
 Route::get('/login', fn() => inertia('Login'))->name('login');
 
@@ -244,20 +244,11 @@ Route::middleware('auth')->group(function () {
     })->name('notifs.delete');
 
     Route::post('/postulation/{id}/archiver', function ($id, Request $request) {
+        abort_if($request->user()->role_id !== 1, 403);
         $postulation = Postulation::findOrFail($id);
-        $user = $request->user();
-        if ($user->role_id === 3) {
-            $etu = \App\Models\Etudiant::where('user_id', $user->id)->firstOrFail();
-            abort_if($postulation->etu_id !== $etu->id, 403);
-        } elseif ($user->role_id === 2) {
-            $ent = Entreprise::where('user_id', $user->id)->firstOrFail();
-            abort_if(!$ent->offres->pluck('id')->contains($postulation->offre_id), 403);
-        } else {
-            abort(403);
-        }
         $postulation->update(['archived' => !$postulation->archived]);
         return back()->with('success', $postulation->archived ? 'Candidature archivée.' : 'Candidature désarchivée.');
-    })->name('postulation.archiver');
+    })->middleware('role:1')->name('postulation.archiver');
 });
 
 Route::patch('/settings/two-factor', [AuthController::class, 'toggleTwoFactor'])->middleware('auth')->name('settings.two-factor');

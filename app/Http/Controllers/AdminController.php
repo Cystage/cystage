@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Etudiant;
 use App\Models\Entreprise;
 use App\Models\Offre;
+use App\Models\Postulation;
 use App\Models\AppLog;
 
 class AdminController extends Controller
@@ -68,12 +69,28 @@ class AdminController extends Controller
             ];
         });
 
+        $stages = Postulation::where('state', 3)
+            ->with(['etudiant', 'offre.entreprise'])
+            ->latest()
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'         => $p->id,
+                    'etudiant'   => ($p->etudiant->prenom ?? '') . ' ' . ($p->etudiant->nom ?? ''),
+                    'offre'      => $p->offre->nom ?? '—',
+                    'entreprise' => $p->offre->entreprise->nom ?? '—',
+                    'archived'   => (bool) $p->archived,
+                    'created_at' => $p->created_at,
+                ];
+            });
+
         return Inertia::render('Admin', [
             'etudiants'   => $etudiants,
             'entreprises' => $entreprises,
             'offres'      => $offres,
             'admins'      => $admins,
             'logs'        => $logs,
+            'stages'      => $stages,
         ]);
     }
 

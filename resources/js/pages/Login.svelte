@@ -60,7 +60,6 @@
 
         <div class="footer-links">
             <p>Mot de passe oublié ? <a href="/forgot-password">Réinitialiser</a></p>
-            <p>Pas de compte ? <a href="/register">Créer un compte</a></p>
         </div>
     </div>
 </main>
