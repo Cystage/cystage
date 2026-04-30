@@ -312,6 +312,11 @@
 <style>
 
 
+    main {
+        padding: 2rem 1.5rem 4rem;
+        min-height: calc(100vh - 52px);
+    }
+
     .content {
         max-width: 1100px;
         margin: 0 auto;
@@ -390,12 +395,16 @@
         cursor: pointer;
         font-family: inherit;
         border-radius: 10px;
-        transition: background 0.15s, color 0.15s;
+        transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
+
+    .tab:hover:not(.active) { background: var(--surface-muted); color: var(--ink-900); }
 
     .tab.active {
         background: var(--surface-card);
-        color: var(--primary-700);
+        color: var(--primary-600);
+        border-color: var(--primary-600);
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
     }
 
     .table-container {
@@ -517,7 +526,7 @@
     .log-ip   { font-size: 0.78rem; color: var(--ink-500); font-family: monospace; }
 
     @media (max-width: 720px) {
-        main { padding: 1.2rem 0.8rem; }
+        main { padding: 1.2rem 0.8rem 3rem; }
         .stats { grid-template-columns: 1fr; }
     }
 </style>

@@ -291,16 +291,15 @@
 
     .btn-postuler {
         padding: 0.55rem 1.3rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+        background: var(--primary-600);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 980px;
         font-size: 0.9rem;
-        font-weight: 700;
+        font-weight: 600;
         cursor: pointer;
         font-family: inherit;
         transition: opacity 0.15s, transform 0.15s;
-        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.22);
     }
 
     .btn-postuler:hover { opacity: 0.88; transform: translateY(-1px); }
@@ -401,16 +400,15 @@
 
     .btn-postuler-lg {
         padding: 0.75rem 2rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+        background: var(--primary-600);
         color: white;
         border: none;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: 700;
+        border-radius: 980px;
+        font-size: 0.95rem;
+        font-weight: 600;
         cursor: pointer;
         font-family: inherit;
         transition: opacity 0.15s, transform 0.15s;
-        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
     }
 
     .btn-postuler-lg:hover { opacity: 0.88; transform: translateY(-1px); }

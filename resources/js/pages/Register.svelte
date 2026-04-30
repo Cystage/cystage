@@ -205,8 +205,9 @@
 
     .role-btn.active {
         background: var(--surface-card);
-        color: var(--primary-700);
-        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+        color: var(--primary-600);
+        border: 1px solid var(--primary-600);
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.1);
     }
 
     /* mobile-first */

@@ -123,21 +123,20 @@
     input[type="submit"]#creer {
         width: 100%;
         padding: 0.82rem;
-        background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+        background: var(--primary-600);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 980px;
         font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         font-family: inherit;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+        transition: opacity 0.15s, transform 0.15s;
     }
 
     input[type="submit"]#creer:hover {
+        opacity: 0.88;
         transform: translateY(-1px);
-        box-shadow: 0 18px 35px rgba(37, 99, 235, 0.28);
     }
 
     @media (max-width: 640px) {
