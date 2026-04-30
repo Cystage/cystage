@@ -25,7 +25,7 @@ class StageConfirme extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.stage_confirme',
+            markdown: 'emails.stage_confirme',
         );
     }
 

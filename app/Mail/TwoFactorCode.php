@@ -22,7 +22,7 @@ class TwoFactorCode extends Mailable
 
     public function content(): Content
     {
-        return new Content(view: 'emails.two_factor_code');
+        return new Content(markdown: 'emails.two_factor_code');
     }
 
     public function attachments(): array

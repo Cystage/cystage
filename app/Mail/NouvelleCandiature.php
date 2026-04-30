@@ -25,7 +25,7 @@ class NouvelleCandiature extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.nouvelle_candidature',
+            markdown: 'emails.nouvelle_candidature',
         );
     }
 
