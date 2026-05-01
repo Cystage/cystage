@@ -1,6 +1,6 @@
 <script lang="ts">
     import Header from '@/components/Header.svelte';
-    import { useForm } from '@inertiajs/svelte';
+    import { useForm, page } from '@inertiajs/svelte';
     import AppHead from '@/components/AppHead.svelte';
     import FormInput from '@/components/FormInput.svelte';
     import Button from '@/components/Button.svelte';
@@ -11,8 +11,6 @@
         nom: '',
         prenom: '',
         num_etudiant: '',
-        password: '',
-        password_confirmation: '',
     });
 
     const formEntreprise = useForm({
@@ -24,9 +22,9 @@
         ville: '',
         pays: '',
         num_tel: '',
-        password: '',
-        password_confirmation: '',
     });
+
+    let success = $derived(($page.props as any).flash?.success);
 
     let errors: Record<string, string> = $state({});
 
@@ -35,12 +33,6 @@
         if (!$formEtudiant.nom) errors.nom = "Le nom est obligatoire";
         if (!$formEtudiant.prenom) errors.prenom = "Le prénom est obligatoire";
         if (!$formEtudiant.num_etudiant) errors.num_etudiant = "Le numéro étudiant est obligatoire";
-        if (!$formEtudiant.password) errors.password = "Le mot de passe est obligatoire";
-        if (!$formEtudiant.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
-        if ($formEtudiant.password && $formEtudiant.password_confirmation && $formEtudiant.password !== $formEtudiant.password_confirmation) {
-            errors.password_confirmation = "Les mots de passe ne correspondent pas";
-            errors.password = " ";
-        }
         return Object.keys(errors).length === 0;
     }
 
@@ -49,18 +41,11 @@
         if (!$formEntreprise.nom) errors.nom = "L'appellation est obligatoire";
         if (!$formEntreprise.siret) errors.siret = "Le SIRET est obligatoire";
         if (!$formEntreprise.email) errors.email = "L'email est obligatoire";
-
         if (!$formEntreprise.adresse) errors.adresse = "L'adresse est obligatoire";
         if (!$formEntreprise.code_postal) errors.code_postal = "Le code postal est obligatoire";
         if (!$formEntreprise.ville) errors.ville = "La ville est obligatoire";
         if (!$formEntreprise.pays) errors.pays = "Le pays est obligatoire";
         if (!$formEntreprise.num_tel) errors.num_tel = "Le numéro de téléphone est obligatoire";
-        if (!$formEntreprise.password) errors.password = "Le mot de passe est obligatoire";
-        if (!$formEntreprise.password_confirmation) errors.password_confirmation = "Veuillez confirmer le mot de passe";
-        if ($formEntreprise.password && $formEntreprise.password_confirmation && $formEntreprise.password !== $formEntreprise.password_confirmation) {
-            errors.password_confirmation = "Les mots de passe ne correspondent pas";
-            errors.password = " ";
-        }
         return Object.keys(errors).length === 0;
     }
 
@@ -88,7 +73,11 @@
 <main>
     <div class="box">
         <h1>Créer un compte</h1>
-        <p class="subtitle">Choisissez votre profil et complétez les informations pour rejoindre CY Stage.</p>
+        <p class="subtitle">Renseignez les informations — l'utilisateur recevra un mail pour définir son mot de passe.</p>
+
+        {#if success}
+            <div class="alert-success">{success}</div>
+        {/if}
 
         <div class="role-selector">
             <button
@@ -114,8 +103,6 @@
                 <FormInput id="nom" label="Nom" placeholder="Nom" required bind:value={$formEtudiant.nom} error={errors.nom || $formEtudiant.errors.nom}></FormInput>
                 <FormInput id="prenom" label="Prénom" placeholder="Prénom" required bind:value={$formEtudiant.prenom} error={errors.prenom || $formEtudiant.errors.prenom}></FormInput>
                 <FormInput id="num_etudiant" label="Numéro étudiant" placeholder="22100700" required bind:value={$formEtudiant.num_etudiant} error={errors.num_etudiant || $formEtudiant.errors.num_etudiant}></FormInput>
-                <FormInput type="password" id="password" label="Mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password} error={errors.password || $formEtudiant.errors.password}></FormInput>
-                <FormInput type="password" id="password_confirmation" label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEtudiant.password_confirmation} error={errors.password_confirmation || $formEtudiant.errors.password_confirmation}></FormInput>
 
                 <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
                 <div class="subm">
@@ -134,8 +121,6 @@
                 <FormInput id="ville"  label="Ville" placeholder="Pau" required bind:value={$formEntreprise.ville} error={errors.ville || $formEntreprise.errors.ville}></FormInput>
                 <FormInput id="pays"  label="Pays" placeholder="France" required bind:value={$formEntreprise.pays} error={errors.pays || $formEntreprise.errors.pays}></FormInput>
                 <FormInput id="num_tel"  label="Téléphone" placeholder="0612345678" required bind:value={$formEntreprise.num_tel} error={errors.num_tel || $formEntreprise.errors.num_tel}></FormInput>
-                <FormInput type="password" id="password" isFull label="Mot de passe" placeholder="••••••••" required bind:value={$formEntreprise.password} error={errors.password || $formEntreprise.errors.password }></FormInput>
-                <FormInput type="password" id="password_confirmation" isFull label="Confirmer le mot de passe" placeholder="••••••••" required bind:value={$formEntreprise.password_confirmation} error={errors.password_confirmation || $formEntreprise.errors.password_confirmation}></FormInput>
 
                 <p class="champ-obligatoire"><span class="required">*</span> Champ obligatoire</p>
                 <div class="subm">
@@ -145,9 +130,6 @@
             </form>
         {/if}
 
-        <div class="footer-links">
-            <p>Déjà un compte ? <a href="/login">Se connecter</a></p>
-        </div>
     </div>
 </main>
 
@@ -177,6 +159,17 @@
         color: var(--ink-600);
         margin-bottom: 1.6rem;
         font-size: 0.95rem;
+    }
+
+    .alert-success {
+        background: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        margin-bottom: 1.25rem;
+        font-size: 0.9rem;
+        text-align: center;
     }
 
     .role-selector {

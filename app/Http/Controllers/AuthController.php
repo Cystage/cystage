@@ -95,33 +95,36 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'password' => 'required|min:8|confirmed',
+            'nom'          => 'required|string|max:255',
+            'prenom'       => 'required|string|max:255',
             'num_etudiant' => 'required|min:8|max:8',
         ]);
 
         $prenom = strtolower($validated['prenom']);
         $nom    = strtolower($validated['nom']);
+        $email  = $prenom . '.' . $nom . '@etu.cyu.fr';
+
+        if (User::where('email', $email)->exists()) {
+            return back()->withErrors(['nom' => 'Un compte existe déjà pour ' . $email . '.'])->withInput();
+        }
 
         $user = User::create([
-            'name' => 'e-'.$prenom[0].$nom,
-            'email' => $prenom.'.'.$nom.'@etu.cyu.fr',
-            'password' => Hash::make($validated['password']),
-            'role_id' => 3
+            'name'     => 'e-' . $prenom[0] . $nom,
+            'email'    => $email,
+            'password' => Hash::make(\Illuminate\Support\Str::random(32)),
+            'role_id'  => 3,
         ]);
 
         Etudiant::create([
-            'nom' => $validated['nom'],
-            'prenom' => $validated['prenom'],
-            'user_id' => $user->id,
-            'num_etudiant' => $validated['num_etudiant']
+            'nom'          => $validated['nom'],
+            'prenom'       => $validated['prenom'],
+            'user_id'      => $user->id,
+            'num_etudiant' => $validated['num_etudiant'],
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-        AppLog::log($user->id, 'register', "Nouvel étudiant inscrit : {$user->email}");
-        return redirect('/');
+        \Illuminate\Support\Facades\Password::sendResetLink(['email' => $user->email]);
+        AppLog::log($request->user()->id, 'register', "Nouvel étudiant créé par l'admin : {$user->email}");
+        return back()->with('success', "Compte créé avec succès. L'utilisateur a reçu un mail pour définir son mot de passe.");
     }
 
     public function newent(Request $request)
@@ -134,7 +137,6 @@ class AuthController extends Controller
             'code_postal' => 'required|string|max:255',
             'ville'       => 'required|string|max:255',
             'pays'        => 'required|string|max:255',
-            'password'    => 'required|min:8|confirmed',
             'num_tel'     => 'required|digits:10',
         ]);
         
@@ -144,7 +146,7 @@ class AuthController extends Controller
         $user = User::create([
             'name'     => 'ent-' . $validated['nom'],
             'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => Hash::make(\Illuminate\Support\Str::random(32)),
             'role_id'  => 2,
         ]);
 
@@ -160,10 +162,9 @@ class AuthController extends Controller
             'logo'        => $logo,
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-        AppLog::log($user->id, 'register', "Nouvelle entreprise inscrite : {$validated['nom']} ({$validated['email']})");
-        return redirect('/');
+        \Illuminate\Support\Facades\Password::sendResetLink(['email' => $user->email]);
+        AppLog::log($request->user()->id, 'register', "Nouvelle entreprise créée par l'admin : {$validated['nom']} ({$validated['email']})");
+        return back()->with('success', "Compte créé avec succès. L'utilisateur a reçu un mail pour définir son mot de passe.");
     }
 
     public function logout(Request $request)
