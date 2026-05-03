@@ -18,7 +18,9 @@
         showEditModal = true;
     }
 
-    let { entreprises=$bindable(), offres=[], competences=$bindable([]), domaines=$bindable([]), links_offres_competences=[], links_offres_domaines=[], etudiant=$bindable() } = $props();
+    let { entreprises=$bindable(), offres=[], competences=$bindable([]), domaines=$bindable([]), links_offres_competences=[], links_offres_domaines=[], etudiant=$bindable(), postulations=[] } = $props();
+
+    const offresPostulees = $derived(new Set((postulations as any[]).map((p: any) => p.offre_id)));
 
     // Pagination
     const PAGE_SIZE = 6;
@@ -298,6 +300,7 @@
                                     etudiant={etudiant}
                                     canManage={utilisateur?.role_id === 1}
                                     onedit={startEdit}
+                                    dejaPostule={offresPostulees.has(offre.id)}
                                 />
                             {/each}
                         {/if}

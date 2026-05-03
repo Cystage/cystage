@@ -8,6 +8,11 @@
     let activeTab = $state('etudiants');
     let success = $derived($page.props.flash?.success);
 
+    const LOG_PER_PAGE = 20;
+    let logPage = $state(1);
+    let logsTotalPages = $derived(Math.ceil(logs.length / LOG_PER_PAGE));
+    let logsPaged = $derived(logs.slice((logPage - 1) * LOG_PER_PAGE, logPage * LOG_PER_PAGE));
+
     const deleteForm = useForm({});
     const roleForm = useForm({ role_id: 0 });
     const deleteOffreForm = useForm({});
@@ -110,7 +115,7 @@
             <button class="tab" class:active={activeTab === 'admins'} onclick={() => activeTab = 'admins'}>
                 🛠️ Admins ({admins.length})
             </button>
-            <button class="tab" class:active={activeTab === 'logs'} onclick={() => activeTab = 'logs'}>
+            <button class="tab" class:active={activeTab === 'logs'} onclick={() => { activeTab = 'logs'; logPage = 1; }}>
                 📜 Logs ({logs.length})
             </button>
         </div>
@@ -339,7 +344,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each logs as log}
+                            {#each logsPaged as log}
                                 {@const meta = logActionLabel[log.action] ?? { label: log.action, color: '#64748b' }}
                                 <tr>
                                     <td class="log-date">{formatDate(log.created_at)}</td>
@@ -355,6 +360,13 @@
                             {/each}
                         </tbody>
                     </table>
+                    {#if logsTotalPages > 1}
+                        <div class="log-pagination">
+                            <button class="page-btn" onclick={() => logPage--} disabled={logPage === 1}>← Précédent</button>
+                            <span class="page-info">Page {logPage} / {logsTotalPages}</span>
+                            <button class="page-btn" onclick={() => logPage++} disabled={logPage === logsTotalPages}>Suivant →</button>
+                        </div>
+                    {/if}
                 {/if}
             </div>
         {/if}
@@ -602,6 +614,33 @@
     .log-date { font-size: 0.8rem; color: var(--ink-600); white-space: nowrap; }
     .log-desc { font-size: 0.85rem; color: var(--ink-700); }
     .log-ip   { font-size: 0.78rem; color: var(--ink-500); font-family: monospace; }
+
+    .log-pagination {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        padding: 0.85rem 1rem;
+        border-top: 1px solid var(--border-200);
+    }
+
+    .page-btn {
+        padding: 0.35rem 0.9rem;
+        border: 1px solid var(--border-200);
+        background: var(--surface-subtle);
+        color: var(--ink-900);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .page-btn:hover:not(:disabled) { background: var(--surface-muted); }
+    .page-btn:disabled { opacity: 0.4; cursor: default; }
+
+    .page-info { font-size: 0.85rem; color: var(--ink-600); }
 
     @media (max-width: 720px) {
         main { padding: 1.2rem 0.8rem 3rem; }

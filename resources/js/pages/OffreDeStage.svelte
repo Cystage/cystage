@@ -3,10 +3,15 @@
     import { page, router } from '@inertiajs/svelte';
     import Button from '@/components/Button.svelte';
 
-    let { offre = $bindable(), entreprise = $bindable(), doms, skills, etudiant = $bindable(), canManage = false, onedit = null } = $props();
+    let { offre = $bindable(), entreprise = $bindable(), doms, skills, etudiant = $bindable(), canManage = false, onedit = null, dejaPostule = false } = $props();
 
     let showModalPostuler = $state(false);
     let user = $derived($page.props.auth?.user);
+
+    function truncate(text: string, max = 160) {
+        if (!text || text.length <= max) return text;
+        return text.slice(0, max).trimEnd() + '…';
+    }
 
     function supprimerOffre() {
         if (confirm(`Supprimer l'offre "${offre.nom}" ? Cette action supprimera aussi toutes les candidatures associées.`)) {
@@ -88,12 +93,12 @@
     <!-- Description -->
     <div class="section">
         <h2>Description du poste</h2>
-        <p>{offre.poste_desc}</p>
+        <p>{truncate(offre.poste_desc)}</p>
     </div>
 
     <div class="section">
         <h2>Profil recherché</h2>
-        <p>{offre.profil_desc}</p>
+        <p>{truncate(offre.profil_desc)}</p>
     </div>
 
     <!-- Compétences -->
@@ -118,7 +123,11 @@
             {/if}
             <a href="/offre/{offre.id}" class="btn-detail">Voir le détail</a>
             {#if user?.role_id == 3}
-                <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
+                {#if dejaPostule}
+                    <span class="already-applied">✓ Déjà postulé</span>
+                {:else}
+                    <Button variant="btnBleu" onclick={() => showModalPostuler = true}> Postuler →</Button>
+                {/if}
             {/if}
         </div>
     </footer>
@@ -352,6 +361,17 @@
     }
 
     .btn-detail:hover { background: var(--primary-100, #dbeafe); }
+
+    .already-applied {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #16a34a;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        border-radius: 8px;
+        padding: 0.4rem 0.9rem;
+        white-space: nowrap;
+    }
 
     .btn-edit, .btn-del {
         font-size: 0.82rem;
