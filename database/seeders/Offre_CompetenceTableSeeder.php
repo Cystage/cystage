@@ -2,65 +2,42 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class Offre_CompetenceTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Offre 1 - Dev Web : PHP, JavaScript, Laravel, HTML/CSS
-        foreach ([6, 4, 15, 3] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 1, 'skill_id' => $skill_id]);
-        }
-        // Offre 2 - Data : Python, SQL, R, Data Mining
-        foreach ([8, 9, 5, 7] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 2, 'skill_id' => $skill_id]);
-        }
-        // Offre 3 - Cyber : Docker, Git, C
-        foreach ([10, 11, 2] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 3, 'skill_id' => $skill_id]);
-        }
-        // Offre 4 - Mobile : Flutter, JavaScript, Git
-        foreach ([12, 4, 11] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 4, 'skill_id' => $skill_id]);
-        }
+        // Compétences : Java=1, C=2, HTML/CSS=3, JavaScript=4, R=5,
+        //               PHP=6, Data Mining=7, Python=8, SQL=9, Docker=10,
+        //               Git=11, Flutter=12, React=13, Vue.js=14, Laravel=15
 
-        DB::table('offre__competences')->insert([
-            'offre_id' => '5',
-            'skill_id' => '3',
-        ]);
-        DB::table('offre__competences')->insert([
-            'offre_id' => '5',
-            'skill_id' => '4',
-        ]);
-        DB::table('offre__competences')->insert([
-            'offre_id' => '5',
-            'skill_id' => '6',
-        ]);
-        DB::table('offre__competences')->insert([
-            'offre_id' => '6',
-            'skill_id' => '5',
-        ]);
-        DB::table('offre__competences')->insert([
-            'offre_id' => '6',
-            'skill_id' => '7',
-        ]);
-        // Offre 7 - DevOps : Docker, Git, Python
-        foreach ([10, 11, 8] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 7, 'skill_id' => $skill_id]);
-        }
-        // Offre 8 - Backend Java : Java, SQL, Git
-        foreach ([1, 9, 11] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 8, 'skill_id' => $skill_id]);
-        }
-        // Offre 9 - IA/ML : Python, R, Data Mining, SQL
-        foreach ([8, 5, 7, 9] as $skill_id) {
-            DB::table('offre__competences')->insert(['offre_id' => 9, 'skill_id' => $skill_id]);
+        $liens = [
+            1  => [2, 8, 10, 11],       // Thales Cyber : C, Python, Docker, Git
+            2  => [2, 1, 11],            // Dassault C++ : C, Java, Git
+            3  => [6, 4, 3, 15, 14],     // Orange Full Stack : PHP, JS, HTML, Laravel, Vue.js
+            4  => [8, 9, 5, 7],          // Orange Data : Python, SQL, R, Data Mining
+            5  => [2, 1, 11],            // Airbus Embarqué : C, Java, Git
+            6  => [10, 11, 8],           // Capgemini DevOps : Docker, Git, Python
+            7  => [1, 9, 11],            // Capgemini Java : Java, SQL, Git
+            8  => [4, 13, 9, 11],        // BNP FinTech : JS, React, SQL, Git
+            9  => [8, 5, 7, 9],          // SocGen IA : Python, R, Data Mining, SQL
+            10 => [8, 9, 5, 7],          // Safran Data : Python, SQL, R, Data Mining
+            11 => [2, 1, 11],            // Ubisoft Jeux : C, Java, Git
+            12 => [12, 4, 11],           // Ubisoft Mobile : Flutter, JS, Git
+            13 => [8, 7, 9, 11],         // Criteo ML : Python, Data Mining, SQL, Git
+            14 => [2, 11, 10],           // Thales Embarqué : C, Git, Docker
+            15 => [8, 9, 7],             // Airbus Data : Python, SQL, Data Mining
+        ];
+
+        foreach ($liens as $offre_id => $skills) {
+            foreach ($skills as $skill_id) {
+                DB::table('offre__competences')->insert([
+                    'offre_id' => $offre_id,
+                    'skill_id' => $skill_id,
+                ]);
+            }
         }
     }
 }

@@ -2,28 +2,44 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        
-        $this->call(RolesTableSeeder::class);
-        $this->call(UsersTableSeeder::class);
-        $this->call(EntreprisesTableSeeder::class);
-        $this->call(EtudiantsTableSeeder::class);
-        $this->call(OffresTableSeeder::class);
-        $this->call(CompetencesTableSeeder::class);
-        $this->call(DomainesTableSeeder::class);
-        $this->call(Offre_CompetenceTableSeeder::class);
-        $this->call(Offre_DomaineTableSeeder::class);
-        $this->call(PostulationsTableSeeder::class);
-        $this->call(PostulationCommentairesTableSeeder::class);
+        $isMySQL = DB::connection()->getDriverName() === 'mysql';
+
+        if ($isMySQL) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        }
+
+        foreach ([
+            'postulation_commentaires', 'postulations',
+            'offre__domaines', 'offre__competences', 'offres',
+            'etudiants', 'entreprises', 'users',
+            'competences', 'domaines', 'roles',
+        ] as $table) {
+            DB::table($table)->truncate();
+        }
+
+        if ($isMySQL) {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
+
+        $this->call([
+            RolesTableSeeder::class,
+            UsersTableSeeder::class,
+            EntreprisesTableSeeder::class,
+            EtudiantsTableSeeder::class,
+            OffresTableSeeder::class,
+            CompetencesTableSeeder::class,
+            DomainesTableSeeder::class,
+            Offre_CompetenceTableSeeder::class,
+            Offre_DomaineTableSeeder::class,
+            PostulationsTableSeeder::class,
+            PostulationCommentairesTableSeeder::class,
+        ]);
     }
 }

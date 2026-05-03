@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->boolean('notif_mail')->default(true)->after('role_id');
+            $table->boolean('notif_mail')->default(false)->after('role_id');
         });
     }
 
